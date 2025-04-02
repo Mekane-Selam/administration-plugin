@@ -1,0 +1,164 @@
+/* Administration Style */
+.administration-container {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    color: #333;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f7f7f7;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.administration-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: #fff;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.administration-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.administration-search {
+    flex-grow: 1;
+    margin: 0 20px;
+}
+
+.administration-search input {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f5f5f5;
+}
+
+.user-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+}
+
+.administration-content {
+    display: flex;
+}
+
+.administration-sidebar {
+    width: 200px;
+    background: #f7f7f7;
+    border-right: 1px solid #e1e1e1;
+}
+
+.administration-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.administration-sidebar li {
+    margin: 0;
+}
+
+.administration-sidebar li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #555;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+}
+
+.administration-sidebar li.active a {
+    background: #eaf2f8;
+    border-left-color: #3498db;
+    color: #3498db;
+}
+
+.administration-sidebar li a i {
+    margin-right: 10px;
+}
+
+.administration-main {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.administration-section {
+    margin-bottom: 30px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.add-button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.section-content {
+    padding: 20px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+.program-card {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+}
+
+.program-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.program-card p {
+    margin: 0;
+    color: #666;
+}
+
+.members-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.member-item {
+    padding: 15px;
+    background: #f9f9f9;
+    border: 1px solid #e1e1e1;
+    border-radius: 4px;
+}

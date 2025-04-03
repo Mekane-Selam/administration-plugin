@@ -9,45 +9,27 @@
         initFormHandlers();
 
         // Menu Toggle Functionality
-        const menuToggle = document.querySelector('.menu-toggle');
-        const sidebar = document.querySelector('.administration-sidebar');
-        const mainContent = document.querySelector('.administration-main');
-        
-        if (menuToggle) {
-            menuToggle.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                mainContent.classList.toggle('expanded');
-            });
-        }
+        $('.menu-toggle').on('click', function() {
+            $('.administration-sidebar').toggleClass('collapsed');
+            $('.administration-main').toggleClass('expanded');
+        });
         
         // Page Switching Functionality
-        const menuItems = document.querySelectorAll('.sidebar-menu li');
-        const pageContents = document.querySelectorAll('.page-content');
-        
-        menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active class from all menu items
-                menuItems.forEach(menuItem => menuItem.classList.remove('active'));
-                
-                // Add active class to clicked menu item
-                this.classList.add('active');
-                
-                // Hide all pages
-                pageContents.forEach(page => {
-                    page.classList.remove('active');
-                    page.style.display = 'none';
-                });
-                
-                // Show selected page
-                const pageId = this.getAttribute('data-page') + '-page';
-                const selectedPage = document.getElementById(pageId);
-                if (selectedPage) {
-                    selectedPage.classList.add('active');
-                    selectedPage.style.display = 'block';
-                }
-            });
+        $('.sidebar-menu li').on('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all menu items
+            $('.sidebar-menu li').removeClass('active');
+            
+            // Add active class to clicked menu item
+            $(this).addClass('active');
+            
+            // Hide all pages with fade
+            $('.page-content').fadeOut(200).removeClass('active');
+            
+            // Show selected page
+            const pageId = $(this).data('page') + '-page';
+            $('#' + pageId).fadeIn(200).addClass('active');
         });
     });
 

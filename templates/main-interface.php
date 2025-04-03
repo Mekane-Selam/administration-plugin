@@ -78,17 +78,26 @@
                         </div>
                     </div>
                     <div class="section-content">
-                        <?php if (!empty($persons)) : ?>
+                        <?php 
+                        $users = get_users(array('role__in' => array('administrator', 'editor', 'author', 'contributor')));
+                        if (!empty($users)) : ?>
                             <div class="members-list">
-                                <?php foreach ($persons as $person) : ?>
+                                <?php foreach ($users as $user) : ?>
                                     <div class="member-item">
-                                        <?php echo esc_html($person->FirstName . ' ' . $person->LastName); ?>
+                                        <div class="member-avatar">
+                                            <?php echo get_avatar($user->ID, 50); ?>
+                                        </div>
+                                        <div class="member-info">
+                                            <h4><?php echo esc_html($user->display_name); ?></h4>
+                                            <p class="member-role"><?php echo esc_html(implode(', ', $user->roles)); ?></p>
+                                            <p class="member-email"><?php echo esc_html($user->user_email); ?></p>
+                                        </div>
                                     </div>
                                 <?php endforeach; ?>
                             </div>
                         <?php else : ?>
                             <div class="empty-state">
-                                <p>No members added yet.</p>
+                                <p>No members found.</p>
                             </div>
                         <?php endif; ?>
                     </div>

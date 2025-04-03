@@ -55,16 +55,17 @@ class Administration_Admin {
     public function enqueue_scripts($hook) {
         if (strpos($hook, 'administration') !== false) {
             wp_enqueue_style(
-                'administration-admin-css',
+                'administration-admin',
                 ADMINISTRATION_PLUGIN_URL . 'assets/css/admin.css',
-                [],
-                ADMINISTRATION_VERSION
+                array(),
+                ADMINISTRATION_VERSION,
+                'all'
             );
 
             wp_enqueue_script(
-                'administration-admin-js',
+                'administration-admin',
                 ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',
-                ['jquery'],
+                array('jquery'),
                 ADMINISTRATION_VERSION,
                 true
             );

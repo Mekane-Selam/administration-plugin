@@ -25,3 +25,5 @@ This plugin provides functionality for:
 - Basic functionality
 - User synchronization
 - Program management
+
+# Test changes

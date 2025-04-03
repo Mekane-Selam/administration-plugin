@@ -1,6 +1,6 @@
 <div class="administration-container">
     <div class="administration-header">
-        <h2>Administration - Prod</h2>
+        <h2>Administration</h2>
         <div class="administration-search">
             <input type="text" placeholder="Search Home">
         </div>

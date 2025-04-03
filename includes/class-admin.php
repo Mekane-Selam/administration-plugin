@@ -114,14 +114,4 @@ class Administration_Admin {
             'all'
         );
     }
-
-    public function enqueue_scripts() {
-        wp_enqueue_script(
-            'administration-admin',
-            ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',
-            array('jquery'),
-            ADMINISTRATION_VERSION,
-            true
-        );
-    }
 }

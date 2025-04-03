@@ -103,4 +103,24 @@ class Administration_Admin {
         // Include the template
         include ADMINISTRATION_PLUGIN_DIR . 'templates/admin-settings.php';
     }
+
+    public function enqueue_styles() {
+        wp_enqueue_style(
+            'administration-admin',
+            ADMINISTRATION_PLUGIN_URL . 'assets/css/admin.css',
+            array(),
+            ADMINISTRATION_VERSION,
+            'all'
+        );
+    }
+
+    public function enqueue_scripts() {
+        wp_enqueue_script(
+            'administration-admin',
+            ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',
+            array('jquery'),
+            ADMINISTRATION_VERSION,
+            true
+        );
+    }
 }

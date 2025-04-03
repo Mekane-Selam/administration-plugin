@@ -61,3 +61,135 @@
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
 }
+
+/* Sidebar Menu Styles */
+.administration-sidebar {
+    width: 250px;
+    background: #2c3e50;
+    color: #fff;
+    transition: all 0.3s ease;
+    position: fixed;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+.administration-sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sidebar-menu li:hover {
+    background-color: #34495e;
+}
+
+.sidebar-menu li.active {
+    background-color: #3498db;
+}
+
+.sidebar-menu a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-menu i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar-menu span {
+    transition: opacity 0.3s;
+}
+
+.administration-sidebar.collapsed .sidebar-menu span {
+    opacity: 0;
+    width: 0;
+    display: none;
+}
+
+/* Hamburger Menu Toggle */
+.menu-toggle {
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.hamburger {
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.hamburger:before,
+.hamburger:after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 3px;
+    background-color: #333;
+    transition: all 0.3s;
+}
+
+.hamburger:before {
+    top: -8px;
+}
+
+.hamburger:after {
+    bottom: -8px;
+}
+
+/* Main Content Area */
+.administration-main {
+    margin-left: 250px;
+    transition: margin-left 0.3s ease;
+    padding: 20px;
+}
+
+.administration-main.expanded {
+    margin-left: 60px;
+}
+
+/* Page Content Transitions */
+.page-content {
+    transition: opacity 0.3s ease;
+}
+
+.page-content:not(.active) {
+    display: none;
+    opacity: 0;
+}
+
+.page-content.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Header Adjustments */
+.administration-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.administration-header h2 {
+    margin: 0;
+    flex-grow: 1;
+}

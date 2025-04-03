@@ -16,6 +16,7 @@ class Administration_Admin {
         
         // Add admin scripts and styles
         add_action('admin_enqueue_scripts', [$this, 'enqueue_scripts']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_styles']);
     }
 
     /**
@@ -71,7 +72,7 @@ class Administration_Admin {
             );
 
             wp_localize_script(
-                'administration-admin-js',
+                'administration-admin',
                 'administration_data',
                 [
                     'ajax_url' => admin_url('admin-ajax.php'),
@@ -91,7 +92,7 @@ class Administration_Admin {
         $roles = Administration_Database::get_all_roles();
         
         // Include the template
-        include ADMINISTRATION_PLUGIN_DIR . 'templates/admin-dashboard.php';
+        include ADMINISTRATION_PLUGIN_DIR . 'templates/main-interface.php';
     }
 
     /**

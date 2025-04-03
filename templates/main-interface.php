@@ -16,19 +16,19 @@
         <div class="administration-sidebar">
             <ul class="sidebar-menu">
                 <li class="active" data-page="home">
-                    <a href="#"><i class="icon-home"></i> <span>Home</span></a>
+                    <a href="#"><i class="dashicons dashicons-admin-home"></i> <span>Home</span></a>
                 </li>
                 <li data-page="programs">
-                    <a href="#"><i class="icon-programs"></i> <span>Programs</span></a>
+                    <a href="#"><i class="dashicons dashicons-calendar"></i> <span>Programs</span></a>
                 </li>
                 <li data-page="members">
-                    <a href="#"><i class="icon-members"></i> <span>Members</span></a>
+                    <a href="#"><i class="dashicons dashicons-groups"></i> <span>Members</span></a>
                 </li>
             </ul>
         </div>
         
         <div class="administration-main">
-            <div class="page-content" id="home-page">
+            <div id="home-page" class="page-content active">
                 <div class="administration-section">
                     <div class="section-header">
                         <h3>Program Management</h3>
@@ -53,17 +53,45 @@
                 </div>
             </div>
             
-            <div class="page-content" id="programs-page" style="display: none;">
+            <div id="programs-page" class="page-content">
                 <div class="administration-section">
-                    <h3>Programs Page</h3>
-                    <p>Programs content will go here</p>
+                    <div class="section-header">
+                        <h3>Programs</h3>
+                        <div class="section-actions">
+                            <button class="add-button">Add Program</button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="empty-state">
+                            <p>Programs management interface coming soon.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="page-content" id="members-page" style="display: none;">
+            <div id="members-page" class="page-content">
                 <div class="administration-section">
-                    <h3>Members Page</h3>
-                    <p>Members content will go here</p>
+                    <div class="section-header">
+                        <h3>Members</h3>
+                        <div class="section-actions">
+                            <button class="add-button">Add Member</button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <?php if (!empty($persons)) : ?>
+                            <div class="members-list">
+                                <?php foreach ($persons as $person) : ?>
+                                    <div class="member-item">
+                                        <?php echo esc_html($person->FirstName . ' ' . $person->LastName); ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else : ?>
+                            <div class="empty-state">
+                                <p>No members added yet.</p>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
         </div>

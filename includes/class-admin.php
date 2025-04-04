@@ -55,6 +55,7 @@ class Administration_Admin {
      */
     public function enqueue_scripts($hook) {
         if (strpos($hook, 'administration') !== false) {
+            // Enqueue styles
             wp_enqueue_style(
                 'administration-admin',
                 ADMINISTRATION_PLUGIN_URL . 'assets/css/admin.css',
@@ -63,6 +64,12 @@ class Administration_Admin {
                 'all'
             );
 
+            // Enqueue WordPress default dashicons
+            wp_enqueue_style('dashicons');
+
+            // Enqueue jQuery and our script
+            wp_enqueue_script('jquery');
+            
             wp_enqueue_script(
                 'administration-admin',
                 ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',
@@ -71,13 +78,14 @@ class Administration_Admin {
                 true
             );
 
+            // Localize script
             wp_localize_script(
                 'administration-admin',
                 'administration_data',
-                [
+                array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('administration_nonce'),
-                ]
+                )
             );
         }
     }

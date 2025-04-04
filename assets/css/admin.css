@@ -161,7 +161,7 @@
 }
 
 /* When menu is collapsed */
-.administration-main.expanded {
+.administration-main.menu-collapsed {
     margin-left: 0px;
 }
 

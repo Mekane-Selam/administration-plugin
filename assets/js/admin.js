@@ -24,7 +24,7 @@ jQuery(document).ready(function($) {
         $sidebar.toggleClass('collapsed');
         
         // Toggle main content state
-        $main.toggleClass('expanded');
+        $main.toggleClass('menu-collapsed');
     });
     
     // Page Switching Functionality

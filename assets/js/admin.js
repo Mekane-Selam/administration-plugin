@@ -7,11 +7,19 @@ jQuery(document).ready(function($) {
     console.log('Sidebar menu items found:', $('.sidebar-menu li').length);
     console.log('Page content sections found:', $('.page-content').length);
     
+    // Initialize sidebar state
+    const $sidebar = $('.administration-sidebar');
+    const $main = $('.administration-main');
+    const $menuToggle = $('.menu-toggle');
+    
+    // Set initial state (expanded by default)
+    $main.addClass('collapsed');
+    
     // Menu Toggle Functionality
-    $('.menu-toggle').on('click', function() {
-        console.log('Menu toggle clicked');
-        $('.administration-sidebar').toggleClass('collapsed');
-        $('.administration-main').toggleClass('expanded');
+    $menuToggle.on('click', function() {
+        $(this).toggleClass('active');
+        $sidebar.toggleClass('collapsed');
+        $main.toggleClass('collapsed expanded');
     });
     
     // Page Switching Functionality
@@ -58,4 +66,12 @@ jQuery(document).ready(function($) {
         const sectionTitle = section.find('h3').text().trim();
         alert('Add ' + sectionTitle + ' feature coming soon!');
     });
+    
+    // Initialize the active page
+    const $activePage = $('.sidebar-menu li.active');
+    if ($activePage.length) {
+        $activePage.find('a').trigger('click');
+    } else {
+        $('.sidebar-menu li:first-child a').trigger('click');
+    }
 });

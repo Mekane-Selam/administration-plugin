@@ -80,7 +80,7 @@
     flex: 1;
     position: relative;
     min-height: calc(100vh - 92px); /* 60px header + 32px WP admin bar */
-    height: auto;
+    background: #f5f6fa;
 }
 
 /* Sidebar */
@@ -88,11 +88,9 @@
     width: 250px;
     background: #2c3e50;
     color: #fff;
-    transition: all 0.3s ease;
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    transition: width 0.3s ease;
+    min-height: calc(100vh - 92px);
+    position: relative;
 }
 
 .administration-sidebar.collapsed {
@@ -119,7 +117,7 @@
     padding: 15px;
     color: #ecf0f1;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
     white-space: nowrap;
     overflow: hidden;
 }
@@ -128,11 +126,11 @@
     width: 30px;
     font-size: 18px;
     text-align: center;
-    margin-right: 15px;
     flex-shrink: 0;
 }
 
 .sidebar-menu li a span {
+    margin-left: 10px;
     opacity: 1;
     transition: opacity 0.3s ease;
 }
@@ -162,12 +160,12 @@
     background: #f5f6fa;
 }
 
-.administration-main.collapsed {
-    margin-left: 250px;
-}
-
 .administration-main.expanded {
     margin-left: 60px;
+}
+
+.administration-main.collapsed {
+    margin-left: 250px;
 }
 
 /* Search Box */

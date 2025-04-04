@@ -79,7 +79,8 @@
     display: flex;
     flex: 1;
     position: relative;
-    height: calc(100vh - 92px); /* 60px header + 32px WP admin bar */
+    min-height: calc(100vh - 92px); /* 60px header + 32px WP admin bar */
+    height: auto;
 }
 
 /* Sidebar */
@@ -90,6 +91,8 @@
     transition: all 0.3s ease;
     height: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .administration-sidebar.collapsed {
@@ -101,24 +104,43 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    width: 100%;
 }
 
 .sidebar-menu li {
     margin: 0;
     padding: 0;
+    width: 100%;
 }
 
 .sidebar-menu li a {
     display: flex;
     align-items: center;
-    padding: 15px 20px;
+    padding: 15px;
     color: #ecf0f1;
     text-decoration: none;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.sidebar-menu li a:hover {
-    background: #34495e;
+.sidebar-menu li a i {
+    width: 30px;
+    font-size: 18px;
+    text-align: center;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.sidebar-menu li a span {
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.administration-sidebar.collapsed .sidebar-menu li a span {
+    opacity: 0;
+    width: 0;
+    margin: 0;
 }
 
 .sidebar-menu li.active a {
@@ -126,10 +148,8 @@
     color: #fff;
 }
 
-.sidebar-menu i {
-    margin-right: 10px;
-    width: 20px;
-    font-size: 18px;
+.sidebar-menu li a:hover {
+    background: #34495e;
 }
 
 /* Main Content */
@@ -286,4 +306,19 @@
     .administration-search {
         display: none;
     }
+}
+
+/* Home Page Grid Layout */
+.home-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.home-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
 }

@@ -157,12 +157,12 @@
     transition: margin-left 0.3s ease;
     overflow-y: auto;
     background: #f5f6fa;
-    margin-left: 250px; /* Default state - menu expanded */
+    margin-left: 0px; /* Default state - menu expanded */
 }
 
 /* When menu is collapsed */
 .administration-main.expanded {
-    margin-left: 60px;
+    margin-left: 0px;
 }
 
 /* Search Box */

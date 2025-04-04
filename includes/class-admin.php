@@ -71,14 +71,6 @@ class Administration_Admin {
             // Make sure jQuery is loaded
             wp_enqueue_script('jquery');
             
-            // Add a test script to verify jQuery is working
-            wp_add_inline_script('jquery', '
-                console.log("jQuery version:", jQuery.fn.jquery);
-                jQuery(document).ready(function($) {
-                    console.log("jQuery is ready and working");
-                });
-            ');
-
             // Enqueue our main script
             wp_enqueue_script(
                 'administration-admin',
@@ -88,13 +80,15 @@ class Administration_Admin {
                 true
             );
 
-            // Localize script
+            // Localize script with necessary data
             wp_localize_script(
                 'administration-admin',
-                'administration_data',
+                'administrationData',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('administration_nonce'),
+                    'rest_url' => rest_url('administration/v1/'),
+                    'nonce' => wp_create_nonce('wp_rest'),
+                    'debug' => WP_DEBUG
                 )
             );
         }

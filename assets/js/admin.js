@@ -38,7 +38,7 @@ jQuery(document).ready(function($) {
         $('.page-content').hide();
         console.log('Hidden all pages');
         
-        // Show the selected page
+        // Show selected page
         const $targetPage = $('#' + pageId + '-page');
         console.log('Target page found:', $targetPage.length > 0);
         
@@ -59,6 +59,13 @@ jQuery(document).ready(function($) {
     // Debug: Log initial state
     console.log('Initial active menu item:', $('.sidebar-menu li.active').data('page'));
     console.log('Initial visible page:', $('.page-content:visible').attr('id'));
+
+    // Add button handlers
+    $('.add-button').on('click', function() {
+        const section = $(this).closest('.administration-section');
+        const sectionTitle = section.find('h3').text().trim();
+        alert('Add ' + sectionTitle + ' feature coming soon!');
+    });
 });
 
 function initTabs() {

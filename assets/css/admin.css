@@ -4,7 +4,9 @@
     flex-direction: column;
     min-height: 100vh;
     background: #f5f6fa;
-    position: relative;
+    margin-top: -32px; /* Compensate for WordPress admin bar */
+    margin-left: -20px; /* Compensate for WordPress admin margin */
+    margin-right: -20px; /* Compensate for WordPress admin margin */
 }
 
 /* Header */
@@ -14,12 +16,9 @@
     padding: 1rem;
     background: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
     height: 60px;
+    position: relative;
+    z-index: 10;
 }
 
 .administration-header h2 {
@@ -80,6 +79,7 @@
     display: flex;
     flex: 1;
     position: relative;
+    height: calc(100vh - 92px); /* 60px header + 32px WP admin bar */
 }
 
 /* Sidebar */
@@ -88,9 +88,7 @@
     background: #2c3e50;
     color: #fff;
     transition: all 0.3s ease;
-    position: sticky;
-    top: 60px;
-    height: calc(100vh - 60px);
+    height: 100%;
     overflow-y: auto;
 }
 
@@ -140,7 +138,8 @@
     padding: 2rem;
     margin-left: 0;
     transition: margin-left 0.3s ease;
-    min-height: calc(100vh - 60px);
+    overflow-y: auto;
+    background: #f5f6fa;
 }
 
 .administration-main.collapsed {

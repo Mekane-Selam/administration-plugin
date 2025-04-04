@@ -19,7 +19,7 @@ jQuery(document).ready(function($) {
     $menuToggle.on('click', function() {
         $(this).toggleClass('active');
         $sidebar.toggleClass('collapsed');
-        $main.toggleClass('collapsed expanded');
+        $main.toggleClass('expanded');
     });
     
     // Page Switching Functionality

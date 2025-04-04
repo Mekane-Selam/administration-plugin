@@ -154,18 +154,14 @@
 .administration-main {
     flex: 1;
     padding: 1.5rem;
-    margin-left: 0;
     transition: margin-left 0.3s ease;
     overflow-y: auto;
     background: #f5f6fa;
+    margin-left: 250px; /* Default state (menu expanded) */
 }
 
 .administration-main.expanded {
-    margin-left: 60px;
-}
-
-.administration-main.collapsed {
-    margin-left: 250px;
+    margin-left: 60px; /* When menu is collapsed */
 }
 
 /* Search Box */

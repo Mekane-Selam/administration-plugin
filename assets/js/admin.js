@@ -23,12 +23,8 @@ jQuery(document).ready(function($) {
         // Toggle sidebar state
         $sidebar.toggleClass('collapsed');
         
-        // Toggle main content state - IMPORTANT: only one class should be present at a time
-        if ($sidebar.hasClass('collapsed')) {
-            $main.removeClass('collapsed').addClass('expanded');
-        } else {
-            $main.removeClass('expanded').addClass('collapsed');
-        }
+        // Toggle main content state
+        $main.toggleClass('expanded');
     });
     
     // Page Switching Functionality

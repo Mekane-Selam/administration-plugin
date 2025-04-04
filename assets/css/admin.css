@@ -90,7 +90,7 @@
     color: #fff;
     transition: width 0.3s ease;
     min-height: calc(100vh - 92px);
-    position: relative;
+    flex-shrink: 0;
 }
 
 .administration-sidebar.collapsed {
@@ -157,15 +157,10 @@
     transition: margin-left 0.3s ease;
     overflow-y: auto;
     background: #f5f6fa;
-    margin-left: 0; /* Reset default margin */
+    margin-left: 250px; /* Default state - menu expanded */
 }
 
-/* When sidebar is expanded (default state) */
-.administration-main.collapsed {
-    margin-left: 250px;
-}
-
-/* When sidebar is collapsed */
+/* When menu is collapsed */
 .administration-main.expanded {
     margin-left: 60px;
 }

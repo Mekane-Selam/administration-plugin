@@ -7,6 +7,8 @@ jQuery(document).ready(function($) {
     // Initialize form handlers
     initFormHandlers();
 
+    console.log('Administration plugin initialized'); // Debug log
+
     // Menu Toggle Functionality
     $('.menu-toggle').on('click', function() {
         $('.administration-sidebar').toggleClass('collapsed');
@@ -16,25 +18,24 @@ jQuery(document).ready(function($) {
     // Page Switching Functionality
     $('.sidebar-menu li').on('click', function(e) {
         e.preventDefault();
-        e.stopPropagation();
+        console.log('Menu item clicked'); // Debug log
         
-        const $this = $(this);
-        const pageId = $this.data('page');
+        // Get the page id from data attribute
+        const pageId = $(this).data('page');
+        console.log('Switching to page:', pageId); // Debug log
         
-        // Update active state
+        // Update active menu item
         $('.sidebar-menu li').removeClass('active');
-        $this.addClass('active');
+        $(this).addClass('active');
         
         // Hide all pages
-        $('.page-content').hide();
+        $('.page-content').removeClass('active').hide();
         
         // Show selected page
-        $('#' + pageId + '-page').show();
+        $('#' + pageId + '-page').addClass('active').show();
         
         // Update search placeholder
         $('.administration-search input').attr('placeholder', 'Search ' + pageId.charAt(0).toUpperCase() + pageId.slice(1));
-        
-        return false;
     });
 });
 

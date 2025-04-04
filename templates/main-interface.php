@@ -28,6 +28,7 @@
         </div>
         
         <div class="administration-main">
+            <!-- Home Page -->
             <div id="home-page" class="page-content active">
                 <div class="administration-section">
                     <div class="section-header">
@@ -52,7 +53,8 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Programs Page -->
             <div id="programs-page" class="page-content">
                 <div class="administration-section">
                     <div class="section-header">
@@ -68,7 +70,8 @@
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Members Page -->
             <div id="members-page" class="page-content">
                 <div class="administration-section">
                     <div class="section-header">

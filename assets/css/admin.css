@@ -170,15 +170,14 @@
 /* Page Content */
 .page-content {
     display: none;
-    transition: opacity 0.3s ease;
 }
 
 .page-content.active {
     display: block;
 }
 
-/* Make sure the first page is visible by default */
-#home-page.page-content {
+/* Make first page visible by default */
+#home-page {
     display: block;
 }
 

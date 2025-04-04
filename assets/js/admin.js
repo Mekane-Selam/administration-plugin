@@ -12,20 +12,14 @@ jQuery(document).ready(function($) {
     const $main = $('.administration-main');
     const $menuToggle = $('.menu-toggle');
     
-    // Remove any existing classes that might be causing issues
-    $main.removeClass('collapsed expanded');
+    // Set initial state
+    $main.addClass('collapsed');
     
     // Menu Toggle Functionality
     $menuToggle.on('click', function() {
         $(this).toggleClass('active');
         $sidebar.toggleClass('collapsed');
-        
-        // Toggle main content margin
-        if ($sidebar.hasClass('collapsed')) {
-            $main.addClass('expanded').removeClass('collapsed');
-        } else {
-            $main.removeClass('expanded').addClass('collapsed');
-        }
+        $main.toggleClass('collapsed expanded');
     });
     
     // Page Switching Functionality

@@ -12,14 +12,23 @@ jQuery(document).ready(function($) {
     const $main = $('.administration-main');
     const $menuToggle = $('.menu-toggle');
     
-    // Set initial state
-    $main.addClass('collapsed');
+    // Set initial state (menu expanded)
+    $main.addClass('collapsed').removeClass('expanded');
     
     // Menu Toggle Functionality
     $menuToggle.on('click', function() {
+        // Toggle menu button state
         $(this).toggleClass('active');
+        
+        // Toggle sidebar state
         $sidebar.toggleClass('collapsed');
-        $main.toggleClass('collapsed expanded');
+        
+        // Toggle main content state - IMPORTANT: only one class should be present at a time
+        if ($sidebar.hasClass('collapsed')) {
+            $main.removeClass('collapsed').addClass('expanded');
+        } else {
+            $main.removeClass('expanded').addClass('collapsed');
+        }
     });
     
     // Page Switching Functionality

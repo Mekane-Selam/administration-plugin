@@ -54,6 +54,7 @@ class Administration_Admin {
      * Enqueue admin scripts and styles.
      */
     public function enqueue_scripts($hook) {
+        // Only load on our plugin pages
         if (strpos($hook, 'administration') !== false) {
             // Enqueue styles
             wp_enqueue_style(
@@ -67,9 +68,18 @@ class Administration_Admin {
             // Enqueue WordPress default dashicons
             wp_enqueue_style('dashicons');
 
-            // Enqueue jQuery and our script
+            // Make sure jQuery is loaded
             wp_enqueue_script('jquery');
             
+            // Add a test script to verify jQuery is working
+            wp_add_inline_script('jquery', '
+                console.log("jQuery version:", jQuery.fn.jquery);
+                jQuery(document).ready(function($) {
+                    console.log("jQuery is ready and working");
+                });
+            ');
+
+            // Enqueue our main script
             wp_enqueue_script(
                 'administration-admin',
                 ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',

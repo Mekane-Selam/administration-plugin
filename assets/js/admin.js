@@ -7,36 +7,58 @@ jQuery(document).ready(function($) {
     // Initialize form handlers
     initFormHandlers();
 
-    console.log('Administration plugin initialized'); // Debug log
+    console.log('Administration plugin initialized');
+    
+    // Debug: Check if we can find our elements
+    console.log('Sidebar menu items found:', $('.sidebar-menu li').length);
+    console.log('Page content sections found:', $('.page-content').length);
 
     // Menu Toggle Functionality
     $('.menu-toggle').on('click', function() {
+        console.log('Menu toggle clicked');
         $('.administration-sidebar').toggleClass('collapsed');
         $('.administration-main').toggleClass('expanded');
     });
     
     // Page Switching Functionality
-    $('.sidebar-menu li').on('click', function(e) {
+    $(document).on('click', '.sidebar-menu li', function(e) {
         e.preventDefault();
-        console.log('Menu item clicked'); // Debug log
+        e.stopPropagation();
         
-        // Get the page id from data attribute
-        const pageId = $(this).data('page');
-        console.log('Switching to page:', pageId); // Debug log
+        const $this = $(this);
+        const pageId = $this.data('page');
         
-        // Update active menu item
+        console.log('Menu item clicked:', pageId);
+        
+        // Update active states
         $('.sidebar-menu li').removeClass('active');
-        $(this).addClass('active');
+        $this.addClass('active');
         
-        // Hide all pages
-        $('.page-content').removeClass('active').hide();
+        // Hide all pages first
+        $('.page-content').hide();
+        console.log('Hidden all pages');
         
-        // Show selected page
-        $('#' + pageId + '-page').addClass('active').show();
+        // Show the selected page
+        const $targetPage = $('#' + pageId + '-page');
+        console.log('Target page found:', $targetPage.length > 0);
         
-        // Update search placeholder
-        $('.administration-search input').attr('placeholder', 'Search ' + pageId.charAt(0).toUpperCase() + pageId.slice(1));
+        if ($targetPage.length) {
+            $targetPage.show();
+            console.log('Showed page:', pageId);
+            
+            // Update search placeholder
+            $('.administration-search input').attr(
+                'placeholder',
+                'Search ' + pageId.charAt(0).toUpperCase() + pageId.slice(1)
+            );
+        } else {
+            console.error('Target page not found:', pageId);
+        }
     });
+    
+    // Debug: Log initial state
+    console.log('Initial active menu item:', $('.sidebar-menu li.active').data('page'));
+    console.log('Initial visible page:', $('.page-content:visible').attr('id'));
 });
 
 function initTabs() {

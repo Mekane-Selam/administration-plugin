@@ -24,26 +24,30 @@ class Administration_Public {
         if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'administration')) {
             wp_enqueue_style(
                 'administration-css',
-                ADMINISTRATION_PLUGIN_URL . 'public/css/administration.css',
+                ADMINISTRATION_PLUGIN_URL . 'assets/css/admin.css',
                 [],
                 ADMINISTRATION_VERSION
             );
             
+            // Enqueue WordPress default dashicons
+            wp_enqueue_style('dashicons');
+            
             wp_enqueue_script(
-                'administration-js',
-                ADMINISTRATION_PLUGIN_URL . 'public/js/administration.js',
+                'administration-admin',
+                ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',
                 ['jquery'],
                 ADMINISTRATION_VERSION,
                 true
             );
             
             wp_localize_script(
-                'administration-js',
-                'administration_data',
+                'administration-admin',
+                'administrationData',
                 [
                     'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('administration_nonce'),
                     'rest_url' => esc_url_raw(rest_url('administration/v1/')),
+                    'nonce' => wp_create_nonce('wp_rest'),
+                    'debug' => WP_DEBUG
                 ]
             );
         }

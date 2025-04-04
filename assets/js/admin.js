@@ -21,18 +21,18 @@ jQuery(document).ready(function($) {
     });
     
     // Page Switching Functionality
-    $(document).on('click', '.sidebar-menu li', function(e) {
+    $(document).on('click', '.sidebar-menu li a', function(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        const $this = $(this);
-        const pageId = $this.data('page');
+        const $menuItem = $(this).parent('li');
+        const pageId = $menuItem.data('page');
         
         console.log('Menu item clicked:', pageId);
         
         // Update active states
         $('.sidebar-menu li').removeClass('active');
-        $this.addClass('active');
+        $menuItem.addClass('active');
         
         // Hide all pages first
         $('.page-content').hide();
@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
         console.log('Target page found:', $targetPage.length > 0);
         
         if ($targetPage.length) {
-            $targetPage.show();
+            $targetPage.fadeIn(200);
             console.log('Showed page:', pageId);
             
             // Update search placeholder
@@ -54,6 +54,8 @@ jQuery(document).ready(function($) {
         } else {
             console.error('Target page not found:', pageId);
         }
+        
+        return false;
     });
     
     // Debug: Log initial state

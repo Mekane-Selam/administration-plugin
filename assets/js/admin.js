@@ -1,18 +1,18 @@
 jQuery(document).ready(function($) {
     'use strict';
-
+    
+    console.log('Administration plugin initialized');
+    
     // Initialize tabs
     initTabs();
     
     // Initialize form handlers
     initFormHandlers();
-
-    console.log('Administration plugin initialized');
     
     // Debug: Check if we can find our elements
     console.log('Sidebar menu items found:', $('.sidebar-menu li').length);
     console.log('Page content sections found:', $('.page-content').length);
-
+    
     // Menu Toggle Functionality
     $('.menu-toggle').on('click', function() {
         console.log('Menu toggle clicked');
@@ -58,36 +58,37 @@ jQuery(document).ready(function($) {
         return false;
     });
     
-    // Debug: Log initial state
-    console.log('Initial active menu item:', $('.sidebar-menu li.active').data('page'));
-    console.log('Initial visible page:', $('.page-content:visible').attr('id'));
-
     // Add button handlers
     $('.add-button').on('click', function() {
         const section = $(this).closest('.administration-section');
         const sectionTitle = section.find('h3').text().trim();
         alert('Add ' + sectionTitle + ' feature coming soon!');
     });
+    
+    // Debug: Log initial state
+    console.log('Initial active menu item:', $('.sidebar-menu li.active').data('page'));
+    console.log('Initial visible page:', $('.page-content:visible').attr('id'));
+    
+    // Initialize tabs function
+    function initTabs() {
+        $('.administration-tab-nav .nav-tab').on('click', function() {
+            const tabId = $(this).data('tab');
+            
+            // Update active tab
+            $('.administration-tab-nav .nav-tab').removeClass('nav-tab-active');
+            $(this).addClass('nav-tab-active');
+            
+            // Show corresponding tab content
+            $('.administration-tab-content').removeClass('active');
+            $('#' + tabId).addClass('active');
+        });
+    }
+    
+    // Initialize form handlers function
+    function initFormHandlers() {
+        $('#select-all-roles').on('change', function() {
+            const isChecked = $(this).prop('checked');
+            $('input[name="administration_access_roles[]"]').prop('checked', isChecked);
+        });
+    }
 });
-
-function initTabs() {
-    $('.administration-tab-nav .nav-tab').on('click', function() {
-        const tabId = $(this).data('tab');
-        
-        // Update active tab
-        $('.administration-tab-nav .nav-tab').removeClass('nav-tab-active');
-        $(this).addClass('nav-tab-active');
-        
-        // Show corresponding tab content
-        $('.administration-tab-content').removeClass('active');
-        $('#' + tabId).addClass('active');
-    });
-}
-
-function initFormHandlers() {
-    // Handle select all checkboxes
-    $('#select-all-roles').on('change', function() {
-        const isChecked = $(this).prop('checked');
-        $('input[name="administration_access_roles[]"]').prop('checked', isChecked);
-    });
-}

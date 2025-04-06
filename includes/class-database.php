@@ -26,6 +26,17 @@ class Administration_Database {
         $program_sessions_table = $wpdb->prefix . 'core_program_sessions';
         $program_checkins_table = $wpdb->prefix . 'core_program_checkins';
         $events_table = $wpdb->prefix . 'core_events';
+        
+        // Volunteer Operations tables
+        $volunteers_table = $wpdb->prefix . 'volunteerops_volunteers';
+        $volunteer_availability_table = $wpdb->prefix . 'volunteerops_volunteeravailability';
+        $task_definitions_table = $wpdb->prefix . 'volunteerops_taskdefinitions';
+        $task_groups_table = $wpdb->prefix . 'volunteerops_taskgroups';
+        $task_group_tasks_table = $wpdb->prefix . 'volunteerops_taskgrouptasks';
+        $shift_templates_table = $wpdb->prefix . 'volunteerops_shifttemplates';
+        $shift_template_task_groups_table = $wpdb->prefix . 'volunteerops_shifttemplatetaskgroups';
+        $shift_occurrences_table = $wpdb->prefix . 'volunteerops_shiftoccurrences';
+        $shift_tasks_table = $wpdb->prefix . 'volunteerops_shifttasks';
 
         // List of all tables
         $tables = [
@@ -37,7 +48,16 @@ class Administration_Database {
             $program_enrollments_table,
             $program_sessions_table,
             $program_checkins_table,
-            $events_table
+            $events_table,
+            $volunteers_table,
+            $volunteer_availability_table,
+            $task_definitions_table,
+            $task_groups_table,
+            $task_group_tasks_table,
+            $shift_templates_table,
+            $shift_template_task_groups_table,
+            $shift_occurrences_table,
+            $shift_tasks_table
         ];
 
         // Check if tables already exist
@@ -175,6 +195,108 @@ class Administration_Database {
             Location VARCHAR(100),
             PRIMARY KEY (EventID),
             CONSTRAINT fk_event_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        // Volunteers Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $volunteers_table (
+            VolunteerID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            PersonID BIGINT(20) UNSIGNED NOT NULL,
+            Skills TEXT,
+            AvailabilityNotes TEXT,
+            PRIMARY KEY (VolunteerID),
+            CONSTRAINT fk_volunteer_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // Volunteer Availability Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $volunteer_availability_table (
+            AvailabilityID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            VolunteerID BIGINT(20) UNSIGNED NOT NULL,
+            StartDateTime DATETIME NOT NULL,
+            EndDateTime DATETIME NOT NULL,
+            AvailabilityType VARCHAR(50) NOT NULL,
+            LastUpdated DATETIME NOT NULL,
+            Notes TEXT,
+            PRIMARY KEY (AvailabilityID),
+            CONSTRAINT fk_availability_volunteer FOREIGN KEY (VolunteerID) REFERENCES $volunteers_table(VolunteerID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // Task Definitions Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $task_definitions_table (
+            TaskID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            TaskName VARCHAR(100) NOT NULL,
+            TaskDescription TEXT,
+            DefaultDuration INT UNSIGNED,
+            PRIMARY KEY (TaskID)
+        ) $charset_collate;";
+
+        // Task Groups Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $task_groups_table (
+            TaskGroupID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            TaskGroupName VARCHAR(100) NOT NULL,
+            Description TEXT,
+            PRIMARY KEY (TaskGroupID)
+        ) $charset_collate;";
+
+        // Task Group Tasks Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $task_group_tasks_table (
+            TaskGroupTaskID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            TaskGroupID BIGINT(20) UNSIGNED NOT NULL,
+            TaskID BIGINT(20) UNSIGNED NOT NULL,
+            SortOrder INT UNSIGNED NOT NULL,
+            PRIMARY KEY (TaskGroupTaskID),
+            CONSTRAINT fk_taskgroup_taskgroup FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE CASCADE,
+            CONSTRAINT fk_taskgroup_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // Shift Templates Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $shift_templates_table (
+            ShiftTemplateID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ShiftTemplateName VARCHAR(100) NOT NULL,
+            ProgramID BIGINT(20) UNSIGNED NOT NULL,
+            DefaultStartTime TIME NOT NULL,
+            DefaultEndTime TIME NOT NULL,
+            PRIMARY KEY (ShiftTemplateID),
+            CONSTRAINT fk_shifttemplate_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // Shift Template Task Groups Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $shift_template_task_groups_table (
+            ShiftTemplateTaskGroupID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ShiftTemplateID BIGINT(20) UNSIGNED NOT NULL,
+            TaskGroupID BIGINT(20) UNSIGNED NOT NULL,
+            SortOrder INT UNSIGNED NOT NULL,
+            PRIMARY KEY (ShiftTemplateTaskGroupID),
+            CONSTRAINT fk_shifttemplate_taskgroup_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE CASCADE,
+            CONSTRAINT fk_shifttemplate_taskgroup_group FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // Shift Occurrences Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $shift_occurrences_table (
+            ShiftOccurrenceID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ProgramID BIGINT(20) UNSIGNED NOT NULL,
+            VolunteerID BIGINT(20) UNSIGNED NOT NULL,
+            ScheduledDate DATE NOT NULL,
+            StartTime TIME NOT NULL,
+            EndTime TIME NOT NULL,
+            ShiftTemplateID BIGINT(20) UNSIGNED NOT NULL,
+            Notes TEXT,
+            PRIMARY KEY (ShiftOccurrenceID),
+            CONSTRAINT fk_shiftoccurrence_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE,
+            CONSTRAINT fk_shiftoccurrence_volunteer FOREIGN KEY (VolunteerID) REFERENCES $volunteers_table(VolunteerID) ON DELETE CASCADE,
+            CONSTRAINT fk_shiftoccurrence_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // Shift Tasks Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $shift_tasks_table (
+            ShiftTaskID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ShiftOccurrenceID BIGINT(20) UNSIGNED NOT NULL,
+            TaskID BIGINT(20) UNSIGNED NOT NULL,
+            IsModified TINYINT(1) DEFAULT 0,
+            Status VARCHAR(50) NOT NULL,
+            Notes TEXT,
+            PRIMARY KEY (ShiftTaskID),
+            CONSTRAINT fk_shifttask_occurrence FOREIGN KEY (ShiftOccurrenceID) REFERENCES $shift_occurrences_table(ShiftOccurrenceID) ON DELETE CASCADE,
+            CONSTRAINT fk_shifttask_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE CASCADE
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

@@ -125,7 +125,7 @@
                     <h3>Members</h3>
                     <div class="section-actions">
                             <button class="add-button">Add Member</button>
-                        </div>
+                    </div>
                 </div>
                 <div class="section-content">
                         <?php 
@@ -237,7 +237,7 @@
                     <div class="administration-section">
                         <div class="section-header">
                             <h3>Offers</h3>
-                            <div class="section-actions">
+                    <div class="section-actions">
                                 <button class="filter-button" id="filter-offers">Filter</button>
                     </div>
                 </div>

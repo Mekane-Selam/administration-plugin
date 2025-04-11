@@ -79,6 +79,50 @@ jQuery(document).ready(function($) {
         $('#job-posting-modal').show();
     });
     
+    // Form Submission Handler
+    $('#job-posting-form').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        const $form = $(this);
+        const $submitButton = $form.find('button[type="submit"]');
+        
+        // Disable submit button and show loading state
+        $submitButton.prop('disabled', true).text('Saving...');
+        
+        const formData = new FormData(this);
+        
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'save_job_posting',
+                nonce: administrationData.nonce,
+                ...Object.fromEntries(formData.entries())
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Hide the form modal
+                    $('#job-posting-modal').hide();
+                    $form[0].reset();
+                    
+                    // Show the newly created job posting
+                    showViewModal(response.data.job_posting);
+                    
+                    // Refresh the job postings list
+                    loadJobPostings();
+                } else {
+                    alert('Error saving job posting: ' + (response.data?.message || 'Unknown error'));
+                }
+            },
+            error: function() {
+                alert('Error saving job posting. Please try again.');
+            },
+            complete: function() {
+                // Re-enable submit button and restore text
+                $submitButton.prop('disabled', false).text('Save Job Posting');
+            }
+        });
+    });
+    
     // Initialize the active page
     const $activePage = $('.sidebar-menu li.active');
     if ($activePage.length) {

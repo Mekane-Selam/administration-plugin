@@ -61,6 +61,14 @@ foreach ($required_files as $file) {
     require_once $file_path;
 }
 
+// Load required files
+require_once plugin_dir_path(__FILE__) . 'includes/class-database.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-ajax.php';
+
+// Initialize classes
+$database = new Administration_Database();
+$ajax = new Administration_Ajax();
+
 /**
  * Initialize the plugin
  */

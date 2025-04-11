@@ -65,11 +65,18 @@ jQuery(document).ready(function($) {
         return false;
     });
     
-    // Add button handlers
-    $('.add-button').on('click', function() {
+    // Add button handlers - but exclude HR module buttons
+    $('.add-button').not('#add-job-posting').on('click', function() {
         const section = $(this).closest('.administration-section');
         const sectionTitle = section.find('h3').text().trim();
         alert('Add ' + sectionTitle + ' feature coming soon!');
+    });
+
+    // Add Job Posting Handler
+    $('#add-job-posting').off('click').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $('#job-posting-modal').show();
     });
     
     // Initialize the active page

@@ -396,7 +396,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 100000;
 }
 
 .modal-content {
@@ -408,6 +408,7 @@
     max-width: 600px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100001;
 }
 
 .modal .close {
@@ -522,52 +523,86 @@ select[multiple] {
 /* HR Dashboard Styles */
 .hr-dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
     padding: 20px;
 }
 
 .hr-dashboard-item {
     background: #fff;
-    border-radius: 8px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 25px;
     text-align: center;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e1e8ed;
+    position: relative;
+    overflow: hidden;
 }
 
 .hr-dashboard-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #3498db;
+}
+
+.hr-dashboard-item:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #3498db;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.hr-dashboard-item:hover:before {
+    opacity: 1;
 }
 
 .hr-dashboard-item .dashboard-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 15px;
-    background: #f5f6fa;
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    background: #f8fafc;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+    border: 2px solid #e1e8ed;
+}
+
+.hr-dashboard-item:hover .dashboard-icon {
+    background: #3498db;
+    border-color: #3498db;
 }
 
 .hr-dashboard-item .dashboard-icon i {
-    font-size: 30px;
+    font-size: 32px;
     color: #3498db;
+    transition: all 0.3s ease;
+}
+
+.hr-dashboard-item:hover .dashboard-icon i {
+    color: #fff;
 }
 
 .hr-dashboard-item h4 {
-    margin: 0 0 10px;
+    margin: 0 0 12px;
     color: #2c3e50;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .hr-dashboard-item p {
     margin: 0;
     color: #7f8c8d;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
 /* HR Section Styles */
@@ -580,21 +615,28 @@ select[multiple] {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    padding: 0 20px;
 }
 
 .hr-section .back-button {
     background: #f5f6fa;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
+    padding: 10px 20px;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     color: #2c3e50;
-    transition: background-color 0.2s ease;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .hr-section .back-button:hover {
     background: #e9ecef;
+    transform: translateX(-3px);
+}
+
+.hr-section .back-button i {
+    font-size: 18px;
 }

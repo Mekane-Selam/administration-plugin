@@ -83,23 +83,38 @@ jQuery(document).ready(function($) {
     // HR Module Functionality
     function initHRModule() {
         // HR Dashboard Navigation
-        $('.hr-dashboard-item').on('click', function() {
+        $('.hr-dashboard-item').off('click').on('click', function() {
             const section = $(this).data('section');
-            if (section === 'jobs') {
-                $('.hr-dashboard-grid').closest('.administration-section').hide();
-                $('#hr-jobs-section').show();
-                
-                // Load initial jobs data
-                loadJobPostings();
-                loadApplications();
-                loadInterviews();
-                loadOffers();
+            console.log('HR dashboard item clicked:', section);
+            
+            switch(section) {
+                case 'jobs':
+                    // Hide dashboard, show jobs section
+                    $('.hr-dashboard-grid').closest('.administration-section').hide();
+                    $('#hr-jobs-section').show();
+                    
+                    // Load initial jobs data
+                    loadJobPostings();
+                    loadApplications();
+                    loadInterviews();
+                    loadOffers();
+                    break;
+                    
+                case 'employees':
+                    alert('Employee management module coming soon!');
+                    break;
+                    
+                case 'timesheets':
+                    alert('Timesheet management module coming soon!');
+                    break;
             }
-            // Other sections (employees, timesheets) will be handled similarly
         });
 
         // Job Postings
         function loadJobPostings() {
+            const $container = $('.job-postings-list');
+            $container.html('<div class="empty-state">Loading job postings...</div>');
+            
             $.ajax({
                 url: ajaxurl,
                 type: 'GET',
@@ -110,7 +125,12 @@ jQuery(document).ready(function($) {
                 success: function(response) {
                     if (response.success) {
                         displayJobPostings(response.data);
+                    } else {
+                        $container.html('<div class="empty-state">Error loading job postings. Please try again.</div>');
                     }
+                },
+                error: function() {
+                    $container.html('<div class="empty-state">Error loading job postings. Please try again.</div>');
                 }
             });
         }
@@ -146,12 +166,22 @@ jQuery(document).ready(function($) {
             }
         }
 
-        $('#add-job-posting').off('click').on('click', function() {
+        // Add Job Posting Handler
+        $('#add-job-posting').off('click').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             $('#job-posting-modal').show();
         });
 
+        // Form Submission Handler
         $('#job-posting-form').off('submit').on('submit', function(e) {
             e.preventDefault();
+            const $form = $(this);
+            const $submitButton = $form.find('button[type="submit"]');
+            
+            // Disable submit button and show loading state
+            $submitButton.prop('disabled', true).text('Saving...');
+            
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
             
@@ -167,11 +197,18 @@ jQuery(document).ready(function($) {
                     if (response.success) {
                         loadJobPostings();
                         $('#job-posting-modal').hide();
-                        this.reset();
+                        $form[0].reset();
                     } else {
-                        alert('Error saving job posting: ' + response.data.message);
+                        alert('Error saving job posting: ' + (response.data?.message || 'Unknown error'));
                     }
-                }.bind(this)
+                },
+                error: function() {
+                    alert('Error saving job posting. Please try again.');
+                },
+                complete: function() {
+                    // Re-enable submit button and restore text
+                    $submitButton.prop('disabled', false).text('Save Job Posting');
+                }
             });
         });
 
@@ -297,10 +334,14 @@ jQuery(document).ready(function($) {
 
         // Back button functionality
         function addBackButton() {
+            // Remove any existing back button first
+            $('#hr-jobs-section .back-button').remove();
+            
             const $backButton = $('<button class="back-button"><i class="dashicons dashicons-arrow-left-alt"></i> Back to Dashboard</button>');
             $('#hr-jobs-section').find('.section-header').first().prepend($backButton);
             
-            $backButton.on('click', function() {
+            $backButton.off('click').on('click', function(e) {
+                e.preventDefault();
                 $('#hr-jobs-section').hide();
                 $('.hr-dashboard-grid').closest('.administration-section').show();
             });
@@ -308,25 +349,34 @@ jQuery(document).ready(function($) {
         addBackButton();
 
         // Modal close handlers
-        $('.modal .close').on('click', function() {
+        $('.modal .close').off('click').on('click', function() {
             $(this).closest('.modal').hide();
         });
 
         // Close modal when clicking outside
-        $('.modal').on('click', function(e) {
+        $('.modal').off('click').on('click', function(e) {
             if (e.target === this) {
                 $(this).hide();
             }
         });
 
+        // Prevent modal content clicks from bubbling to the modal backdrop
+        $('.modal-content').off('click').on('click', function(e) {
+            e.stopPropagation();
+        });
+
         // Load initial data when HR page is active
-        $(document).on('pageChanged', function(e, page) {
+        $(document).off('pageChanged.hr').on('pageChanged.hr', function(e, page) {
             if (page === 'hr') {
                 // Show dashboard, hide jobs section initially
                 $('.hr-dashboard-grid').closest('.administration-section').show();
                 $('#hr-jobs-section').hide();
             }
         });
+
+        // Debug logging
+        console.log('HR Module initialized');
+        console.log('HR dashboard items found:', $('.hr-dashboard-item').length);
     }
 
     // Initialize HR Module when document is ready

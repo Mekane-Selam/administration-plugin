@@ -79,4 +79,235 @@ jQuery(document).ready(function($) {
     } else {
         $('.sidebar-menu li:first-child a').trigger('click');
     }
+
+    // HR Module Functionality
+    function initHRModule() {
+        // Job Postings
+        $('#add-job-posting').on('click', function() {
+            $('#job-posting-modal').show();
+        });
+
+        $('#job-posting-form').on('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'save_job_posting',
+                    nonce: administrationData.nonce,
+                    ...data
+                },
+                success: function(response) {
+                    if (response.success) {
+                        loadJobPostings();
+                        $('#job-posting-modal').hide();
+                        this.reset();
+                    } else {
+                        alert('Error saving job posting: ' + response.data.message);
+                    }
+                }.bind(this)
+            });
+        });
+
+        // Applications
+        function loadApplications() {
+            $.ajax({
+                url: ajaxurl,
+                type: 'GET',
+                data: {
+                    action: 'get_applications',
+                    nonce: administrationData.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        displayApplications(response.data);
+                    }
+                }
+            });
+        }
+
+        function displayApplications(applications) {
+            const $container = $('.applications-list');
+            $container.empty();
+
+            applications.forEach(app => {
+                const $app = $(`
+                    <div class="application-item" data-id="${app.ApplicationID}">
+                        <div class="application-header">
+                            <h4>${app.FirstName} ${app.LastName}</h4>
+                            <span class="status ${app.Status.toLowerCase()}">${app.Status}</span>
+                        </div>
+                        <div class="application-details">
+                            <p>Applied for: ${app.JobTitle}</p>
+                            <p>Date: ${new Date(app.SubmissionDate).toLocaleDateString()}</p>
+                        </div>
+                        <div class="application-actions">
+                            <button class="view-application">View</button>
+                        </div>
+                    </div>
+                `);
+                $container.append($app);
+            });
+        }
+
+        // Interviews
+        function loadInterviews() {
+            $.ajax({
+                url: ajaxurl,
+                type: 'GET',
+                data: {
+                    action: 'get_interviews',
+                    nonce: administrationData.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        displayInterviews(response.data);
+                    }
+                }
+            });
+        }
+
+        function displayInterviews(interviews) {
+            const $container = $('.interviews-list');
+            $container.empty();
+
+            interviews.forEach(interview => {
+                const $interview = $(`
+                    <div class="interview-item" data-id="${interview.InterviewID}">
+                        <div class="interview-header">
+                            <h4>${interview.CandidateName}</h4>
+                            <span class="status ${interview.Status.toLowerCase()}">${interview.Status}</span>
+                        </div>
+                        <div class="interview-details">
+                            <p>Round: ${interview.InterviewRound}</p>
+                            <p>Date: ${new Date(interview.ScheduledDateTime).toLocaleString()}</p>
+                            <p>Type: ${interview.InterviewType}</p>
+                        </div>
+                    </div>
+                `);
+                $container.append($interview);
+            });
+        }
+
+        // Offers
+        function loadOffers() {
+            $.ajax({
+                url: ajaxurl,
+                type: 'GET',
+                data: {
+                    action: 'get_offers',
+                    nonce: administrationData.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        displayOffers(response.data);
+                    }
+                }
+            });
+        }
+
+        function displayOffers(offers) {
+            const $container = $('.offers-list');
+            $container.empty();
+
+            offers.forEach(offer => {
+                const $offer = $(`
+                    <div class="offer-item" data-id="${offer.OfferID}">
+                        <div class="offer-header">
+                            <h4>${offer.CandidateName}</h4>
+                            <span class="status ${offer.Status.toLowerCase()}">${offer.Status}</span>
+                        </div>
+                        <div class="offer-details">
+                            <p>Position: ${offer.Position}</p>
+                            <p>Department: ${offer.Department}</p>
+                            <p>Salary: ${offer.SalaryOffered}</p>
+                            <p>Start Date: ${new Date(offer.StartDate).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                `);
+                $container.append($offer);
+            });
+        }
+
+        // Modal Handlers
+        $('.close').on('click', function() {
+            $(this).closest('.modal').hide();
+        });
+
+        $('#schedule-interview').on('click', function() {
+            $('#interview-modal').show();
+        });
+
+        $('#make-offer').on('click', function() {
+            $('#offer-modal').show();
+        });
+
+        // Interview Form Handler
+        $('#interview-form').on('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'schedule_interview',
+                    nonce: administrationData.nonce,
+                    ...data
+                },
+                success: function(response) {
+                    if (response.success) {
+                        loadInterviews();
+                        $('#interview-modal').hide();
+                        this.reset();
+                    } else {
+                        alert('Error scheduling interview: ' + response.data.message);
+                    }
+                }.bind(this)
+            });
+        });
+
+        // Offer Form Handler
+        $('#offer-form').on('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'make_offer',
+                    nonce: administrationData.nonce,
+                    ...data
+                },
+                success: function(response) {
+                    if (response.success) {
+                        loadOffers();
+                        $('#offer-modal').hide();
+                        this.reset();
+                    } else {
+                        alert('Error making offer: ' + response.data.message);
+                    }
+                }.bind(this)
+            });
+        });
+
+        // Load initial data when HR page is active
+        $(document).on('pageChanged', function(e, page) {
+            if (page === 'hr') {
+                loadJobPostings();
+                loadApplications();
+                loadInterviews();
+                loadOffers();
+            }
+        });
+    }
+
+    // Initialize HR Module when document is ready
+    initHRModule();
 });

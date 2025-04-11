@@ -38,6 +38,17 @@ class Administration_Database {
         $shift_occurrences_table = $wpdb->prefix . 'volunteerops_shiftoccurrences';
         $shift_tasks_table = $wpdb->prefix . 'volunteerops_shifttasks';
 
+        // HR tables
+        $job_postings_table = $wpdb->prefix . 'hr_jobpostings';
+        $applications_table = $wpdb->prefix . 'hr_applications';
+        $external_applicants_table = $wpdb->prefix . 'hr_externalapplicants';
+        $interview_schedules_table = $wpdb->prefix . 'hr_interviewschedules';
+        $interviewers_table = $wpdb->prefix . 'hr_interviewers';
+        $job_skills_table = $wpdb->prefix . 'hr_jobskills';
+        $application_skills_table = $wpdb->prefix . 'hr_applicationskills';
+        $job_workflows_table = $wpdb->prefix . 'hr_jobworkflows';
+        $offers_table = $wpdb->prefix . 'hr_offers';
+
         // List of all tables
         $tables = [
             $person_table,
@@ -57,7 +68,16 @@ class Administration_Database {
             $shift_templates_table,
             $shift_template_task_groups_table,
             $shift_occurrences_table,
-            $shift_tasks_table
+            $shift_tasks_table,
+            $job_postings_table,
+            $applications_table,
+            $external_applicants_table,
+            $interview_schedules_table,
+            $interviewers_table,
+            $job_skills_table,
+            $application_skills_table,
+            $job_workflows_table,
+            $offers_table
         ];
 
         // Check if tables already exist
@@ -297,6 +317,152 @@ class Administration_Database {
             PRIMARY KEY (ShiftTaskID),
             CONSTRAINT fk_shifttask_occurrence FOREIGN KEY (ShiftOccurrenceID) REFERENCES $shift_occurrences_table(ShiftOccurrenceID) ON DELETE CASCADE,
             CONSTRAINT fk_shifttask_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // HR Job Postings Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $job_postings_table (
+            JobPostingID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ProgramID BIGINT(20) UNSIGNED NULL,
+            Title VARCHAR(100) NOT NULL,
+            Description TEXT,
+            Requirements TEXT,
+            Responsibilities TEXT,
+            JobType VARCHAR(50) NOT NULL,
+            Status VARCHAR(50) NOT NULL DEFAULT 'Draft',
+            Location VARCHAR(100),
+            SalaryRange VARCHAR(100),
+            PostedDate DATETIME,
+            ClosingDate DATETIME,
+            DepartmentName VARCHAR(100),
+            ReportsTo BIGINT(20) UNSIGNED NULL,
+            CreatedBy BIGINT(20) UNSIGNED NOT NULL,
+            LastModifiedDate DATETIME NOT NULL,
+            IsInternal TINYINT(1) DEFAULT 0,
+            PRIMARY KEY (JobPostingID),
+            CONSTRAINT fk_jobposting_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL,
+            CONSTRAINT fk_jobposting_reports_to FOREIGN KEY (ReportsTo) REFERENCES $person_table(PersonID) ON DELETE SET NULL,
+            CONSTRAINT fk_jobposting_created_by FOREIGN KEY (CreatedBy) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // HR Applications Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $applications_table (
+            ApplicationID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            JobPostingID BIGINT(20) UNSIGNED NOT NULL,
+            PersonID BIGINT(20) UNSIGNED NULL,
+            ExternalApplicantID BIGINT(20) UNSIGNED NULL,
+            Status VARCHAR(50) NOT NULL DEFAULT 'New',
+            SubmissionDate DATETIME NOT NULL,
+            LastModifiedDate DATETIME NOT NULL,
+            Notes TEXT,
+            ResumeURL VARCHAR(255),
+            CoverLetterURL VARCHAR(255),
+            ReferralSource VARCHAR(100),
+            PRIMARY KEY (ApplicationID),
+            CONSTRAINT fk_application_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE,
+            CONSTRAINT fk_application_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        // HR External Applicants Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $external_applicants_table (
+            ExternalApplicantID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            FirstName VARCHAR(50) NOT NULL,
+            LastName VARCHAR(50) NOT NULL,
+            Email VARCHAR(100) NOT NULL,
+            Phone VARCHAR(20),
+            AddressLine1 VARCHAR(100),
+            AddressLine2 VARCHAR(100),
+            City VARCHAR(50),
+            State VARCHAR(50),
+            Zip VARCHAR(20),
+            CreatedDate DATETIME NOT NULL,
+            LastModifiedDate DATETIME NOT NULL,
+            ConvertedToPersonID BIGINT(20) UNSIGNED NULL,
+            PRIMARY KEY (ExternalApplicantID),
+            CONSTRAINT fk_externalapplicant_person FOREIGN KEY (ConvertedToPersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        // HR Interview Schedules Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $interview_schedules_table (
+            InterviewID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ApplicationID BIGINT(20) UNSIGNED NOT NULL,
+            InterviewRound INT UNSIGNED NOT NULL,
+            ScheduledDateTime DATETIME NOT NULL,
+            Location VARCHAR(100),
+            InterviewType VARCHAR(50) NOT NULL,
+            Status VARCHAR(50) NOT NULL DEFAULT 'Scheduled',
+            Notes TEXT,
+            PRIMARY KEY (InterviewID),
+            CONSTRAINT fk_interview_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // HR Interviewers Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $interviewers_table (
+            InterviewerAssignmentID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            InterviewID BIGINT(20) UNSIGNED NOT NULL,
+            InterviewerID BIGINT(20) UNSIGNED NOT NULL,
+            Status VARCHAR(50) NOT NULL DEFAULT 'Invited',
+            Feedback TEXT,
+            Rating INT,
+            FeedbackSubmitted TINYINT(1) DEFAULT 0,
+            PRIMARY KEY (InterviewerAssignmentID),
+            CONSTRAINT fk_interviewer_interview FOREIGN KEY (InterviewID) REFERENCES $interview_schedules_table(InterviewID) ON DELETE CASCADE,
+            CONSTRAINT fk_interviewer_person FOREIGN KEY (InterviewerID) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // HR Job Skills Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $job_skills_table (
+            JobSkillID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            JobPostingID BIGINT(20) UNSIGNED NOT NULL,
+            SkillName VARCHAR(100) NOT NULL,
+            Required TINYINT(1) DEFAULT 0,
+            PRIMARY KEY (JobSkillID),
+            CONSTRAINT fk_jobskill_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // HR Application Skills Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $application_skills_table (
+            ApplicationSkillID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ApplicationID BIGINT(20) UNSIGNED NOT NULL,
+            SkillName VARCHAR(100) NOT NULL,
+            YearsExperience INT UNSIGNED,
+            ProficiencyLevel VARCHAR(50),
+            PRIMARY KEY (ApplicationSkillID),
+            CONSTRAINT fk_applicationskill_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        // HR Job Workflows Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $job_workflows_table (
+            WorkflowID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            JobPostingID BIGINT(20) UNSIGNED NOT NULL,
+            StepNumber INT UNSIGNED NOT NULL,
+            StepName VARCHAR(100) NOT NULL,
+            RequiredRole BIGINT(20) UNSIGNED NULL,
+            IsComplete TINYINT(1) DEFAULT 0,
+            CompletedBy BIGINT(20) UNSIGNED NULL,
+            CompletedDate DATETIME,
+            PRIMARY KEY (WorkflowID),
+            CONSTRAINT fk_workflow_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE,
+            CONSTRAINT fk_workflow_role FOREIGN KEY (RequiredRole) REFERENCES $roles_table(RoleID) ON DELETE SET NULL,
+            CONSTRAINT fk_workflow_completed_by FOREIGN KEY (CompletedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        // HR Offers Table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $offers_table (
+            OfferID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ApplicationID BIGINT(20) UNSIGNED NOT NULL,
+            OfferDate DATETIME NOT NULL,
+            Status VARCHAR(50) NOT NULL DEFAULT 'Draft',
+            StartDate DATE,
+            SalaryOffered DECIMAL(10,2),
+            Position VARCHAR(100),
+            Department VARCHAR(100),
+            ApprovalStatus VARCHAR(50) DEFAULT 'Pending',
+            ApprovedBy BIGINT(20) UNSIGNED NULL,
+            ApprovalDate DATETIME,
+            Notes TEXT,
+            PRIMARY KEY (OfferID),
+            CONSTRAINT fk_offer_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE CASCADE,
+            CONSTRAINT fk_offer_approved_by FOREIGN KEY (ApprovedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

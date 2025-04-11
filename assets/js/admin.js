@@ -96,7 +96,12 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'save_job_posting',
                 nonce: administrationData.nonce,
-                ...Object.fromEntries(formData.entries())
+                title: formData.get('title'),
+                description: formData.get('description'),
+                requirements: formData.get('requirements'),
+                department: formData.get('departmentName'),
+                location: formData.get('location'),
+                type: formData.get('jobType')
             },
             success: function(response) {
                 if (response.success) {
@@ -104,8 +109,8 @@ jQuery(document).ready(function($) {
                     $('#job-posting-modal').hide();
                     $form[0].reset();
                     
-                    // Show the newly created job posting
-                    showViewModal(response.data.job_posting);
+                    // Show success message
+                    alert('Job posting saved successfully!');
                     
                     // Refresh the job postings list
                     loadJobPostings();

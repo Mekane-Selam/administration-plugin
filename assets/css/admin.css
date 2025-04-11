@@ -518,3 +518,83 @@ select[multiple] {
         grid-template-columns: 1fr;
     }
 }
+
+/* HR Dashboard Styles */
+.hr-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.hr-dashboard-item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hr-dashboard-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hr-dashboard-item .dashboard-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: #f5f6fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hr-dashboard-item .dashboard-icon i {
+    font-size: 30px;
+    color: #3498db;
+}
+
+.hr-dashboard-item h4 {
+    margin: 0 0 10px;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.hr-dashboard-item p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+/* HR Section Styles */
+.hr-section {
+    margin-top: 20px;
+}
+
+.hr-section .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.hr-section .back-button {
+    background: #f5f6fa;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #2c3e50;
+    transition: background-color 0.2s ease;
+}
+
+.hr-section .back-button:hover {
+    background: #e9ecef;
+}

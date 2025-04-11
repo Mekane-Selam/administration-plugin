@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     'use strict';
-    
+
     console.log('Administration plugin initialized');
     
     // Debug: Check if we can find our elements
@@ -82,12 +82,75 @@ jQuery(document).ready(function($) {
 
     // HR Module Functionality
     function initHRModule() {
+        // HR Dashboard Navigation
+        $('.hr-dashboard-item').on('click', function() {
+            const section = $(this).data('section');
+            if (section === 'jobs') {
+                $('.hr-dashboard-grid').closest('.administration-section').hide();
+                $('#hr-jobs-section').show();
+                
+                // Load initial jobs data
+                loadJobPostings();
+                loadApplications();
+                loadInterviews();
+                loadOffers();
+            }
+            // Other sections (employees, timesheets) will be handled similarly
+        });
+
         // Job Postings
-        $('#add-job-posting').on('click', function() {
+        function loadJobPostings() {
+            $.ajax({
+                url: ajaxurl,
+                type: 'GET',
+                data: {
+                    action: 'get_job_postings',
+                    nonce: administrationData.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        displayJobPostings(response.data);
+                    }
+                }
+            });
+        }
+
+        function displayJobPostings(postings) {
+            const $container = $('.job-postings-list');
+            $container.empty();
+
+            if (postings && postings.length > 0) {
+                postings.forEach(posting => {
+                    const $posting = $(`
+                        <div class="job-posting-item" data-id="${posting.JobID}">
+                            <div class="job-posting-header">
+                                <h4>${posting.Title}</h4>
+                                <span class="status ${posting.Status.toLowerCase()}">${posting.Status}</span>
+                            </div>
+                            <div class="job-posting-details">
+                                <p><strong>Department:</strong> ${posting.Department}</p>
+                                <p><strong>Type:</strong> ${posting.JobType}</p>
+                                <p><strong>Location:</strong> ${posting.Location}</p>
+                                <p><strong>Posted:</strong> ${new Date(posting.PostedDate).toLocaleDateString()}</p>
+                            </div>
+                            <div class="job-posting-actions">
+                                <button class="edit-posting">Edit</button>
+                                <button class="view-applications">View Applications</button>
+                            </div>
+                        </div>
+                    `);
+                    $container.append($posting);
+                });
+            } else {
+                $container.append('<div class="empty-state">No job postings found. Click "Add Job Posting" to create one.</div>');
+            }
+        }
+
+        $('#add-job-posting').off('click').on('click', function() {
             $('#job-posting-modal').show();
         });
 
-        $('#job-posting-form').on('submit', function(e) {
+        $('#job-posting-form').off('submit').on('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
@@ -232,78 +295,36 @@ jQuery(document).ready(function($) {
             });
         }
 
-        // Modal Handlers
-        $('.close').on('click', function() {
+        // Back button functionality
+        function addBackButton() {
+            const $backButton = $('<button class="back-button"><i class="dashicons dashicons-arrow-left-alt"></i> Back to Dashboard</button>');
+            $('#hr-jobs-section').find('.section-header').first().prepend($backButton);
+            
+            $backButton.on('click', function() {
+                $('#hr-jobs-section').hide();
+                $('.hr-dashboard-grid').closest('.administration-section').show();
+            });
+        }
+        addBackButton();
+
+        // Modal close handlers
+        $('.modal .close').on('click', function() {
             $(this).closest('.modal').hide();
         });
 
-        $('#schedule-interview').on('click', function() {
-            $('#interview-modal').show();
-        });
-
-        $('#make-offer').on('click', function() {
-            $('#offer-modal').show();
-        });
-
-        // Interview Form Handler
-        $('#interview-form').on('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'schedule_interview',
-                    nonce: administrationData.nonce,
-                    ...data
-                },
-                success: function(response) {
-                    if (response.success) {
-                        loadInterviews();
-                        $('#interview-modal').hide();
-                        this.reset();
-                    } else {
-                        alert('Error scheduling interview: ' + response.data.message);
-                    }
-                }.bind(this)
-            });
-        });
-
-        // Offer Form Handler
-        $('#offer-form').on('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'make_offer',
-                    nonce: administrationData.nonce,
-                    ...data
-                },
-                success: function(response) {
-                    if (response.success) {
-                        loadOffers();
-                        $('#offer-modal').hide();
-                        this.reset();
-                    } else {
-                        alert('Error making offer: ' + response.data.message);
-                    }
-                }.bind(this)
-            });
+        // Close modal when clicking outside
+        $('.modal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).hide();
+            }
         });
 
         // Load initial data when HR page is active
         $(document).on('pageChanged', function(e, page) {
             if (page === 'hr') {
-                loadJobPostings();
-                loadApplications();
-                loadInterviews();
-                loadOffers();
+                // Show dashboard, hide jobs section initially
+                $('.hr-dashboard-grid').closest('.administration-section').show();
+                $('#hr-jobs-section').hide();
             }
         });
     }

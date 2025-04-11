@@ -662,3 +662,109 @@ select[multiple] {
 .hr-section .back-button i {
     font-size: 18px;
 }
+
+/* Job Posting View Styles */
+.job-posting-view {
+    padding: 20px 0;
+}
+
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+.view-header h2 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.8rem;
+}
+
+.view-section {
+    margin-bottom: 25px;
+}
+
+.view-section h3 {
+    color: #34495e;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.content-box {
+    background: #f8fafc;
+    border: 1px solid #e1e8ed;
+    border-radius: 6px;
+    padding: 15px;
+    white-space: pre-wrap;
+}
+
+/* Job Posting Actions */
+.job-posting-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.job-posting-actions .button {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #e1e8ed;
+    background: #fff;
+    color: #2c3e50;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.job-posting-actions .button:hover {
+    background: #f8fafc;
+    border-color: #3498db;
+    color: #3498db;
+}
+
+.job-posting-actions .button i {
+    font-size: 16px;
+}
+
+/* Status Styles */
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.status.open {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status.closed {
+    background-color: #ffebee;
+    color: #c62828;
+}
+
+.status.on-hold {
+    background-color: #fff3e0;
+    color: #ef6c00;
+}
+
+.status.draft {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+/* Status Modal Styles */
+.status-modal .modal-content {
+    max-width: 400px;
+}
+
+/* Edit Modal Styles */
+.edit-mode .modal-content {
+    background: #fff;
+}

@@ -36,23 +36,23 @@
                 <div class="home-grid">
                     <!-- Programs Overview Box -->
                     <div class="home-section">
-                        <div class="section-header">
+                <div class="section-header">
                             <h3>Programs Overview</h3>
-                            <div class="section-actions">
+                    <div class="section-actions">
                                 <button class="add-button">Quick Add</button>
-                            </div>
-                        </div>
-                        <div class="section-content">
+                    </div>
+                </div>
+                <div class="section-content">
                             <div class="programs-overview">
-                                <?php if (!empty($programs)) : ?>
-                                    <?php foreach ($programs as $program) : ?>
-                                        <div class="program-card">
-                                            <h4><?php echo esc_html($program->ProgramName); ?></h4>
-                                            <p><?php echo esc_html($program->ProgramDescription); ?></p>
-                                        </div>
-                                    <?php endforeach; ?>
-                                <?php else : ?>
-                                    <div class="empty-state">
+                    <?php if (!empty($programs)) : ?>
+                        <?php foreach ($programs as $program) : ?>
+                            <div class="program-card">
+                                <h4><?php echo esc_html($program->ProgramName); ?></h4>
+                                <p><?php echo esc_html($program->ProgramDescription); ?></p>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <div class="empty-state">
                                         <p>No recent programs to display.</p>
                                     </div>
                                 <?php endif; ?>
@@ -93,8 +93,8 @@
                                 <?php else : ?>
                                     <div class="empty-state">
                                         <p>No recent member activity to display.</p>
-                                    </div>
-                                <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -117,23 +117,23 @@
                     </div>
                 </div>
             </div>
-
+            
             <!-- Members Page -->
             <div id="members-page" class="page-content">
-                <div class="administration-section">
-                    <div class="section-header">
-                        <h3>Members</h3>
-                        <div class="section-actions">
+            <div class="administration-section">
+                <div class="section-header">
+                    <h3>Members</h3>
+                    <div class="section-actions">
                             <button class="add-button">Add Member</button>
                         </div>
-                    </div>
-                    <div class="section-content">
+                </div>
+                <div class="section-content">
                         <?php 
                         $users = get_users(array('role__in' => array('administrator', 'editor', 'author', 'contributor')));
                         if (!empty($users)) : ?>
-                            <div class="members-list">
+                        <div class="members-list">
                                 <?php foreach ($users as $user) : ?>
-                                    <div class="member-item">
+                                <div class="member-item">
                                         <div class="member-avatar">
                                             <?php echo get_avatar($user->ID, 50); ?>
                                         </div>
@@ -142,23 +142,23 @@
                                             <p class="member-role"><?php echo esc_html(implode(', ', $user->roles)); ?></p>
                                             <p class="member-email"><?php echo esc_html($user->user_email); ?></p>
                                         </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php else : ?>
-                            <div class="empty-state">
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else : ?>
+                        <div class="empty-state">
                                 <p>No members found.</p>
-                            </div>
-                        <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
                     </div>
                 </div>
             </div>
-
+            
             <!-- HR Page -->
             <div id="hr-page" class="page-content">
                 <!-- HR Dashboard -->
-                <div class="administration-section">
-                    <div class="section-header">
+            <div class="administration-section">
+                <div class="section-header">
                         <h3>HR Dashboard</h3>
                     </div>
                     <div class="hr-dashboard-grid">
@@ -239,9 +239,9 @@
                             <h3>Offers</h3>
                             <div class="section-actions">
                                 <button class="filter-button" id="filter-offers">Filter</button>
-                            </div>
-                        </div>
-                        <div class="section-content">
+                    </div>
+                </div>
+                <div class="section-content">
                             <div class="offers-list">
                                 <!-- Offers will be loaded here -->
                             </div>

@@ -154,63 +154,270 @@ jQuery(document).ready(function($) {
                                 <p><strong>Posted:</strong> ${new Date(posting.PostedDate).toLocaleDateString()}</p>
                             </div>
                             <div class="job-posting-actions">
-                                <button class="edit-posting">Edit</button>
-                                <button class="view-applications">View Applications</button>
+                                <button class="button view-posting" title="View Details">
+                                    <i class="dashicons dashicons-visibility"></i> View
+                                </button>
+                                <button class="button edit-posting" title="Edit Posting">
+                                    <i class="dashicons dashicons-edit"></i> Edit
+                                </button>
+                                <button class="button toggle-status" title="Toggle Status">
+                                    <i class="dashicons dashicons-marker"></i> Change Status
+                                </button>
                             </div>
                         </div>
                     `);
                     $container.append($posting);
+                });
+
+                // Add event handlers for the new buttons
+                $('.view-posting').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    const jobId = $(this).closest('.job-posting-item').data('id');
+                    viewJobPosting(jobId);
+                });
+
+                $('.edit-posting').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    const jobId = $(this).closest('.job-posting-item').data('id');
+                    editJobPosting(jobId);
+                });
+
+                $('.toggle-status').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    const jobId = $(this).closest('.job-posting-item').data('id');
+                    toggleJobStatus(jobId);
                 });
             } else {
                 $container.append('<div class="empty-state">No job postings found. Click "Add Job Posting" to create one.</div>');
             }
         }
 
-        // Add Job Posting Handler
-        $('#add-job-posting').off('click').on('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $('#job-posting-modal').show();
-        });
-
-        // Form Submission Handler
-        $('#job-posting-form').off('submit').on('submit', function(e) {
-            e.preventDefault();
-            const $form = $(this);
-            const $submitButton = $form.find('button[type="submit"]');
-            
-            // Disable submit button and show loading state
-            $submitButton.prop('disabled', true).text('Saving...');
-            
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-            
+        // View Job Posting
+        function viewJobPosting(jobId) {
             $.ajax({
                 url: ajaxurl,
-                type: 'POST',
+                type: 'GET',
                 data: {
-                    action: 'save_job_posting',
+                    action: 'get_job_posting',
                     nonce: administrationData.nonce,
-                    ...data
+                    job_id: jobId
                 },
                 success: function(response) {
                     if (response.success) {
-                        loadJobPostings();
-                        $('#job-posting-modal').hide();
-                        $form[0].reset();
+                        showViewModal(response.data);
                     } else {
-                        alert('Error saving job posting: ' + (response.data?.message || 'Unknown error'));
+                        alert('Error loading job posting details: ' + (response.data?.message || 'Unknown error'));
                     }
                 },
                 error: function() {
-                    alert('Error saving job posting. Please try again.');
-                },
-                complete: function() {
-                    // Re-enable submit button and restore text
-                    $submitButton.prop('disabled', false).text('Save Job Posting');
+                    alert('Error loading job posting details. Please try again.');
                 }
             });
-        });
+        }
+
+        // Edit Job Posting
+        function editJobPosting(jobId) {
+            $.ajax({
+                url: ajaxurl,
+                type: 'GET',
+                data: {
+                    action: 'get_job_posting',
+                    nonce: administrationData.nonce,
+                    job_id: jobId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showEditModal(response.data);
+                    } else {
+                        alert('Error loading job posting for editing: ' + (response.data?.message || 'Unknown error'));
+                    }
+                },
+                error: function() {
+                    alert('Error loading job posting for editing. Please try again.');
+                }
+            });
+        }
+
+        // Toggle Job Status
+        function toggleJobStatus(jobId) {
+            const statusOptions = ['Open', 'Closed', 'On Hold', 'Draft'];
+            const $statusModal = $(`
+                <div class="modal status-modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <h2>Change Job Posting Status</h2>
+                        <form id="status-change-form">
+                            <div class="form-group">
+                                <label for="job-status">Status</label>
+                                <select id="job-status" name="status" required>
+                                    ${statusOptions.map(status => `<option value="${status}">${status}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="status-note">Note (Optional)</label>
+                                <textarea id="status-note" name="statusNote" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="button button-primary">Update Status</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `);
+
+            // Add the modal to the page
+            $('body').append($statusModal);
+            $statusModal.show();
+
+            // Handle form submission
+            $('#status-change-form').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'update_job_status',
+                        nonce: administrationData.nonce,
+                        job_id: jobId,
+                        status: formData.get('status'),
+                        note: formData.get('statusNote')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $statusModal.remove();
+                            loadJobPostings(); // Refresh the list
+                        } else {
+                            alert('Error updating status: ' + (response.data?.message || 'Unknown error'));
+                        }
+                    },
+                    error: function() {
+                        alert('Error updating status. Please try again.');
+                    }
+                });
+            });
+
+            // Handle modal close
+            $statusModal.find('.close').on('click', function() {
+                $statusModal.remove();
+            });
+        }
+
+        // Show View Modal
+        function showViewModal(posting) {
+            const $viewModal = $(`
+                <div class="modal view-modal">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <div class="job-posting-view">
+                            <div class="view-header">
+                                <h2>${posting.Title}</h2>
+                                <span class="status ${posting.Status.toLowerCase()}">${posting.Status}</span>
+                            </div>
+                            <div class="view-content">
+                                <div class="view-section">
+                                    <h3>Job Details</h3>
+                                    <p><strong>Department:</strong> ${posting.Department}</p>
+                                    <p><strong>Type:</strong> ${posting.JobType}</p>
+                                    <p><strong>Location:</strong> ${posting.Location}</p>
+                                    <p><strong>Salary Range:</strong> ${posting.SalaryRange}</p>
+                                    <p><strong>Posted Date:</strong> ${new Date(posting.PostedDate).toLocaleDateString()}</p>
+                                    <p><strong>Closing Date:</strong> ${new Date(posting.ClosingDate).toLocaleDateString()}</p>
+                                    <p><strong>Internal Only:</strong> ${posting.IsInternal ? 'Yes' : 'No'}</p>
+                                </div>
+                                <div class="view-section">
+                                    <h3>Description</h3>
+                                    <div class="content-box">${posting.Description}</div>
+                                </div>
+                                <div class="view-section">
+                                    <h3>Requirements</h3>
+                                    <div class="content-box">${posting.Requirements}</div>
+                                </div>
+                                <div class="view-section">
+                                    <h3>Responsibilities</h3>
+                                    <div class="content-box">${posting.Responsibilities}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            // Add the modal to the page
+            $('body').append($viewModal);
+            $viewModal.show();
+
+            // Handle modal close
+            $viewModal.find('.close').on('click', function() {
+                $viewModal.remove();
+            });
+        }
+
+        // Show Edit Modal
+        function showEditModal(posting) {
+            // Clone the add job posting modal and modify it for editing
+            const $editModal = $('#job-posting-modal').clone()
+                .attr('id', 'job-posting-edit-modal')
+                .addClass('edit-mode');
+
+            // Update the modal title
+            $editModal.find('h2').text('Edit Job Posting');
+
+            // Populate the form with existing data
+            const $form = $editModal.find('form');
+            $form.attr('id', 'job-posting-edit-form');
+            
+            // Populate form fields
+            $form.find('#title').val(posting.Title);
+            $form.find('#description').val(posting.Description);
+            $form.find('#requirements').val(posting.Requirements);
+            $form.find('#responsibilities').val(posting.Responsibilities);
+            $form.find('#job-type').val(posting.JobType);
+            $form.find('#location').val(posting.Location);
+            $form.find('#salary-range').val(posting.SalaryRange);
+            $form.find('#department').val(posting.Department);
+            $form.find('#posted-date').val(posting.PostedDate.split('T')[0]);
+            $form.find('#closing-date').val(posting.ClosingDate.split('T')[0]);
+            $form.find('input[name="isInternal"]').prop('checked', posting.IsInternal);
+
+            // Add the modal to the page
+            $('body').append($editModal);
+            $editModal.show();
+
+            // Handle form submission
+            $form.off('submit').on('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(this);
+                
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'update_job_posting',
+                        nonce: administrationData.nonce,
+                        job_id: posting.JobID,
+                        ...Object.fromEntries(formData.entries())
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $editModal.remove();
+                            loadJobPostings(); // Refresh the list
+                        } else {
+                            alert('Error updating job posting: ' + (response.data?.message || 'Unknown error'));
+                        }
+                    },
+                    error: function() {
+                        alert('Error updating job posting. Please try again.');
+                    }
+                });
+            });
+
+            // Handle modal close
+            $editModal.find('.close').on('click', function() {
+                $editModal.remove();
+            });
+        }
 
         // Applications
         function loadApplications() {

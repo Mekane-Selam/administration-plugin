@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
         const formData = new FormData(this);
         
         $.ajax({
-            url: ajaxurl,
+            url: administrationData.ajax_url,
             type: 'POST',
             data: {
                 action: 'save_job_posting',
@@ -172,7 +172,7 @@ jQuery(document).ready(function($) {
             $container.html('<div class="empty-state">Loading job postings...</div>');
             
             $.ajax({
-                url: ajaxurl,
+                url: administrationData.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'get_job_postings',
@@ -251,7 +251,7 @@ jQuery(document).ready(function($) {
         // View Job Posting
         function viewJobPosting(jobId) {
             $.ajax({
-                url: ajaxurl,
+                url: administrationData.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'get_job_posting',
@@ -274,7 +274,7 @@ jQuery(document).ready(function($) {
         // Edit Job Posting
         function editJobPosting(jobId) {
             $.ajax({
-                url: ajaxurl,
+                url: administrationData.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'get_job_posting',
@@ -331,7 +331,7 @@ jQuery(document).ready(function($) {
                 const formData = new FormData(this);
                 
                 $.ajax({
-                    url: ajaxurl,
+                    url: administrationData.ajax_url,
                     type: 'POST',
                     data: {
                         action: 'update_job_status',
@@ -447,7 +447,7 @@ jQuery(document).ready(function($) {
                 const formData = new FormData(this);
                 
                 $.ajax({
-                    url: ajaxurl,
+                    url: administrationData.ajax_url,
                     type: 'POST',
                     data: {
                         action: 'update_job_posting',
@@ -478,7 +478,7 @@ jQuery(document).ready(function($) {
         // Applications
         function loadApplications() {
             $.ajax({
-                url: ajaxurl,
+                url: administrationData.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'get_applications',
@@ -519,7 +519,7 @@ jQuery(document).ready(function($) {
         // Interviews
         function loadInterviews() {
             $.ajax({
-                url: ajaxurl,
+                url: administrationData.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'get_interviews',
@@ -558,7 +558,7 @@ jQuery(document).ready(function($) {
         // Offers
         function loadOffers() {
             $.ajax({
-                url: ajaxurl,
+                url: administrationData.ajax_url,
                 type: 'GET',
                 data: {
                     action: 'get_offers',

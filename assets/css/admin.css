@@ -397,6 +397,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 100000;
+    overflow-y: auto; /* Enable scrolling on the modal overlay */
 }
 
 .modal-content {
@@ -409,6 +410,27 @@
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 100001;
+    max-height: 90vh; /* Limit height to 90% of viewport height */
+    overflow-y: auto; /* Enable scrolling within the modal content */
+}
+
+/* Add smooth scrolling to the modal content */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .modal .close {

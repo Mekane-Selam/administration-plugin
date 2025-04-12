@@ -147,9 +147,14 @@ class Administration_Ajax {
         $title = sanitize_text_field($_POST['title']);
         $description = wp_kses_post($_POST['description']);
         $requirements = wp_kses_post($_POST['requirements']);
+        $responsibilities = wp_kses_post($_POST['responsibilities']);
         $department = sanitize_text_field($_POST['departmentName']);
         $location = sanitize_text_field($_POST['location']);
         $type = sanitize_text_field($_POST['jobType']);
+        $salary_range = sanitize_text_field($_POST['salaryRange']);
+        $posted_date = sanitize_text_field($_POST['postedDate']);
+        $closing_date = sanitize_text_field($_POST['closingDate']);
+        $is_internal = isset($_POST['isInternal']) ? 1 : 0;
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'hr_jobpostings';
@@ -160,13 +165,18 @@ class Administration_Ajax {
                 'Title' => $title,
                 'Description' => $description,
                 'Requirements' => $requirements,
+                'Responsibilities' => $responsibilities,
                 'DepartmentName' => $department,
                 'Location' => $location,
                 'JobType' => $type,
+                'SalaryRange' => $salary_range,
+                'PostedDate' => $posted_date ? $posted_date : current_time('mysql'),
+                'ClosingDate' => $closing_date,
+                'IsInternal' => $is_internal,
                 'LastModifiedDate' => current_time('mysql')
             ),
             array('JobPostingID' => $id),
-            array('%s', '%s', '%s', '%s', '%s', '%s', '%s'),
+            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s'),
             array('%d')
         );
 

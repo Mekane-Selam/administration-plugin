@@ -36,10 +36,10 @@ class Administration_Ajax {
         $title = sanitize_text_field($_POST['title']);
         $description = wp_kses_post($_POST['description']);
         $requirements = wp_kses_post($_POST['requirements']);
-        $department = sanitize_text_field($_POST['department']);
+        $department = sanitize_text_field($_POST['departmentName']);
         $location = sanitize_text_field($_POST['location']);
-        $type = sanitize_text_field($_POST['type']);
-        $status = 'draft';
+        $type = sanitize_text_field($_POST['jobType']);
+        $status = 'Draft';
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'hr_jobpostings';
@@ -50,11 +50,11 @@ class Administration_Ajax {
                 'Title' => $title,
                 'Description' => $description,
                 'Requirements' => $requirements,
-                'Department' => $department,
+                'DepartmentName' => $department,
                 'Location' => $location,
-                'Type' => $type,
+                'JobType' => $type,
                 'Status' => $status,
-                'CreatedDate' => current_time('mysql'),
+                'PostedDate' => current_time('mysql'),
                 'CreatedBy' => get_current_user_id()
             ),
             array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d')
@@ -93,7 +93,7 @@ class Administration_Ajax {
         
         $job = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM $table_name WHERE ID = %d",
+                "SELECT * FROM $table_name WHERE JobPostingID = %d",
                 $id
             )
         );
@@ -121,7 +121,7 @@ class Administration_Ajax {
         $table_name = $wpdb->prefix . 'hr_jobpostings';
         
         $jobs = $wpdb->get_results(
-            "SELECT * FROM $table_name ORDER BY CreatedDate DESC"
+            "SELECT * FROM $table_name ORDER BY PostedDate DESC"
         );
 
         wp_send_json_success($jobs);
@@ -147,9 +147,9 @@ class Administration_Ajax {
         $title = sanitize_text_field($_POST['title']);
         $description = wp_kses_post($_POST['description']);
         $requirements = wp_kses_post($_POST['requirements']);
-        $department = sanitize_text_field($_POST['department']);
+        $department = sanitize_text_field($_POST['departmentName']);
         $location = sanitize_text_field($_POST['location']);
-        $type = sanitize_text_field($_POST['type']);
+        $type = sanitize_text_field($_POST['jobType']);
 
         global $wpdb;
         $table_name = $wpdb->prefix . 'hr_jobpostings';
@@ -160,14 +160,13 @@ class Administration_Ajax {
                 'Title' => $title,
                 'Description' => $description,
                 'Requirements' => $requirements,
-                'Department' => $department,
+                'DepartmentName' => $department,
                 'Location' => $location,
-                'Type' => $type,
-                'ModifiedDate' => current_time('mysql'),
-                'ModifiedBy' => get_current_user_id()
+                'JobType' => $type,
+                'LastModifiedDate' => current_time('mysql')
             ),
-            array('ID' => $id),
-            array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d'),
+            array('JobPostingID' => $id),
+            array('%s', '%s', '%s', '%s', '%s', '%s', '%s'),
             array('%d')
         );
 
@@ -287,7 +286,7 @@ class Administration_Ajax {
         $table_name = $wpdb->prefix . 'hr_offers';
         
         $offers = $wpdb->get_results(
-            "SELECT * FROM $table_name ORDER BY CreatedDate DESC"
+            "SELECT * FROM $table_name ORDER BY OfferDate DESC"
         );
 
         wp_send_json_success($offers);

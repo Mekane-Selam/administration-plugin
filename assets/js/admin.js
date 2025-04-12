@@ -112,8 +112,8 @@ jQuery(document).ready(function($) {
                     // Show success message
                     alert('Job posting saved successfully!');
                     
-                    // Refresh the job postings list
-                    loadJobPostings();
+                    // View the newly created job posting
+                    viewJobPosting(response.data.id);
                 } else {
                     alert('Error saving job posting: ' + (response.data?.message || 'Unknown error'));
                 }
@@ -198,13 +198,13 @@ jQuery(document).ready(function($) {
             if (postings && postings.length > 0) {
                 postings.forEach(posting => {
                     const $posting = $(`
-                        <div class="job-posting-item" data-id="${posting.JobID}">
+                        <div class="job-posting-item" data-id="${posting.JobPostingID}">
                             <div class="job-posting-header">
                                 <h4>${posting.Title}</h4>
                                 <span class="status ${posting.Status.toLowerCase()}">${posting.Status}</span>
                             </div>
                             <div class="job-posting-details">
-                                <p><strong>Department:</strong> ${posting.Department}</p>
+                                <p><strong>Department:</strong> ${posting.DepartmentName}</p>
                                 <p><strong>Type:</strong> ${posting.JobType}</p>
                                 <p><strong>Location:</strong> ${posting.Location}</p>
                                 <p><strong>Posted:</strong> ${new Date(posting.PostedDate).toLocaleDateString()}</p>
@@ -256,7 +256,7 @@ jQuery(document).ready(function($) {
                 data: {
                     action: 'get_job_posting',
                     nonce: administrationData.nonce,
-                    job_id: jobId
+                    id: jobId
                 },
                 success: function(response) {
                     if (response.success) {
@@ -279,7 +279,7 @@ jQuery(document).ready(function($) {
                 data: {
                     action: 'get_job_posting',
                     nonce: administrationData.nonce,
-                    job_id: jobId
+                    id: jobId
                 },
                 success: function(response) {
                     if (response.success) {
@@ -539,109 +539,3 @@ jQuery(document).ready(function($) {
 
             interviews.forEach(interview => {
                 const $interview = $(`
-                    <div class="interview-item" data-id="${interview.InterviewID}">
-                        <div class="interview-header">
-                            <h4>${interview.CandidateName}</h4>
-                            <span class="status ${interview.Status.toLowerCase()}">${interview.Status}</span>
-                        </div>
-                        <div class="interview-details">
-                            <p>Round: ${interview.InterviewRound}</p>
-                            <p>Date: ${new Date(interview.ScheduledDateTime).toLocaleString()}</p>
-                            <p>Type: ${interview.InterviewType}</p>
-                        </div>
-                    </div>
-                `);
-                $container.append($interview);
-            });
-        }
-
-        // Offers
-        function loadOffers() {
-            $.ajax({
-                url: administrationData.ajax_url,
-                type: 'GET',
-                data: {
-                    action: 'get_offers',
-                    nonce: administrationData.nonce
-                },
-                success: function(response) {
-                    if (response.success) {
-                        displayOffers(response.data);
-                    }
-                }
-            });
-        }
-
-        function displayOffers(offers) {
-            const $container = $('.offers-list');
-            $container.empty();
-
-            offers.forEach(offer => {
-                const $offer = $(`
-                    <div class="offer-item" data-id="${offer.OfferID}">
-                        <div class="offer-header">
-                            <h4>${offer.CandidateName}</h4>
-                            <span class="status ${offer.Status.toLowerCase()}">${offer.Status}</span>
-                        </div>
-                        <div class="offer-details">
-                            <p>Position: ${offer.Position}</p>
-                            <p>Department: ${offer.Department}</p>
-                            <p>Salary: ${offer.SalaryOffered}</p>
-                            <p>Start Date: ${new Date(offer.StartDate).toLocaleDateString()}</p>
-                        </div>
-                    </div>
-                `);
-                $container.append($offer);
-            });
-        }
-
-        // Back button functionality
-        function addBackButton() {
-            // Remove any existing back button first
-            $('#hr-jobs-section .back-button').remove();
-            
-            const $backButton = $('<button class="back-button"><i class="dashicons dashicons-arrow-left-alt"></i> Back to Dashboard</button>');
-            $('#hr-jobs-section').find('.section-header').first().prepend($backButton);
-            
-            $backButton.off('click').on('click', function(e) {
-                e.preventDefault();
-                $('#hr-jobs-section').hide();
-                $('.hr-dashboard-grid').closest('.administration-section').show();
-            });
-        }
-        addBackButton();
-
-        // Modal close handlers
-        $('.modal .close').off('click').on('click', function() {
-            $(this).closest('.modal').hide();
-        });
-
-        // Close modal when clicking outside
-        $('.modal').off('click').on('click', function(e) {
-            if (e.target === this) {
-                $(this).hide();
-            }
-        });
-
-        // Prevent modal content clicks from bubbling to the modal backdrop
-        $('.modal-content').off('click').on('click', function(e) {
-            e.stopPropagation();
-        });
-
-        // Load initial data when HR page is active
-        $(document).off('pageChanged.hr').on('pageChanged.hr', function(e, page) {
-            if (page === 'hr') {
-                // Show dashboard, hide jobs section initially
-                $('.hr-dashboard-grid').closest('.administration-section').show();
-                $('#hr-jobs-section').hide();
-            }
-        });
-
-        // Debug logging
-        console.log('HR Module initialized');
-        console.log('HR dashboard items found:', $('.hr-dashboard-item').length);
-    }
-
-    // Initialize HR Module when document is ready
-    initHRModule();
-});

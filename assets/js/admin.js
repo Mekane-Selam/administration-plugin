@@ -156,7 +156,7 @@ jQuery(document).ready(function($) {
                     loadJobPostings();
                     loadApplications();
                     loadInterviews();
-                    loadOffers();
+                    // loadOffers(); // Removing this until we implement offers functionality
                     break;
                     
                 case 'employees':
@@ -511,8 +511,18 @@ jQuery(document).ready(function($) {
                     data: {
                         action: 'update_job_posting',
                         nonce: administrationData.nonce,
-                        job_id: posting.JobID,
-                        ...Object.fromEntries(formData.entries())
+                        job_id: posting.JobPostingID,
+                        title: formData.get('title'),
+                        description: formData.get('description'),
+                        requirements: formData.get('requirements'),
+                        responsibilities: formData.get('responsibilities'),
+                        job_type: formData.get('job-type'),
+                        location: formData.get('location'),
+                        salary_range: formData.get('salary-range'),
+                        department: formData.get('department'),
+                        posted_date: formData.get('posted-date'),
+                        closing_date: formData.get('closing-date'),
+                        is_internal: formData.get('isInternal') === 'on' ? 1 : 0
                     },
                     success: function(response) {
                         if (response.success) {
@@ -522,7 +532,8 @@ jQuery(document).ready(function($) {
                             alert('Error updating job posting: ' + (response.data?.message || 'Unknown error'));
                         }
                     },
-                    error: function() {
+                    error: function(xhr, status, error) {
+                        console.error('Error updating job posting:', error);
                         alert('Error updating job posting. Please try again.');
                     }
                 });

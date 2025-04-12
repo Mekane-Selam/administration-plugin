@@ -484,14 +484,26 @@ jQuery(document).ready(function($) {
             $form.find('#department').val(posting.Department);
             
             // Handle dates safely
-            if (posting.PostedDate) {
-                const postedDate = new Date(posting.PostedDate);
-                $form.find('#posted-date').val(postedDate.toISOString().split('T')[0]);
+            if (posting.PostedDate && posting.PostedDate !== '0000-00-00 00:00:00') {
+                try {
+                    const postedDate = new Date(posting.PostedDate);
+                    if (!isNaN(postedDate.getTime())) {
+                        $form.find('#posted-date').val(postedDate.toISOString().split('T')[0]);
+                    }
+                } catch (e) {
+                    console.warn('Invalid PostedDate:', posting.PostedDate);
+                }
             }
             
-            if (posting.ClosingDate) {
-                const closingDate = new Date(posting.ClosingDate);
-                $form.find('#closing-date').val(closingDate.toISOString().split('T')[0]);
+            if (posting.ClosingDate && posting.ClosingDate !== '0000-00-00 00:00:00') {
+                try {
+                    const closingDate = new Date(posting.ClosingDate);
+                    if (!isNaN(closingDate.getTime())) {
+                        $form.find('#closing-date').val(closingDate.toISOString().split('T')[0]);
+                    }
+                } catch (e) {
+                    console.warn('Invalid ClosingDate:', posting.ClosingDate);
+                }
             }
             
             $form.find('input[name="isInternal"]').prop('checked', posting.IsInternal);
@@ -515,20 +527,27 @@ jQuery(document).ready(function($) {
                         title: formData.get('title'),
                         description: formData.get('description'),
                         requirements: formData.get('requirements'),
+                        responsibilities: formData.get('responsibilities'),
                         departmentName: formData.get('department'),
                         location: formData.get('location'),
-                        jobType: formData.get('job-type')
+                        jobType: formData.get('job-type'),
+                        salaryRange: formData.get('salary-range'),
+                        postedDate: formData.get('posted-date'),
+                        closingDate: formData.get('closing-date'),
+                        isInternal: formData.get('isInternal') === 'on' ? 1 : 0
                     },
                     success: function(response) {
                         if (response.success) {
                             $editModal.remove();
                             loadJobPostings(); // Refresh the list
+                            alert('Job posting updated successfully!');
                         } else {
                             alert('Error updating job posting: ' + (response.data?.message || 'Unknown error'));
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error('Error updating job posting:', error);
+                        console.error('Response:', xhr.responseText);
                         alert('Error updating job posting. Please try again.');
                     }
                 });

@@ -511,18 +511,13 @@ jQuery(document).ready(function($) {
                     data: {
                         action: 'update_job_posting',
                         nonce: administrationData.nonce,
-                        job_id: posting.JobPostingID,
+                        id: posting.JobPostingID,
                         title: formData.get('title'),
                         description: formData.get('description'),
                         requirements: formData.get('requirements'),
-                        responsibilities: formData.get('responsibilities'),
-                        job_type: formData.get('job-type'),
+                        departmentName: formData.get('department'),
                         location: formData.get('location'),
-                        salary_range: formData.get('salary-range'),
-                        department: formData.get('department'),
-                        posted_date: formData.get('posted-date'),
-                        closing_date: formData.get('closing-date'),
-                        is_internal: formData.get('isInternal') === 'on' ? 1 : 0
+                        jobType: formData.get('job-type')
                     },
                     success: function(response) {
                         if (response.success) {

@@ -136,6 +136,9 @@ jQuery(document).ready(function($) {
         $('.sidebar-menu li:first-child a').trigger('click');
     }
 
+    // Initialize HR Module
+    initHRModule();
+
     // HR Module Functionality
     function initHRModule() {
         // HR Dashboard Navigation

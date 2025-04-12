@@ -113,7 +113,7 @@ jQuery(document).ready(function($) {
                     alert('Job posting saved successfully!');
                     
                     // View the newly created job posting
-                    viewJobPosting(response.data.id);
+                    viewJobPosting(response.data.JobPostingID);
                 } else {
                     alert('Error saving job posting: ' + (response.data?.message || 'Unknown error'));
                 }
@@ -482,8 +482,18 @@ jQuery(document).ready(function($) {
             $form.find('#location').val(posting.Location);
             $form.find('#salary-range').val(posting.SalaryRange);
             $form.find('#department').val(posting.Department);
-            $form.find('#posted-date').val(posting.PostedDate.split('T')[0]);
-            $form.find('#closing-date').val(posting.ClosingDate.split('T')[0]);
+            
+            // Handle dates safely
+            if (posting.PostedDate) {
+                const postedDate = new Date(posting.PostedDate);
+                $form.find('#posted-date').val(postedDate.toISOString().split('T')[0]);
+            }
+            
+            if (posting.ClosingDate) {
+                const closingDate = new Date(posting.ClosingDate);
+                $form.find('#closing-date').val(closingDate.toISOString().split('T')[0]);
+            }
+            
             $form.find('input[name="isInternal"]').prop('checked', posting.IsInternal);
 
             // Add the modal to the page

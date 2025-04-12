@@ -166,6 +166,52 @@ jQuery(document).ready(function($) {
             }
         });
 
+        // Back button functionality
+        function addBackButton() {
+            // Remove any existing back button first
+            $('#hr-jobs-section .back-button').remove();
+            
+            const $backButton = $('<button class="back-button"><i class="dashicons dashicons-arrow-left-alt"></i> Back to Dashboard</button>');
+            $('#hr-jobs-section').find('.section-header').first().prepend($backButton);
+            
+            $backButton.off('click').on('click', function(e) {
+                e.preventDefault();
+                $('#hr-jobs-section').hide();
+                $('.hr-dashboard-grid').closest('.administration-section').show();
+            });
+        }
+        addBackButton();
+
+        // Modal close handlers
+        $('.modal .close').off('click').on('click', function() {
+            $(this).closest('.modal').hide();
+        });
+
+        // Close modal when clicking outside
+        $('.modal').off('click').on('click', function(e) {
+            if (e.target === this) {
+                $(this).hide();
+            }
+        });
+
+        // Prevent modal content clicks from bubbling to the modal backdrop
+        $('.modal-content').off('click').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Load initial data when HR page is active
+        $(document).off('pageChanged.hr').on('pageChanged.hr', function(e, page) {
+            if (page === 'hr') {
+                // Show dashboard, hide jobs section initially
+                $('.hr-dashboard-grid').closest('.administration-section').show();
+                $('#hr-jobs-section').hide();
+            }
+        });
+
+        // Debug logging
+        console.log('HR Module initialized');
+        console.log('HR dashboard items found:', $('.hr-dashboard-item').length);
+
         // Job Postings
         function loadJobPostings() {
             const $container = $('.job-postings-list');
@@ -539,3 +585,20 @@ jQuery(document).ready(function($) {
 
             interviews.forEach(interview => {
                 const $interview = $(`
+                    <div class="interview-item" data-id="${interview.InterviewID}">
+                        <div class="interview-header">
+                            <h4>${interview.CandidateName}</h4>
+                            <span class="status ${interview.Status.toLowerCase()}">${interview.Status}</span>
+                        </div>
+                        <div class="interview-details">
+                            <p>Round: ${interview.InterviewRound}</p>
+                            <p>Date: ${new Date(interview.ScheduledDateTime).toLocaleString()}</p>
+                            <p>Type: ${interview.InterviewType}</p>
+                        </div>
+                    </div>
+                `);
+                $container.append($interview);
+            });
+        }
+    }
+});

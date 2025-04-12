@@ -15,6 +15,11 @@ class Administration_Ajax {
         add_action('wp_ajax_get_job_postings', array($this, 'get_job_postings'));
         add_action('wp_ajax_update_job_posting', array($this, 'update_job_posting'));
         add_action('wp_ajax_update_job_status', array($this, 'update_job_status'));
+        
+        // Add missing HR endpoints
+        add_action('wp_ajax_get_applications', array($this, 'get_applications'));
+        add_action('wp_ajax_get_interviews', array($this, 'get_interviews'));
+        add_action('wp_ajax_get_offers', array($this, 'get_offers'));
     }
 
     /**
@@ -223,6 +228,69 @@ class Administration_Ajax {
         wp_send_json_success(array(
             'message' => 'Job status updated successfully'
         ));
+    }
+
+    /**
+     * Get all applications
+     */
+    public function get_applications() {
+        check_ajax_referer('administration_nonce', 'nonce');
+
+        if (!current_user_can('read')) {
+            wp_send_json_error('Insufficient permissions');
+            return;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'hr_applications';
+        
+        $applications = $wpdb->get_results(
+            "SELECT * FROM $table_name ORDER BY SubmissionDate DESC"
+        );
+
+        wp_send_json_success($applications);
+    }
+
+    /**
+     * Get all interviews
+     */
+    public function get_interviews() {
+        check_ajax_referer('administration_nonce', 'nonce');
+
+        if (!current_user_can('read')) {
+            wp_send_json_error('Insufficient permissions');
+            return;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'hr_interviewschedules';
+        
+        $interviews = $wpdb->get_results(
+            "SELECT * FROM $table_name ORDER BY ScheduledDateTime DESC"
+        );
+
+        wp_send_json_success($interviews);
+    }
+
+    /**
+     * Get all offers
+     */
+    public function get_offers() {
+        check_ajax_referer('administration_nonce', 'nonce');
+
+        if (!current_user_can('read')) {
+            wp_send_json_error('Insufficient permissions');
+            return;
+        }
+
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'hr_offers';
+        
+        $offers = $wpdb->get_results(
+            "SELECT * FROM $table_name ORDER BY CreatedDate DESC"
+        );
+
+        wp_send_json_success($offers);
     }
 
     /**

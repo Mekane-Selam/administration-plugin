@@ -87,7 +87,7 @@ class Administration_Admin {
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'rest_url' => rest_url('administration/v1/'),
-                    'nonce' => wp_create_nonce('wp_rest'),
+                    'nonce' => wp_create_nonce('administration_nonce'),
                     'debug' => WP_DEBUG
                 )
             );

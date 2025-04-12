@@ -46,7 +46,7 @@ class Administration_Public {
                 [
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'rest_url' => esc_url_raw(rest_url('administration/v1/')),
-                    'nonce' => wp_create_nonce('wp_rest'),
+                    'nonce' => wp_create_nonce('administration_nonce'),
                     'debug' => WP_DEBUG
                 ]
             );

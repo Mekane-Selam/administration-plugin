@@ -127,7 +127,6 @@ class Administration_Public {
      * Display job postings
      */
     public function job_postings_shortcode($atts) {
-        error_log('job_postings_shortcode called');
         global $wpdb;
         
         // Get open job postings
@@ -137,78 +136,254 @@ class Administration_Public {
             ORDER BY PostedDate DESC"
         );
         
-        error_log('SQL Query: ' . "SELECT * FROM {$wpdb->prefix}hr_jobpostings WHERE Status = 'Open' ORDER BY PostedDate DESC");
-        error_log('Query Results: ' . print_r($jobs, true));
+        // Start output buffering
+        ob_start();
         
-        if ($wpdb->last_error) {
-            error_log('Job Postings Query Error: ' . $wpdb->last_error);
-            return '<p>Error loading job postings.</p>';
-        }
+        // Main container
+        echo '<div class="job-postings-container">';
         
+        // If no jobs found
         if (empty($jobs)) {
-            return '<p>No job openings at this time.</p>';
+            echo '<div class="no-jobs-message">';
+            echo '<p>There are currently no job openings. Please check back later.</p>';
+            echo '</div>';
+            echo '</div>'; // Close container
+            return ob_get_clean();
         }
         
-        $output = '<div class="job-postings-list">';
+        // List view container
+        echo '<div class="job-postings-list">';
+        echo '<h2>Current Job Openings</h2>';
         
         foreach ($jobs as $job) {
-            $output .= sprintf(
-                '<div class="job-posting">
-                    <h3>%s</h3>
-                    <div class="job-meta">
-                        <span class="location">Location: %s</span>
-                        <span class="type">Type: %s</span>
-                        <span class="posted">Posted: %s</span>
-                    </div>
-                    <div class="job-description">%s</div>
-                    <div class="job-actions">
-                        <a href="%s" class="wp-block-button__link wp-element-button">Apply Now</a>
-                    </div>
-                </div>',
-                esc_html($job->Title),
-                esc_html($job->Location),
-                esc_html($job->JobType),
-                esc_html(date('F j, Y', strtotime($job->PostedDate))),
-                wp_kses_post($job->Description),
-                esc_url(add_query_arg('job_id', $job->JobPostingID, home_url('/job-application/')))
-            );
+            echo '<div class="job-posting-item" data-job-id="' . esc_attr($job->JobPostingID) . '">';
+            echo '<div class="job-posting-header">';
+            echo '<h3>' . esc_html($job->Title) . '</h3>';
+            echo '<span class="job-meta">' . esc_html($job->DepartmentName) . ' • ' . esc_html($job->Location) . '</span>';
+            echo '</div>';
+            echo '<div class="job-posting-summary">';
+            echo '<p>' . wp_trim_words(wp_strip_all_tags($job->Description), 30) . '</p>';
+            echo '</div>';
+            echo '<div class="job-posting-actions">';
+            echo '<button class="view-details-btn">View Details</button>';
+            echo '</div>';
+            echo '</div>';
         }
         
-        $output .= '</div>';
+        echo '</div>'; // Close list view
         
-        // Add styles for job postings
-        $output .= '
+        // Detail view container (initially hidden)
+        echo '<div class="job-posting-detail" style="display: none;">';
+        echo '<button class="back-to-list-btn">← Back to Jobs</button>';
+        echo '<div class="job-detail-content"></div>';
+        echo '</div>';
+        
+        echo '</div>'; // Close main container
+        
+        // Add JavaScript for handling view switching
+        wp_enqueue_script('jquery');
+        ?>
+        <script type="text/javascript">
+        (function($) {
+            $(document).ready(function() {
+                console.log('Job postings script loaded');
+                
+                // View details button click handler
+                $('.view-details-btn').on('click', function() {
+                    console.log('View details clicked');
+                    const jobId = $(this).closest('.job-posting-item').data('job-id');
+                    const $listView = $('.job-postings-list');
+                    const $detailView = $('.job-posting-detail');
+                    const $detailContent = $('.job-detail-content');
+                    
+                    console.log('Job ID:', jobId);
+                    
+                    // Hide list view and show detail view
+                    $listView.hide();
+                    $detailView.show();
+                    
+                    // Load job details
+                    $.ajax({
+                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        type: 'GET',
+                        data: {
+                            action: 'get_job_posting',
+                            id: jobId
+                        },
+                        success: function(response) {
+                            console.log('AJAX response:', response);
+                            if (response.success) {
+                                const job = response.data;
+                                let html = '<div class="job-detail-header">';
+                                html += '<h2>' + job.Title + '</h2>';
+                                html += '<div class="job-meta">';
+                                html += '<span class="department">' + job.DepartmentName + '</span>';
+                                html += '<span class="location">' + job.Location + '</span>';
+                                html += '<span class="type">' + job.JobType + '</span>';
+                                html += '</div>';
+                                html += '</div>';
+                                
+                                html += '<div class="job-detail-content">';
+                                html += '<div class="job-section">';
+                                html += '<h3>Job Description</h3>';
+                                html += '<div class="content">' + job.Description + '</div>';
+                                html += '</div>';
+                                
+                                html += '<div class="job-section">';
+                                html += '<h3>Requirements</h3>';
+                                html += '<div class="content">' + job.Requirements + '</div>';
+                                html += '</div>';
+                                
+                                html += '<div class="job-actions">';
+                                html += '<a href="' + '<?php echo home_url('job-application'); ?>?job_id=' + job.JobPostingID + '" class="apply-btn">Apply Now</a>';
+                                html += '</div>';
+                                html += '</div>';
+                                
+                                $detailContent.html(html);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', error);
+                        }
+                    });
+                });
+                
+                // Back to list button click handler
+                $('.back-to-list-btn').on('click', function() {
+                    console.log('Back to list clicked');
+                    $('.job-posting-detail').hide();
+                    $('.job-postings-list').show();
+                });
+            });
+        })(jQuery);
+        </script>
+        
         <style>
-            .job-postings-list {
-                max-width: 800px;
-                margin: 0 auto;
-            }
-            .job-posting {
-                padding: 2rem;
-                margin-bottom: 2rem;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                background: #fff;
-            }
-            .job-posting h3 {
-                margin: 0 0 1rem 0;
-            }
-            .job-meta {
-                margin-bottom: 1rem;
-                color: #666;
-            }
-            .job-meta span {
-                margin-right: 1.5rem;
-            }
-            .job-description {
-                margin-bottom: 1.5rem;
-            }
-            .job-actions {
-                margin-top: 1.5rem;
-            }
-        </style>';
+        .job-postings-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
         
-        return $output;
+        .job-postings-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .job-posting-item {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        
+        .job-posting-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .job-posting-header h3 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .job-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .job-posting-summary {
+            margin: 15px 0;
+            color: #444;
+        }
+        
+        .view-details-btn {
+            background: #0073aa;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .view-details-btn:hover {
+            background: #005177;
+        }
+        
+        .job-posting-detail {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .back-to-list-btn {
+            background: none;
+            border: none;
+            color: #0073aa;
+            cursor: pointer;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .job-detail-header {
+            margin-bottom: 30px;
+        }
+        
+        .job-detail-header h2 {
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+        
+        .job-section {
+            margin-bottom: 30px;
+        }
+        
+        .job-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .job-section .content {
+            color: #444;
+            line-height: 1.6;
+        }
+        
+        .apply-btn {
+            display: inline-block;
+            background: #0073aa;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        
+        .apply-btn:hover {
+            background: #005177;
+        }
+        
+        .no-jobs-message {
+            text-align: center;
+            padding: 40px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        </style>
+        <?php
+        
+        return ob_get_clean();
     }
 
     /**

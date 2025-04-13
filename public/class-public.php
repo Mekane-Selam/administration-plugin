@@ -153,7 +153,9 @@ class Administration_Public {
         
         // List view container
         echo '<div class="job-postings-list">';
+        echo '<div class="job-list-header">';
         echo '<h2 class="job-list-title">Current Job Openings</h2>';
+        echo '</div>';
         echo '<div class="job-postings-grid">';
         
         foreach ($jobs as $job) {
@@ -275,10 +277,16 @@ class Administration_Public {
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
-        .job-list-title {
+        .job-list-header {
             text-align: center;
-            color: #2c3e50;
             margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .job-list-title {
+            color: #2c3e50;
+            margin: 0;
             font-size: 2.5em;
             font-weight: 600;
         }
@@ -287,7 +295,6 @@ class Administration_Public {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 30px;
-            margin-top: 20px;
         }
         
         .job-posting-item {

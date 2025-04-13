@@ -399,9 +399,10 @@ class Administration_Ajax {
                 'LastModifiedDate' => current_time('mysql'),
                 'Notes' => $notes,
                 'ResumeURL' => str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $resume_path),
-                'CoverLetter' => $cover_letter
+                'CoverLetterURL' => $cover_letter,
+                'ReferralSource' => 'Website'
             ),
-            array('%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s')
+            array('%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
         );
 
         if ($result === false) {

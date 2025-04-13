@@ -637,4 +637,45 @@ jQuery(document).ready(function($) {
             });
         }
     }
+
+    // Job Application Form Handler
+    $('#job-application-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        const $form = $(this);
+        const $submitButton = $form.find('button[type="submit"]');
+        const formData = new FormData(this);
+        
+        // Add nonce to form data
+        formData.append('nonce', administrationData.nonce);
+        
+        // Disable submit button and show loading state
+        $submitButton.prop('disabled', true).text('Submitting...');
+        
+        $.ajax({
+            url: administrationData.ajax_url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    $form.hide();
+                    $('.application-success').show();
+                } else {
+                    alert('Error submitting application: ' + (response.data?.message || 'Unknown error'));
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error submitting application:', error);
+                console.error('Response:', xhr.responseText);
+                alert('Error submitting application. Please try again.');
+            },
+            complete: function() {
+                // Re-enable submit button and restore text
+                $submitButton.prop('disabled', false).text('Submit Application');
+            }
+        });
+    });
 });

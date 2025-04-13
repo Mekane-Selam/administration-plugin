@@ -20,6 +20,10 @@ class Administration_Ajax {
         add_action('wp_ajax_get_applications', array($this, 'get_applications'));
         add_action('wp_ajax_get_interviews', array($this, 'get_interviews'));
         add_action('wp_ajax_get_offers', array($this, 'get_offers'));
+        
+        // Add public endpoints for job applications
+        add_action('wp_ajax_submit_job_application', array($this, 'submit_job_application'));
+        add_action('wp_ajax_nopriv_submit_job_application', array($this, 'submit_job_application'));
     }
 
     /**
@@ -299,6 +303,93 @@ class Administration_Ajax {
         );
 
         wp_send_json_success($offers);
+    }
+
+    /**
+     * Submit a job application
+     */
+    public function submit_job_application() {
+        check_ajax_referer('submit_job_application', 'nonce');
+
+        // Get form data
+        $job_id = intval($_POST['job_id']);
+        $first_name = sanitize_text_field($_POST['first_name']);
+        $last_name = sanitize_text_field($_POST['last_name']);
+        $email = sanitize_email($_POST['email']);
+        $phone = sanitize_text_field($_POST['phone']);
+        $cover_letter = wp_kses_post($_POST['cover_letter']);
+        $notes = wp_kses_post($_POST['notes']);
+
+        // Handle file uploads
+        $resume_url = '';
+        if (!empty($_FILES['resume'])) {
+            $upload = wp_handle_upload($_FILES['resume'], array('test_form' => false));
+            if (!isset($upload['error'])) {
+                $resume_url = $upload['url'];
+            } else {
+                wp_send_json_error('Error uploading resume: ' . $upload['error']);
+                return;
+            }
+        }
+
+        // Get current user's person record if logged in
+        $person = null;
+        if (is_user_logged_in()) {
+            $person = Administration_Database::get_person_by_user_id(get_current_user_id());
+        }
+
+        global $wpdb;
+
+        // Insert application
+        $result = $wpdb->insert(
+            $wpdb->prefix . 'hr_applications',
+            array(
+                'JobPostingID' => $job_id,
+                'PersonID' => $person ? $person->PersonID : null,
+                'Status' => 'New',
+                'SubmissionDate' => current_time('mysql'),
+                'LastModifiedDate' => current_time('mysql'),
+                'Notes' => $notes,
+                'ResumeURL' => $resume_url,
+                'CoverLetterURL' => $cover_letter
+            ),
+            array('%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s')
+        );
+
+        if ($result) {
+            // If person doesn't exist, create external applicant record
+            if (!$person) {
+                $wpdb->insert(
+                    $wpdb->prefix . 'hr_externalapplicants',
+                    array(
+                        'FirstName' => $first_name,
+                        'LastName' => $last_name,
+                        'Email' => $email,
+                        'Phone' => $phone,
+                        'CreatedDate' => current_time('mysql'),
+                        'LastModifiedDate' => current_time('mysql')
+                    ),
+                    array('%s', '%s', '%s', '%s', '%s', '%s')
+                );
+
+                $external_applicant_id = $wpdb->insert_id;
+
+                // Update application with external applicant ID
+                $wpdb->update(
+                    $wpdb->prefix . 'hr_applications',
+                    array('ExternalApplicantID' => $external_applicant_id),
+                    array('ApplicationID' => $wpdb->insert_id),
+                    array('%d'),
+                    array('%d')
+                );
+            }
+
+            wp_send_json_success(array(
+                'message' => 'Application submitted successfully'
+            ));
+        } else {
+            wp_send_json_error('Failed to submit application');
+        }
     }
 
     /**

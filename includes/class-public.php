@@ -4,6 +4,8 @@ class PublicClass {
     public function __construct() {
         // Register shortcodes
         add_shortcode('job_postings', array($this, 'job_postings_shortcode'));
+        // Register job application template
+        $this->register_job_application_template();
     }
 
     /**
@@ -51,5 +53,34 @@ class PublicClass {
         $output .= '</div>';
         
         return $output;
+    }
+
+    /**
+     * Register the job application template
+     */
+    public function register_job_application_template() {
+        add_filter('theme_page_templates', array($this, 'add_job_application_template'));
+        add_filter('template_include', array($this, 'load_job_application_template'));
+    }
+
+    /**
+     * Add the job application template to the template list
+     */
+    public function add_job_application_template($templates) {
+        $templates['job-application-template.php'] = __('Job Application', 'mekaneselam');
+        return $templates;
+    }
+
+    /**
+     * Load the job application template when selected
+     */
+    public function load_job_application_template($template) {
+        if (is_page()) {
+            $page_template = get_post_meta(get_the_ID(), '_wp_page_template', true);
+            if ('job-application-template.php' === $page_template) {
+                $template = plugin_dir_path(dirname(__FILE__)) . 'templates/job-application-template.php';
+            }
+        }
+        return $template;
     }
 } 

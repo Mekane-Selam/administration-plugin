@@ -528,12 +528,12 @@ jQuery(document).ready(function($) {
                         description: formData.get('description'),
                         requirements: formData.get('requirements'),
                         responsibilities: formData.get('responsibilities'),
-                        departmentName: formData.get('department'),
+                        departmentName: formData.get('departmentName'),
                         location: formData.get('location'),
-                        jobType: formData.get('job-type'),
-                        salaryRange: formData.get('salary-range'),
-                        postedDate: formData.get('posted-date'),
-                        closingDate: formData.get('closing-date'),
+                        jobType: formData.get('jobType'),
+                        salaryRange: formData.get('salaryRange'),
+                        postedDate: formData.get('postedDate'),
+                        closingDate: formData.get('closingDate'),
                         isInternal: formData.get('isInternal') === 'on' ? 1 : 0
                     },
                     success: function(response) {

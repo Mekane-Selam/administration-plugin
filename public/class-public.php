@@ -277,11 +277,14 @@ class Administration_Public {
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
-        .job-list-header {
+        .job-postings-list {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            margin-bottom: 40px;
+            gap: 40px;
+        }
+        
+        .job-list-header {
+            text-align: center;
             padding-bottom: 20px;
             border-bottom: 1px solid #e9ecef;
         }
@@ -291,7 +294,6 @@ class Administration_Public {
             margin: 0;
             font-size: 2.5em;
             font-weight: 600;
-            text-align: center;
         }
         
         .job-postings-grid {

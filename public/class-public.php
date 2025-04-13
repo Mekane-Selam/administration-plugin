@@ -309,6 +309,9 @@ class Administration_Public {
             padding: 25px;
             transition: all 0.3s ease;
             border: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .job-posting-item:hover {
@@ -343,6 +346,7 @@ class Administration_Public {
         }
         
         .job-posting-summary {
+            flex: 1 1 auto;
             margin: 20px 0;
             color: #495057;
             line-height: 1.6;

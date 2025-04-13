@@ -3,15 +3,26 @@
 class PublicClass {
     public function __construct() {
         // Register shortcodes
+        error_log('PublicClass constructor called');
         add_shortcode('job_postings', array($this, 'job_postings_shortcode'));
+        add_shortcode('test_shortcode', array($this, 'test_shortcode'));
         // Register job application template
         $this->register_job_application_template();
+    }
+
+    /**
+     * Test shortcode
+     */
+    public function test_shortcode($atts) {
+        error_log('test_shortcode called');
+        return '<p>Test shortcode is working!</p>';
     }
 
     /**
      * Display job postings
      */
     public function job_postings_shortcode($atts) {
+        error_log('job_postings_shortcode called');
         global $wpdb;
         
         // Get open job postings
@@ -20,6 +31,9 @@ class PublicClass {
             WHERE Status = 'Open' 
             ORDER BY PostedDate DESC"
         );
+        
+        error_log('SQL Query: ' . "SELECT * FROM {$wpdb->prefix}hr_jobpostings WHERE Status = 'Open' ORDER BY PostedDate DESC");
+        error_log('Query Results: ' . print_r($jobs, true));
         
         if ($wpdb->last_error) {
             error_log('Job Postings Query Error: ' . $wpdb->last_error);

@@ -21,11 +21,19 @@ class Administration_Public {
      * Enqueue public scripts and styles.
      */
     public function enqueue_scripts() {
-        // Only enqueue if shortcode is present
         global $post;
-        if (is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'administration')) {
+        
+        // Check if we're on a page/post and if any of our shortcodes are present
+        if (is_a($post, 'WP_Post') && (
+            has_shortcode($post->post_content, 'administration') ||
+            has_shortcode($post->post_content, 'job_postings') ||
+            has_shortcode($post->post_content, 'job_application') ||
+            // Also check if we're on the job application page with a job_id parameter
+            (is_page('job-application') && isset($_GET['job_id']))
+        )) {
+            // Enqueue styles
             wp_enqueue_style(
-                'administration-css',
+                'administration-public',
                 ADMINISTRATION_PLUGIN_URL . 'assets/css/admin.css',
                 [],
                 ADMINISTRATION_VERSION
@@ -34,8 +42,12 @@ class Administration_Public {
             // Enqueue WordPress default dashicons
             wp_enqueue_style('dashicons');
             
+            // Enqueue jQuery
+            wp_enqueue_script('jquery');
+            
+            // Enqueue our script
             wp_enqueue_script(
-                'administration-admin',
+                'administration-public',
                 ADMINISTRATION_PLUGIN_URL . 'assets/js/admin.js',
                 ['jquery'],
                 ADMINISTRATION_VERSION,
@@ -43,7 +55,7 @@ class Administration_Public {
             );
             
             wp_localize_script(
-                'administration-admin',
+                'administration-public',
                 'administrationData',
                 [
                     'ajax_url' => admin_url('admin-ajax.php'),

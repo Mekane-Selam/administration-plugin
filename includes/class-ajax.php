@@ -201,14 +201,14 @@ class Administration_Ajax {
             return;
         }
 
-        $id = intval($_POST['id']);
+        $id = intval($_POST['job_id']);
         if (!$id) {
             wp_send_json_error('Invalid job posting ID');
             return;
         }
 
         $status = sanitize_text_field($_POST['status']);
-        $valid_statuses = array('draft', 'published', 'closed', 'archived');
+        $valid_statuses = array('Open', 'Closed', 'On Hold', 'Draft');
         if (!in_array($status, $valid_statuses)) {
             wp_send_json_error('Invalid status');
             return;
@@ -221,11 +221,10 @@ class Administration_Ajax {
             $table_name,
             array(
                 'Status' => $status,
-                'ModifiedDate' => current_time('mysql'),
-                'ModifiedBy' => get_current_user_id()
+                'LastModifiedDate' => current_time('mysql')
             ),
-            array('ID' => $id),
-            array('%s', '%s', '%d'),
+            array('JobPostingID' => $id),
+            array('%s', '%s'),
             array('%d')
         );
 

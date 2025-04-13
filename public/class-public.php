@@ -312,55 +312,167 @@ class Administration_Public {
         <style>
             .job-application-container {
                 max-width: 800px;
-                margin: 0 auto;
-                padding: 2rem;
+                margin: 2rem auto;
+                padding: 2.5rem;
+                background: #fff;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
+
+            /* Job Details Section */
             .job-details {
-                margin-bottom: 2rem;
+                margin-bottom: 2.5rem;
                 padding-bottom: 2rem;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 2px solid #eef0f3;
+            }
+            .job-details h2 {
+                color: #1a1a1a;
+                font-size: 2rem;
+                margin-bottom: 1rem;
+                font-weight: 600;
             }
             .job-meta {
                 margin: 1rem 0;
                 color: #666;
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1.5rem;
             }
             .job-meta span {
-                margin-right: 1.5rem;
+                display: inline-flex;
+                align-items: center;
+                font-size: 0.95rem;
             }
+            .job-meta span::before {
+                content: "";
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                background: #0073aa;
+                border-radius: 50%;
+                margin-right: 8px;
+            }
+            .job-description {
+                color: #444;
+                line-height: 1.6;
+            }
+
+            /* Form Sections */
             .form-section {
+                background: #f8f9fa;
+                padding: 2rem;
                 margin-bottom: 2rem;
+                border-radius: 6px;
+                border: 1px solid #eef0f3;
             }
             .form-section h3 {
+                color: #1a1a1a;
+                font-size: 1.5rem;
                 margin-bottom: 1.5rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #eef0f3;
             }
             .form-row {
                 display: flex;
-                gap: 1rem;
-                margin-bottom: 1rem;
+                gap: 1.5rem;
+                margin-bottom: 1.5rem;
             }
             .form-group {
                 flex: 1;
             }
             .form-group label {
                 display: block;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.75rem;
                 font-weight: 500;
+                color: #2c3338;
             }
             .form-group input[type="text"],
             .form-group input[type="email"],
             .form-group input[type="tel"],
+            .form-group input[type="file"],
             .form-group textarea {
                 width: 100%;
-                padding: 0.5rem;
+                padding: 0.75rem;
                 border: 1px solid #ddd;
                 border-radius: 4px;
+                background: #fff;
+                font-size: 1rem;
+                transition: border-color 0.2s, box-shadow 0.2s;
             }
+            .form-group input[type="text"]:focus,
+            .form-group input[type="email"]:focus,
+            .form-group input[type="tel"]:focus,
+            .form-group textarea:focus {
+                border-color: #0073aa;
+                box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.1);
+                outline: none;
+            }
+            .form-group textarea {
+                min-height: 120px;
+                resize: vertical;
+            }
+            .form-group input[type="file"] {
+                padding: 0.5rem;
+                background: #fff;
+                border: 2px dashed #ddd;
+                cursor: pointer;
+            }
+            .form-group input[type="file"]:hover {
+                border-color: #0073aa;
+            }
+
+            /* Submit Button */
             .form-actions {
-                margin-top: 2rem;
+                margin-top: 2.5rem;
+                text-align: center;
             }
-            @media (max-width: 600px) {
+            .form-actions button {
+                background-color: #0073aa;
+                color: #fff;
+                padding: 1rem 2rem;
+                border: none;
+                border-radius: 4px;
+                font-size: 1.1rem;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background-color 0.2s;
+            }
+            .form-actions button:hover {
+                background-color: #005177;
+            }
+
+            /* Success Message */
+            .success-message {
+                text-align: center;
+                padding: 2rem;
+                background: #f0f7ed;
+                border-radius: 6px;
+                border: 1px solid #c3e6cb;
+            }
+            .success-message h3 {
+                color: #1e7e34;
+                margin-bottom: 1rem;
+            }
+            .success-message p {
+                color: #2c3338;
+            }
+
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .job-application-container {
+                    margin: 1rem;
+                    padding: 1.5rem;
+                }
+                .form-section {
+                    padding: 1.5rem;
+                }
                 .form-row {
                     flex-direction: column;
+                    gap: 1rem;
+                }
+                .job-meta {
+                    flex-direction: column;
+                    gap: 0.5rem;
                 }
             }
         </style>';

@@ -76,68 +76,81 @@ class PublicClass {
         echo '</div>'; // Close main container
         
         // Add JavaScript for handling view switching
+        wp_enqueue_script('jquery');
         ?>
-        <script>
-        jQuery(document).ready(function($) {
-            // View details button click handler
-            $('.view-details-btn').on('click', function() {
-                const jobId = $(this).closest('.job-posting-item').data('job-id');
-                const $listView = $('.job-postings-list');
-                const $detailView = $('.job-posting-detail');
-                const $detailContent = $('.job-detail-content');
+        <script type="text/javascript">
+        (function($) {
+            $(document).ready(function() {
+                console.log('Job postings script loaded');
                 
-                // Hide list view and show detail view
-                $listView.hide();
-                $detailView.show();
-                
-                // Load job details
-                $.ajax({
-                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
-                    type: 'GET',
-                    data: {
-                        action: 'get_job_posting',
-                        id: jobId
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            const job = response.data;
-                            let html = '<div class="job-detail-header">';
-                            html += '<h2>' + job.Title + '</h2>';
-                            html += '<div class="job-meta">';
-                            html += '<span class="department">' + job.DepartmentName + '</span>';
-                            html += '<span class="location">' + job.Location + '</span>';
-                            html += '<span class="type">' + job.JobType + '</span>';
-                            html += '</div>';
-                            html += '</div>';
-                            
-                            html += '<div class="job-detail-content">';
-                            html += '<div class="job-section">';
-                            html += '<h3>Job Description</h3>';
-                            html += '<div class="content">' + job.Description + '</div>';
-                            html += '</div>';
-                            
-                            html += '<div class="job-section">';
-                            html += '<h3>Requirements</h3>';
-                            html += '<div class="content">' + job.Requirements + '</div>';
-                            html += '</div>';
-                            
-                            html += '<div class="job-actions">';
-                            html += '<a href="' + '<?php echo home_url('job-application'); ?>?job_id=' + job.JobPostingID + '" class="apply-btn">Apply Now</a>';
-                            html += '</div>';
-                            html += '</div>';
-                            
-                            $detailContent.html(html);
+                // View details button click handler
+                $('.view-details-btn').on('click', function() {
+                    console.log('View details clicked');
+                    const jobId = $(this).closest('.job-posting-item').data('job-id');
+                    const $listView = $('.job-postings-list');
+                    const $detailView = $('.job-posting-detail');
+                    const $detailContent = $('.job-detail-content');
+                    
+                    console.log('Job ID:', jobId);
+                    
+                    // Hide list view and show detail view
+                    $listView.hide();
+                    $detailView.show();
+                    
+                    // Load job details
+                    $.ajax({
+                        url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                        type: 'GET',
+                        data: {
+                            action: 'get_job_posting',
+                            id: jobId
+                        },
+                        success: function(response) {
+                            console.log('AJAX response:', response);
+                            if (response.success) {
+                                const job = response.data;
+                                let html = '<div class="job-detail-header">';
+                                html += '<h2>' + job.Title + '</h2>';
+                                html += '<div class="job-meta">';
+                                html += '<span class="department">' + job.DepartmentName + '</span>';
+                                html += '<span class="location">' + job.Location + '</span>';
+                                html += '<span class="type">' + job.JobType + '</span>';
+                                html += '</div>';
+                                html += '</div>';
+                                
+                                html += '<div class="job-detail-content">';
+                                html += '<div class="job-section">';
+                                html += '<h3>Job Description</h3>';
+                                html += '<div class="content">' + job.Description + '</div>';
+                                html += '</div>';
+                                
+                                html += '<div class="job-section">';
+                                html += '<h3>Requirements</h3>';
+                                html += '<div class="content">' + job.Requirements + '</div>';
+                                html += '</div>';
+                                
+                                html += '<div class="job-actions">';
+                                html += '<a href="' + '<?php echo home_url('job-application'); ?>?job_id=' + job.JobPostingID + '" class="apply-btn">Apply Now</a>';
+                                html += '</div>';
+                                html += '</div>';
+                                
+                                $detailContent.html(html);
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX error:', error);
                         }
-                    }
+                    });
+                });
+                
+                // Back to list button click handler
+                $('.back-to-list-btn').on('click', function() {
+                    console.log('Back to list clicked');
+                    $('.job-posting-detail').hide();
+                    $('.job-postings-list').show();
                 });
             });
-            
-            // Back to list button click handler
-            $('.back-to-list-btn').on('click', function() {
-                $('.job-postings-detail').hide();
-                $('.job-postings-list').show();
-            });
-        });
+        })(jQuery);
         </script>
         
         <style>
@@ -145,6 +158,9 @@ class PublicClass {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .job-postings-list {
@@ -160,6 +176,7 @@ class PublicClass {
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             padding: 20px;
             transition: transform 0.2s;
+            cursor: pointer;
         }
         
         .job-posting-item:hover {
@@ -210,6 +227,7 @@ class PublicClass {
             cursor: pointer;
             padding: 10px 0;
             margin-bottom: 20px;
+            font-size: 16px;
         }
         
         .job-detail-header {

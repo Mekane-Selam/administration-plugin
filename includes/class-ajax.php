@@ -12,6 +12,7 @@ class Administration_Ajax {
         // Register AJAX actions for both logged in and non-logged in users
         add_action('wp_ajax_save_job_posting', array($this, 'save_job_posting'));
         add_action('wp_ajax_get_job_posting', array($this, 'get_job_posting'));
+        add_action('wp_ajax_nopriv_get_job_posting', array($this, 'get_job_posting'));
         add_action('wp_ajax_get_job_postings', array($this, 'get_job_postings'));
         add_action('wp_ajax_update_job_posting', array($this, 'update_job_posting'));
         add_action('wp_ajax_update_job_status', array($this, 'update_job_status'));
@@ -79,13 +80,6 @@ class Administration_Ajax {
      * Get a specific job posting
      */
     public function get_job_posting() {
-        check_ajax_referer('administration_nonce', 'nonce');
-
-        if (!current_user_can('read')) {
-            wp_send_json_error('Insufficient permissions');
-            return;
-        }
-
         $id = intval($_GET['id']);
         if (!$id) {
             wp_send_json_error('Invalid job posting ID');

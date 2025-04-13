@@ -484,6 +484,11 @@ class Administration_Public {
             $("#job-application-form").on("submit", function(e) {
                 e.preventDefault();
                 
+                // Show loading state
+                var $submitButton = $(this).find("button[type=submit]");
+                var originalText = $submitButton.text();
+                $submitButton.prop("disabled", true).text("Submitting...");
+                
                 var formData = new FormData(this);
                 formData.append("action", "submit_job_application");
                 
@@ -494,14 +499,23 @@ class Administration_Public {
                     processData: false,
                     contentType: false,
                     success: function(response) {
+                        console.log("Response:", response);
                         if (response.success) {
                             $("#job-application-form").html("<div class=\"success-message\"><h3>Application Submitted!</h3><p>Thank you for your application. We will review it and contact you soon.</p></div>");
                         } else {
-                            alert("Error submitting application. Please try again.");
+                            // Reset button
+                            $submitButton.prop("disabled", false).text(originalText);
+                            // Show error message
+                            alert(response.data || "Error submitting application. Please try again.");
                         }
                     },
-                    error: function() {
-                        alert("Error submitting application. Please try again.");
+                    error: function(xhr, status, error) {
+                        console.error("Error submitting application:", status, error);
+                        console.log("Response:", xhr.responseText);
+                        // Reset button
+                        $submitButton.prop("disabled", false).text(originalText);
+                        // Show error message
+                        alert("Error submitting application. Please try again. " + (xhr.responseText || ""));
                     }
                 });
             });

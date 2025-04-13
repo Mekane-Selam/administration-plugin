@@ -410,6 +410,7 @@ class Administration_Ajax {
             return;
         }
 
+        // Send success response
         wp_send_json_success(array(
             'message' => 'Application submitted successfully',
             'application_id' => $this->db->insert_id

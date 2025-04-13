@@ -638,22 +638,21 @@ jQuery(document).ready(function($) {
         }
     }
 
-    // Job Application Form Handler
+    // Job application form submission
     $('#job-application-form').on('submit', function(e) {
         e.preventDefault();
         
-        const $form = $(this);
-        const $submitButton = $form.find('button[type="submit"]');
-        const formData = new FormData(this);
-        
-        // Add nonce to form data
-        formData.append('nonce', administrationData.nonce);
-        
+        var $form = $(this);
+        var $submitButton = $form.find('button[type="submit"]');
+        var formData = new FormData(this);
+        formData.append('action', 'submit_job_application');
+        formData.append('job_application_nonce', $('#job_application_nonce').val());
+
         // Disable submit button and show loading state
         $submitButton.prop('disabled', true).text('Submitting...');
-        
+
         $.ajax({
-            url: administrationData.ajax_url,
+            url: ajaxurl,
             type: 'POST',
             data: formData,
             processData: false,
@@ -661,19 +660,23 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     // Show success message
-                    $form.hide();
-                    $('.application-success').show();
+                    $('#application-success').removeClass('hidden');
+                    // Hide form
+                    $form.addClass('hidden');
+                    // Reset form
+                    $form[0].reset();
                 } else {
-                    alert('Error submitting application: ' + (response.data?.message || 'Unknown error'));
+                    // Show error message
+                    alert(response.data || 'Error submitting application. Please try again.');
                 }
             },
             error: function(xhr, status, error) {
-                console.error('Error submitting application:', error);
+                console.error('Error submitting application:', status, error);
                 console.error('Response:', xhr.responseText);
                 alert('Error submitting application. Please try again.');
             },
             complete: function() {
-                // Re-enable submit button and restore text
+                // Re-enable submit button
                 $submitButton.prop('disabled', false).text('Submit Application');
             }
         });

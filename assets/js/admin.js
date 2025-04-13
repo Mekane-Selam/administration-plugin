@@ -252,11 +252,9 @@ jQuery(document).ready(function($) {
                                 <h4>${posting.Title}</h4>
                                 <span class="status ${posting.Status.toLowerCase()}">${posting.Status}</span>
                             </div>
-                            <div class="job-posting-details">
-                                <p><strong>Department:</strong> ${posting.DepartmentName}</p>
-                                <p><strong>Type:</strong> ${posting.JobType}</p>
-                                <p><strong>Location:</strong> ${posting.Location}</p>
-                                <p><strong>Posted:</strong> ${new Date(posting.PostedDate).toLocaleDateString()}</p>
+                            <div class="job-posting-meta">
+                                <span class="department">${posting.DepartmentName || 'No Department'}</span>
+                                <span class="posted-date">Posted: ${new Date(posting.PostedDate).toLocaleDateString()}</span>
                             </div>
                             <div class="job-posting-actions">
                                 <button class="button view-posting" title="View Details">

@@ -768,3 +768,98 @@ select[multiple] {
 .edit-mode .modal-content {
     background: #fff;
 }
+
+.job-postings-list {
+    max-height: 600px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.job-posting-item {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.job-posting-item:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.job-posting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.job-posting-header h4 {
+    margin: 0;
+    font-size: 16px;
+    color: #23282d;
+}
+
+.job-posting-meta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 13px;
+}
+
+.job-posting-meta .department {
+    font-weight: 500;
+}
+
+.job-posting-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.job-posting-actions .button {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.status {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status.open {
+    background-color: #e6f4ea;
+    color: #137333;
+}
+
+.status.closed {
+    background-color: #fce8e6;
+    color: #c5221f;
+}
+
+.status.draft {
+    background-color: #f8f9fa;
+    color: #5f6368;
+}
+
+/* Scrollbar styling */
+.job-postings-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.job-postings-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.job-postings-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.job-postings-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

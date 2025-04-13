@@ -153,13 +153,18 @@ class Administration_Public {
         
         // List view container
         echo '<div class="job-postings-list">';
-        echo '<h2>Current Job Openings</h2>';
+        echo '<h2 class="job-list-title">Current Job Openings</h2>';
+        echo '<div class="job-postings-grid">';
         
         foreach ($jobs as $job) {
             echo '<div class="job-posting-item" data-job-id="' . esc_attr($job->JobPostingID) . '">';
             echo '<div class="job-posting-header">';
             echo '<h3>' . esc_html($job->Title) . '</h3>';
-            echo '<span class="job-meta">' . esc_html($job->DepartmentName) . ' • ' . esc_html($job->Location) . '</span>';
+            echo '<div class="job-meta">';
+            echo '<span class="department"><i class="fas fa-building"></i> ' . esc_html($job->DepartmentName) . '</span>';
+            echo '<span class="location"><i class="fas fa-map-marker-alt"></i> ' . esc_html($job->Location) . '</span>';
+            echo '<span class="type"><i class="fas fa-clock"></i> ' . esc_html($job->JobType) . '</span>';
+            echo '</div>';
             echo '</div>';
             echo '<div class="job-posting-summary">';
             echo '<p>' . wp_trim_words(wp_strip_all_tags($job->Description), 30) . '</p>';
@@ -170,11 +175,12 @@ class Administration_Public {
             echo '</div>';
         }
         
+        echo '</div>'; // Close grid
         echo '</div>'; // Close list view
         
         // Detail view container (initially hidden)
         echo '<div class="job-posting-detail" style="display: none;">';
-        echo '<button class="back-to-list-btn">← Back to Jobs</button>';
+        echo '<button class="back-to-list-btn"><i class="fas fa-arrow-left"></i> Back to Jobs</button>';
         echo '<div class="job-detail-content"></div>';
         echo '</div>';
         
@@ -217,25 +223,26 @@ class Administration_Public {
                                 let html = '<div class="job-detail-header">';
                                 html += '<h2>' + job.Title + '</h2>';
                                 html += '<div class="job-meta">';
-                                html += '<span class="department">' + job.DepartmentName + '</span>';
-                                html += '<span class="location">' + job.Location + '</span>';
-                                html += '<span class="type">' + job.JobType + '</span>';
+                                html += '<span class="department"><i class="fas fa-building"></i> ' + job.DepartmentName + '</span>';
+                                html += '<span class="location"><i class="fas fa-map-marker-alt"></i> ' + job.Location + '</span>';
+                                html += '<span class="type"><i class="fas fa-clock"></i> ' + job.JobType + '</span>';
+                                html += '<span class="posted"><i class="fas fa-calendar"></i> Posted: ' + new Date(job.PostedDate).toLocaleDateString() + '</span>';
                                 html += '</div>';
                                 html += '</div>';
                                 
-                                html += '<div class="job-detail-content">';
+                                html += '<div class="job-detail-sections">';
                                 html += '<div class="job-section">';
-                                html += '<h3>Job Description</h3>';
+                                html += '<h3><i class="fas fa-file-alt"></i> Job Description</h3>';
                                 html += '<div class="content">' + job.Description + '</div>';
                                 html += '</div>';
                                 
                                 html += '<div class="job-section">';
-                                html += '<h3>Requirements</h3>';
+                                html += '<h3><i class="fas fa-list-check"></i> Requirements</h3>';
                                 html += '<div class="content">' + job.Requirements + '</div>';
                                 html += '</div>';
                                 
                                 html += '<div class="job-actions">';
-                                html += '<a href="' + '<?php echo home_url('job-application'); ?>?job_id=' + job.JobPostingID + '" class="apply-btn">Apply Now</a>';
+                                html += '<a href="' + '<?php echo home_url('job-application'); ?>?job_id=' + job.JobPostingID + '" class="apply-btn"><i class="fas fa-paper-plane"></i> Apply Now</a>';
                                 html += '</div>';
                                 html += '</div>';
                                 
@@ -262,67 +269,95 @@ class Administration_Public {
         .job-postings-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px 20px;
             background: #f8f9fa;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
-        .job-postings-list {
+        .job-list-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        
+        .job-postings-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
             margin-top: 20px;
         }
         
         .job-posting-item {
             background: #fff;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 20px;
-            transition: transform 0.2s;
-            cursor: pointer;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
         }
         
         .job-posting-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
         }
         
         .job-posting-header h3 {
-            margin: 0 0 10px 0;
-            color: #333;
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 1.4em;
+            font-weight: 600;
         }
         
         .job-meta {
-            color: #666;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .job-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #6c757d;
             font-size: 0.9em;
         }
         
+        .job-meta i {
+            color: #0073aa;
+        }
+        
         .job-posting-summary {
-            margin: 15px 0;
-            color: #444;
+            margin: 20px 0;
+            color: #495057;
+            line-height: 1.6;
         }
         
         .view-details-btn {
             background: #0073aa;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 10px 20px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            width: 100%;
         }
         
         .view-details-btn:hover {
             background: #005177;
+            transform: translateY(-2px);
         }
         
         .job-posting-detail {
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 40px;
         }
         
         .back-to-list-btn {
@@ -331,54 +366,95 @@ class Administration_Public {
             color: #0073aa;
             cursor: pointer;
             padding: 10px 0;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-list-btn:hover {
+            color: #005177;
+            transform: translateX(-5px);
         }
         
         .job-detail-header {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
         }
         
         .job-detail-header h2 {
-            margin: 0 0 15px 0;
-            color: #333;
+            margin: 0 0 20px 0;
+            color: #2c3e50;
+            font-size: 2em;
+            font-weight: 600;
+        }
+        
+        .job-detail-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
         }
         
         .job-section {
-            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
         }
         
         .job-section h3 {
-            color: #333;
-            margin-bottom: 15px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .job-section .content {
-            color: #444;
-            line-height: 1.6;
+            color: #495057;
+            line-height: 1.8;
+        }
+        
+        .job-actions {
+            text-align: center;
+            margin-top: 40px;
         }
         
         .apply-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             background: #0073aa;
             color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 15px 30px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
         }
         
         .apply-btn:hover {
             background: #005177;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         
         .no-jobs-message {
             text-align: center;
-            padding: 40px;
+            padding: 60px;
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .no-jobs-message p {
+            color: #6c757d;
+            font-size: 1.2em;
         }
         </style>
         <?php

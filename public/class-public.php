@@ -136,6 +136,19 @@ class Administration_Public {
             ORDER BY PostedDate DESC"
         );
         
+        // Check for database errors
+        if ($wpdb->last_error) {
+            error_log('Job Postings Query Error: ' . $wpdb->last_error);
+            // Start output buffering
+            ob_start();
+            echo '<div class="job-postings-container">';
+            echo '<div class="error-message">';
+            echo '<p>Error loading job postings. Please check the server logs or contact support.</p>';
+            echo '</div>';
+            echo '</div>'; // Close container
+            return ob_get_clean();
+        }
+        
         // Start output buffering
         ob_start();
         

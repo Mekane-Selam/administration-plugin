@@ -20,6 +20,9 @@
             
             // View all links
             $('.view-all').on('click', this.handleViewAllClick);
+
+            // Close menu on outside click (mobile)
+            $(document).on('click', this.handleDocumentClick);
         },
 
         toggleMenu: function(e) {
@@ -31,12 +34,29 @@
             e.preventDefault();
             const page = $(this).data('page');
             Dashboard.loadPage(page);
+            // Close menu on mobile after click
+            if (window.innerWidth <= 782) {
+                $('#dashboard-menu').removeClass('active');
+            }
         },
 
         handleViewAllClick: function(e) {
             e.preventDefault();
             const page = $(this).data('page');
             Dashboard.loadPage(page);
+            // Close menu on mobile after click
+            if (window.innerWidth <= 782) {
+                $('#dashboard-menu').removeClass('active');
+            }
+        },
+
+        handleDocumentClick: function(e) {
+            // If click is outside the menu and toggle, close the menu (on mobile)
+            if (window.innerWidth <= 782) {
+                if (!$(e.target).closest('#dashboard-menu, #dashboard-menu-toggle').length) {
+                    $('#dashboard-menu').removeClass('active');
+                }
+            }
         },
 
         loadPage: function(page) {

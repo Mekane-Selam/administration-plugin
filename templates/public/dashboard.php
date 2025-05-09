@@ -3,6 +3,12 @@
  * Main public dashboard template
  */
 
+// Add a body class for the public dashboard
+add_filter('body_class', function($classes) {
+    $classes[] = 'administration-dashboard-public';
+    return $classes;
+});
+
 // Check if user has access
 if (!is_user_logged_in() || !current_user_can('manage_options')) {
     wp_die(__('You do not have sufficient permissions to access this page.', 'administration-plugin'));

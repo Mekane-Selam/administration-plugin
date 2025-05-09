@@ -9,26 +9,6 @@
     <div class="administration-programs">
         <div class="notice notice-info">
             <p><?php _e('Admin settings page', 'administration-plugin'); ?></p>
-        <div class="programs-header">
-            <button class="button button-primary" id="add-program">Add New Program</button>
-        </div>
-
-        <div class="programs-list">
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>Program Name</th>
-                        <th>Description</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Programs will be loaded here via JavaScript -->
-                </tbody>
-            </table>
         </div>
     </div>
 </div>

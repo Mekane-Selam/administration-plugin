@@ -46,6 +46,9 @@ class Administration_Plugin_Autoloader {
                 return;
             }
         }
+
+        // If we get here, the class file wasn't found
+        error_log('Administration Plugin: Could not load class file for ' . $class_name);
     }
 }
 

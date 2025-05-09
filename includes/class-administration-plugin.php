@@ -27,6 +27,15 @@ class Administration_Plugin {
         // Load the loader class
         require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-loader.php';
         
+        // Load the admin class
+        require_once ADMINISTRATION_PLUGIN_PATH . 'includes/admin/class-administration-plugin-admin.php';
+        
+        // Load the public class
+        require_once ADMINISTRATION_PLUGIN_PATH . 'includes/public/class-administration-plugin-public.php';
+        
+        // Load the API class
+        require_once ADMINISTRATION_PLUGIN_PATH . 'includes/api/class-administration-plugin-api.php';
+        
         // Initialize the loader
         $this->loader = new Administration_Plugin_Loader();
     }

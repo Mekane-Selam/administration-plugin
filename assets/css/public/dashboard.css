@@ -13,7 +13,7 @@ body.administration-dashboard-public {
     margin: 40px auto;
     padding: 32px 24px;
     background: #fff;
-    border-radius: 16px;
+    border-radius: 0;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     font-family: 'Segoe UI', Arial, sans-serif;
 }
@@ -99,7 +99,7 @@ body.administration-dashboard-public {
 
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: 1fr;
     gap: 28px;
 }
 

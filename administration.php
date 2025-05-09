@@ -24,6 +24,10 @@ define('ADMINISTRATION_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 // Autoloader
 require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-autoloader.php';
+Administration_Plugin_Autoloader::register();
+
+// Load the main plugin class
+require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-administration-plugin.php';
 
 // Activation/Deactivation hooks
 register_activation_hook(__FILE__, array('Administration_Plugin_Activator', 'activate'));

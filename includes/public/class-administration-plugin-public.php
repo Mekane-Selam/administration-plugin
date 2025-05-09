@@ -7,7 +7,8 @@ class Administration_Plugin_Public {
      * Initialize the class
      */
     public function __construct() {
-        // Add any initialization code here
+        // Register shortcodes
+        add_shortcode('administration_dashboard', array($this, 'render_dashboard'));
     }
 
     /**
@@ -44,5 +45,27 @@ class Administration_Plugin_Public {
                 'nonce' => wp_create_nonce('administration_plugin_public_nonce')
             )
         );
+    }
+
+    /**
+     * Render the administration dashboard
+     *
+     * @param array $atts Shortcode attributes
+     * @return string The rendered dashboard HTML
+     */
+    public function render_dashboard($atts) {
+        // Check if user is logged in and has appropriate permissions
+        if (!is_user_logged_in() || !current_user_can('manage_options')) {
+            return '<p>' . __('You do not have permission to view this content.', 'administration-plugin') . '</p>';
+        }
+
+        // Start output buffering
+        ob_start();
+
+        // Include the dashboard template
+        require_once ADMINISTRATION_PLUGIN_PATH . 'templates/public/dashboard.php';
+
+        // Return the buffered content
+        return ob_get_clean();
     }
 } 

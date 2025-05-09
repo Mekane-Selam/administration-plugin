@@ -208,11 +208,11 @@
 
         openAddProgramModal: function(e) {
             e.preventDefault();
-            $('#add-program-modal').fadeIn(200);
+            $('#add-program-modal').addClass('show');
         },
         closeAddProgramModal: function(e) {
             e.preventDefault();
-            $('#add-program-modal').fadeOut(200);
+            $('#add-program-modal').removeClass('show');
             $('#add-program-form')[0].reset();
             $('#add-program-message').html('');
         },

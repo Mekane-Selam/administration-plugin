@@ -9,6 +9,13 @@ class Administration_Plugin_Public {
     public function __construct() {
         // Register shortcodes
         add_shortcode('administration_dashboard', array($this, 'render_dashboard'));
+
+        // Register AJAX handlers for dashboard content
+        add_action('wp_ajax_load_dashboard_page', array($this, 'ajax_load_dashboard_page'));
+        add_action('wp_ajax_get_programs_overview', array($this, 'ajax_get_programs_overview'));
+        add_action('wp_ajax_get_people_overview', array($this, 'ajax_get_people_overview'));
+        add_action('wp_ajax_get_volunteer_ops_overview', array($this, 'ajax_get_volunteer_ops_overview'));
+        add_action('wp_ajax_get_hr_overview', array($this, 'ajax_get_hr_overview'));
     }
 
     /**
@@ -67,5 +74,80 @@ class Administration_Plugin_Public {
 
         // Return the buffered content
         return ob_get_clean();
+    }
+
+    /**
+     * AJAX handler for loading dashboard page content modularly
+     */
+    public function ajax_load_dashboard_page() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'main';
+        ob_start();
+        switch ($page) {
+            case 'main':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
+                break;
+            case 'programs':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/programs-content.php';
+                break;
+            case 'people':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
+                break;
+            case 'volunteer-ops':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/volunteer-ops-content.php';
+                break;
+            case 'hr':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/hr-content.php';
+                break;
+            default:
+                echo '<div class="error-message">Invalid page.</div>';
+        }
+        $content = ob_get_clean();
+        wp_send_json_success($content);
+    }
+
+    /**
+     * AJAX handler for Programs Overview widget
+     */
+    public function ajax_get_programs_overview() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        ob_start();
+        // Modular: include a partial for programs list (create this file as needed)
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/widgets/programs-list.php';
+        $content = ob_get_clean();
+        wp_send_json_success($content);
+    }
+
+    /**
+     * AJAX handler for People Overview widget
+     */
+    public function ajax_get_people_overview() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        ob_start();
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/widgets/people-list.php';
+        $content = ob_get_clean();
+        wp_send_json_success($content);
+    }
+
+    /**
+     * AJAX handler for Volunteer Operations Overview widget
+     */
+    public function ajax_get_volunteer_ops_overview() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        ob_start();
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/widgets/volunteer-ops-list.php';
+        $content = ob_get_clean();
+        wp_send_json_success($content);
+    }
+
+    /**
+     * AJAX handler for HR Overview widget
+     */
+    public function ajax_get_hr_overview() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        ob_start();
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/widgets/hr-list.php';
+        $content = ob_get_clean();
+        wp_send_json_success($content);
     }
 } 

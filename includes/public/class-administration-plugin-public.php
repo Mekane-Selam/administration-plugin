@@ -16,8 +16,8 @@ class Administration_Plugin_Public {
      */
     public function enqueue_styles() {
         wp_enqueue_style(
-            'administration-plugin-public',
-            ADMINISTRATION_PLUGIN_URL . 'assets/css/public.css',
+            'administration-plugin-dashboard',
+            ADMINISTRATION_PLUGIN_URL . 'assets/css/public/dashboard.css',
             array(),
             ADMINISTRATION_PLUGIN_VERSION,
             'all'
@@ -29,20 +29,20 @@ class Administration_Plugin_Public {
      */
     public function enqueue_scripts() {
         wp_enqueue_script(
-            'administration-plugin-public',
-            ADMINISTRATION_PLUGIN_URL . 'assets/js/public.js',
+            'administration-plugin-dashboard',
+            ADMINISTRATION_PLUGIN_URL . 'assets/js/public/dashboard.js',
             array('jquery'),
             ADMINISTRATION_PLUGIN_VERSION,
-            false
+            true
         );
 
-        // Localize the script with new data
+        // Localize the script with new data for AJAX and nonce
         wp_localize_script(
-            'administration-plugin-public',
-            'administration_plugin_public',
+            'administration-plugin-dashboard',
+            'administration_plugin',
             array(
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('administration_plugin_public_nonce')
+                'nonce' => wp_create_nonce('administration_plugin_nonce')
             )
         );
     }

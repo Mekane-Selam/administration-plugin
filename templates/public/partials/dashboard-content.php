@@ -9,7 +9,6 @@
         <div class="dashboard-widget" id="programs-overview">
             <div class="widget-header">
                 <h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
-                <a href="#" class="view-all" data-page="programs"><?php _e('View All', 'administration-plugin'); ?></a>
             </div>
             <div class="widget-content">
                 <div class="programs-list">
@@ -23,7 +22,6 @@
         <div class="dashboard-widget" id="people-overview">
             <div class="widget-header">
                 <h2><?php _e('People Overview', 'administration-plugin'); ?></h2>
-                <a href="#" class="view-all" data-page="people"><?php _e('View All', 'administration-plugin'); ?></a>
             </div>
             <div class="widget-content">
                 <div class="people-list">
@@ -37,7 +35,6 @@
         <div class="dashboard-widget" id="volunteer-ops-overview">
             <div class="widget-header">
                 <h2><?php _e('Volunteer Operations', 'administration-plugin'); ?></h2>
-                <a href="#" class="view-all" data-page="volunteer-ops"><?php _e('View All', 'administration-plugin'); ?></a>
             </div>
             <div class="widget-content">
                 <div class="volunteer-ops-list">
@@ -51,7 +48,6 @@
         <div class="dashboard-widget" id="hr-overview">
             <div class="widget-header">
                 <h2><?php _e('HR Overview', 'administration-plugin'); ?></h2>
-                <a href="#" class="view-all" data-page="hr"><?php _e('View All', 'administration-plugin'); ?></a>
             </div>
             <div class="widget-content">
                 <div class="hr-list">

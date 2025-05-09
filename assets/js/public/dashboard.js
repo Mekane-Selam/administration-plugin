@@ -23,6 +23,11 @@
 
             // Close menu on outside click (mobile)
             $(document).on('click', this.handleDocumentClick);
+
+            // Add Program modal events
+            $(document).on('click', '#add-program-btn', this.openAddProgramModal);
+            $(document).on('click', '#close-add-program-modal, #cancel-add-program', this.closeAddProgramModal);
+            $(document).on('submit', '#add-program-form', this.submitAddProgramForm);
         },
 
         toggleMenu: function(e) {
@@ -196,6 +201,55 @@
                 success: function(response) {
                     if (response.success) {
                         $('.hr-list').html(response.data);
+                    }
+                }
+            });
+        },
+
+        openAddProgramModal: function(e) {
+            e.preventDefault();
+            $('#add-program-modal').fadeIn(200);
+        },
+        closeAddProgramModal: function(e) {
+            e.preventDefault();
+            $('#add-program-modal').fadeOut(200);
+            $('#add-program-form')[0].reset();
+            $('#add-program-message').html('');
+        },
+        submitAddProgramForm: function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var data = $form.serializeArray();
+            data.push({ name: 'action', value: 'add_program' });
+            data.push({ name: 'nonce', value: administration_plugin.nonce });
+            $('#add-program-message').html('<span class="loading">Saving...</span>');
+            $.post(administration_plugin.ajax_url, data, function(response) {
+                if (response.success) {
+                    $('#add-program-message').html('<span class="success-message">Program added successfully!</span>');
+                    // Refresh the programs list widget
+                    Dashboard.refreshProgramsList();
+                    setTimeout(function() {
+                        $('#add-program-modal').fadeOut(200);
+                        $('#add-program-form')[0].reset();
+                        $('#add-program-message').html('');
+                    }, 1200);
+                } else {
+                    $('#add-program-message').html('<span class="error-message">' + (response.data || 'Error saving program.') + '</span>');
+                }
+            });
+        },
+        refreshProgramsList: function() {
+            // Reload the programs list widget via AJAX
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_programs_overview',
+                    nonce: administration_plugin.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('.programs-list').html(response.data);
                     }
                 }
             });

@@ -16,6 +16,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_people_overview', array($this, 'ajax_get_people_overview'));
         add_action('wp_ajax_get_volunteer_ops_overview', array($this, 'ajax_get_volunteer_ops_overview'));
         add_action('wp_ajax_get_hr_overview', array($this, 'ajax_get_hr_overview'));
+        add_action('wp_ajax_add_program', array($this, 'ajax_add_program'));
     }
 
     /**
@@ -149,5 +150,37 @@ class Administration_Plugin_Public {
         include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/widgets/hr-list.php';
         $content = ob_get_clean();
         wp_send_json_success($content);
+    }
+
+    /**
+     * AJAX handler to add a new program
+     */
+    public function ajax_add_program() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_programs';
+        $name = isset($_POST['program_name']) ? sanitize_text_field($_POST['program_name']) : '';
+        $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+        $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
+        $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
+        $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
+        if (!$name) {
+            wp_send_json_error('Program name is required.');
+        }
+        $result = $wpdb->insert($table, array(
+            'ProgramName' => $name,
+            'Description' => $description,
+            'StartDate' => $start_date,
+            'EndDate' => $end_date,
+            'Status' => $status
+        ));
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to add program.');
+        }
     }
 } 

@@ -7,50 +7,8 @@
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     
     <div class="administration-volunteer-ops">
-        <div class="volunteer-ops-header">
-            <button class="button button-primary" id="add-volunteer">Add New Volunteer</button>
-            <button class="button" id="manage-tasks">Manage Tasks</button>
-            <button class="button" id="manage-shifts">Manage Shifts</button>
-        </div>
-
-        <div class="volunteer-ops-content">
-            <div class="volunteers-list">
-                <h2>Volunteers</h2>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Skills</th>
-                            <th>Availability</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Volunteers will be loaded here via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="shifts-list">
-                <h2>Upcoming Shifts</h2>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Program</th>
-                            <th>Volunteer</th>
-                            <th>Tasks</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Shifts will be loaded here via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
+        <div class="notice notice-info">
+            <p><?php _e('Admin settings page', 'administration-plugin'); ?></p>
         </div>
     </div>
 </div>

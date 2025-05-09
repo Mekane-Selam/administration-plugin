@@ -7,51 +7,8 @@
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     
     <div class="administration-hr">
-        <div class="hr-header">
-            <button class="button button-primary" id="add-job">Post New Job</button>
-            <button class="button" id="manage-applications">Manage Applications</button>
-            <button class="button" id="manage-interviews">Manage Interviews</button>
-        </div>
-
-        <div class="hr-content">
-            <div class="jobs-list">
-                <h2>Job Postings</h2>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Department</th>
-                            <th>Location</th>
-                            <th>Type</th>
-                            <th>Status</th>
-                            <th>Posted Date</th>
-                            <th>Closing Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Jobs will be loaded here via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="applications-list">
-                <h2>Recent Applications</h2>
-                <table class="wp-list-table widefat fixed striped">
-                    <thead>
-                        <tr>
-                            <th>Applicant</th>
-                            <th>Position</th>
-                            <th>Status</th>
-                            <th>Submission Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Applications will be loaded here via JavaScript -->
-                    </tbody>
-                </table>
-            </div>
+        <div class="notice notice-info">
+            <p><?php _e('Admin settings page', 'administration-plugin'); ?></p>
         </div>
     </div>
 </div>

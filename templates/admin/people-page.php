@@ -7,29 +7,8 @@
     <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
     
     <div class="administration-people">
-        <div class="people-header">
-            <button class="button button-primary" id="add-person">Add New Person</button>
-            <div class="search-box">
-                <input type="search" id="person-search" placeholder="Search people...">
-            </div>
-        </div>
-
-        <div class="people-list">
-            <table class="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Roles</th>
-                        <th>Programs</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- People will be loaded here via JavaScript -->
-                </tbody>
-            </table>
+        <div class="notice notice-info">
+            <p><?php _e('Admin settings page', 'administration-plugin'); ?></p>
         </div>
     </div>
 </div>

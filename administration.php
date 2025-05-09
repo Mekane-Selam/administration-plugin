@@ -22,12 +22,14 @@ define('ADMINISTRATION_PLUGIN_VERSION', '1.0.0');
 define('ADMINISTRATION_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('ADMINISTRATION_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-// Autoloader
+// Load required files
 require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-autoloader.php';
-Administration_Plugin_Autoloader::register();
-
-// Load the main plugin class
+require_once ADMINISTRATION_PLUGIN_PATH . 'includes/activator/class-administration-plugin-activator.php';
+require_once ADMINISTRATION_PLUGIN_PATH . 'includes/activator/class-administration-plugin-deactivator.php';
 require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-administration-plugin.php';
+
+// Register autoloader
+Administration_Plugin_Autoloader::register();
 
 // Activation/Deactivation hooks
 register_activation_hook(__FILE__, array('Administration_Plugin_Activator', 'activate'));

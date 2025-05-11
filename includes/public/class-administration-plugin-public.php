@@ -17,6 +17,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_volunteer_ops_overview', array($this, 'ajax_get_volunteer_ops_overview'));
         add_action('wp_ajax_get_hr_overview', array($this, 'ajax_get_hr_overview'));
         add_action('wp_ajax_add_program', array($this, 'ajax_add_program'));
+        add_action('wp_ajax_get_program_details', array($this, 'ajax_get_program_details'));
     }
 
     /**
@@ -183,5 +184,37 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to add program.');
         }
+    }
+
+    /**
+     * AJAX handler to fetch program details for the modal overlay
+     */
+    public function ajax_get_program_details() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_programs';
+        $program_id = isset($_POST['program_id']) ? intval($_POST['program_id']) : 0;
+        if (!$program_id) {
+            wp_send_json_error('Invalid program ID.');
+        }
+        $program = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE ProgramID = %d", $program_id));
+        if (!$program) {
+            wp_send_json_error('Program not found.');
+        }
+        ob_start();
+        ?>
+        <h3><?php echo esc_html($program->ProgramName); ?></h3>
+        <p><strong>Type:</strong> <?php echo esc_html($program->ProgramType); ?></p>
+        <p><strong>Description:</strong> <?php echo esc_html($program->ProgramDescription); ?></p>
+        <p><strong>Start Date:</strong> <?php echo esc_html($program->StartDate); ?></p>
+        <p><strong>End Date:</strong> <?php echo esc_html($program->EndDate); ?></p>
+        <p><strong>Status:</strong> <?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
+        <button class="edit-button" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">Edit Program</button>
+        <?php
+        $html = ob_get_clean();
+        wp_send_json_success($html);
     }
 } 

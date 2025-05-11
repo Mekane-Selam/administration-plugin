@@ -292,4 +292,89 @@ body.administration-dashboard-public {
 }
 .close:hover {
     color: #d63638;
+}
+
+/* Programs Grid and Cards */
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.program-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.program-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.program-card h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.program-type {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 5px 0;
+}
+
+.program-dates {
+    color: #888;
+    font-size: 0.85rem;
+    margin: 5px 0;
+}
+
+.program-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    background: #e0e0e0;
+    color: #333;
+}
+
+/* Program Details Modal */
+#program-details-modal .modal-content {
+    max-width: 600px;
+    padding: 30px;
+}
+
+#program-details-content {
+    margin-top: 20px;
+}
+
+#program-details-content h3 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #333;
+}
+
+#program-details-content p {
+    margin: 10px 0;
+    color: #666;
+}
+
+#program-details-content .edit-button {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background: #0073aa;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+#program-details-content .edit-button:hover {
+    background: #005177;
 } 

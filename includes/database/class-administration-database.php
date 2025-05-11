@@ -152,6 +152,7 @@ class Administration_Database {
         $sql[] = "CREATE TABLE IF NOT EXISTS $programs_table (
             ProgramID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             ProgramName VARCHAR(100) NOT NULL,
+            ProgramType VARCHAR(50) NOT NULL,
             ProgramDescription TEXT,
             ActiveFlag TINYINT(1) DEFAULT 1,
             StartDate DATE,

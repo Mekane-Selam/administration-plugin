@@ -11,29 +11,54 @@ $programs = administration_plugin_get_programs();
 ?>
 <div class="widget-list programs-list">
     <?php if ($programs && count($programs) > 0): ?>
-        <table class="wp-list-table widefat fixed striped">
-            <thead>
-                <tr>
-                    <th>Program Name</th>
-                    <th>Description</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($programs as $program): ?>
-                    <tr>
-                        <td><?php echo esc_html($program->ProgramName); ?></td>
-                        <td><?php echo esc_html($program->ProgramDescription); ?></td>
-                        <td><?php echo esc_html($program->StartDate); ?></td>
-                        <td><?php echo esc_html($program->EndDate); ?></td>
-                        <td><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="programs-grid">
+            <?php foreach ($programs as $program): ?>
+                <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">
+                    <h3><?php echo esc_html($program->ProgramName); ?></h3>
+                    <p class="program-type"><?php echo esc_html($program->ProgramType); ?></p>
+                    <p class="program-dates"><?php echo esc_html($program->StartDate); ?> - <?php echo esc_html($program->EndDate); ?></p>
+                    <p class="program-status"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
     <?php else: ?>
         <p>No programs found.</p>
     <?php endif; ?>
-</div> 
+</div>
+
+<!-- Program Details Modal -->
+<div id="program-details-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Program Details</h2>
+        <div id="program-details-content"></div>
+    </div>
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+    $('.program-card').on('click', function() {
+        var programId = $(this).data('program-id');
+        // AJAX call to fetch program details
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'get_program_details',
+                program_id: programId,
+                nonce: '<?php echo wp_create_nonce("administration_plugin_nonce"); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#program-details-content').html(response.data);
+                    $('#program-details-modal').addClass('show');
+                }
+            }
+        });
+    });
+
+    $('.close').on('click', function() {
+        $('#program-details-modal').removeClass('show');
+    });
+});
+</script> 

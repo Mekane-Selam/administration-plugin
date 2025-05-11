@@ -1,47 +1,64 @@
-<div class="dashboard-section programs-content">
-    <div class="programs-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
-        <h2>Programs</h2>
-        <button class="button button-primary" id="add-program-btn">Add Program</button>
-    </div>
-    <div id="programs-list-widget">
-        <?php include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/widgets/programs-list.php'; ?>
-    </div>
-
-    <!-- Add Program Modal -->
-    <div id="add-program-modal" class="modal" style="display:none;">
-        <div class="modal-content">
-            <span class="close" id="close-add-program-modal">&times;</span>
-            <h2>Add Program</h2>
-            <form id="add-program-form">
-                <div class="form-field">
-                    <label for="program-name">Program Name</label>
-                    <input type="text" id="program-name" name="program_name" required>
+<?php
+// Fetch programs from the database
+if (!function_exists('administration_plugin_get_programs')) {
+    function administration_plugin_get_programs() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_programs';
+        return $wpdb->get_results("SELECT * FROM $table ORDER BY ProgramID DESC");
+    }
+}
+$programs = administration_plugin_get_programs();
+?>
+<div class="programs-content">
+    <?php if ($programs && count($programs) > 0): ?>
+        <div class="programs-grid">
+            <?php foreach ($programs as $program): ?>
+                <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">
+                    <h3><?php echo esc_html($program->ProgramName); ?></h3>
+                    <p class="program-type"><?php echo esc_html($program->ProgramType); ?></p>
+                    <p class="program-dates"><?php echo esc_html($program->StartDate); ?> - <?php echo esc_html($program->EndDate); ?></p>
+                    <p class="program-status"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
                 </div>
-                <div class="form-field">
-                    <label for="program-description">Description</label>
-                    <textarea id="program-description" name="description"></textarea>
-                </div>
-                <div class="form-field">
-                    <label for="program-start-date">Start Date</label>
-                    <input type="date" id="program-start-date" name="start_date">
-                </div>
-                <div class="form-field">
-                    <label for="program-end-date">End Date</label>
-                    <input type="date" id="program-end-date" name="end_date">
-                </div>
-                <div class="form-field">
-                    <label for="program-status">Status</label>
-                    <select id="program-status" name="status">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="button button-primary">Save Program</button>
-                    <button type="button" class="button" id="cancel-add-program">Cancel</button>
-                </div>
-            </form>
-            <div id="add-program-message"></div>
+            <?php endforeach; ?>
         </div>
+    <?php else: ?>
+        <p>No programs found.</p>
+    <?php endif; ?>
+</div>
+
+<!-- Program Details Modal -->
+<div id="program-details-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Program Details</h2>
+        <div id="program-details-content"></div>
     </div>
-</div> 
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+    $('.program-card').on('click', function() {
+        var programId = $(this).data('program-id');
+        // AJAX call to fetch program details
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'get_program_details',
+                program_id: programId,
+                nonce: '<?php echo wp_create_nonce("administration_plugin_nonce"); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#program-details-content').html(response.data);
+                    $('#program-details-modal').addClass('show');
+                }
+            }
+        });
+    });
+
+    $('.close').on('click', function() {
+        $('#program-details-modal').removeClass('show');
+    });
+});
+</script> 

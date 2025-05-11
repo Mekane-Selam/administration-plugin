@@ -18,6 +18,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_hr_overview', array($this, 'ajax_get_hr_overview'));
         add_action('wp_ajax_add_program', array($this, 'ajax_add_program'));
         add_action('wp_ajax_get_program_details', array($this, 'ajax_get_program_details'));
+        add_action('wp_ajax_edit_program', array($this, 'ajax_edit_program'));
     }
 
     /**
@@ -216,5 +217,45 @@ class Administration_Plugin_Public {
         <?php
         $html = ob_get_clean();
         wp_send_json_success($html);
+    }
+
+    /**
+     * AJAX handler to edit a program
+     */
+    public function ajax_edit_program() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_programs';
+        $program_id = isset($_POST['program_id']) ? intval($_POST['program_id']) : 0;
+        $name = isset($_POST['program_name']) ? sanitize_text_field($_POST['program_name']) : '';
+        $type = isset($_POST['program_type']) ? sanitize_text_field($_POST['program_type']) : '';
+        $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+        $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
+        $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
+        $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
+        if (!$program_id || !$name) {
+            wp_send_json_error('Missing required fields.');
+        }
+        $active_flag = ($status === 'active') ? 1 : 0;
+        $result = $wpdb->update(
+            $table,
+            array(
+                'ProgramName' => $name,
+                'ProgramType' => $type,
+                'ProgramDescription' => $description,
+                'StartDate' => $start_date,
+                'EndDate' => $end_date,
+                'ActiveFlag' => $active_flag
+            ),
+            array('ProgramID' => $program_id)
+        );
+        if ($result !== false) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update program.');
+        }
     }
 } 

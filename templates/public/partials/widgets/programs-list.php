@@ -25,10 +25,10 @@ $programs = administration_plugin_get_programs();
                 <?php foreach ($programs as $program): ?>
                     <tr>
                         <td><?php echo esc_html($program->ProgramName); ?></td>
-                        <td><?php echo esc_html($program->Description); ?></td>
+                        <td><?php echo esc_html($program->ProgramDescription); ?></td>
                         <td><?php echo esc_html($program->StartDate); ?></td>
                         <td><?php echo esc_html($program->EndDate); ?></td>
-                        <td><?php echo esc_html(ucfirst($program->Status)); ?></td>
+                        <td><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

@@ -170,12 +170,13 @@ class Administration_Plugin_Public {
         if (!$name) {
             wp_send_json_error('Program name is required.');
         }
+        $active_flag = ($status === 'active') ? 1 : 0;
         $result = $wpdb->insert($table, array(
             'ProgramName' => $name,
-            'Description' => $description,
+            'ProgramDescription' => $description,
+            'ActiveFlag' => $active_flag,
             'StartDate' => $start_date,
-            'EndDate' => $end_date,
-            'Status' => $status
+            'EndDate' => $end_date
         ));
         if ($result) {
             wp_send_json_success();

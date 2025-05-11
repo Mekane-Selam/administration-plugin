@@ -138,6 +138,82 @@
                 $(document).off('click', '#program-details-modal .close').on('click', '#program-details-modal .close', function() {
                     $('#program-details-modal').removeClass('show');
                 });
+                // Edit program button handler
+                $(document).off('click', '#program-details-content .edit-button').on('click', '#program-details-content .edit-button', function() {
+                    var $btn = $(this);
+                    var programId = $btn.data('program-id');
+                    // Get current program details from the modal
+                    var $content = $('#program-details-content');
+                    var name = $content.find('h3').text();
+                    var type = $content.find('p:contains("Type:")').text().replace('Type:', '').trim();
+                    var description = $content.find('p:contains("Description:")').text().replace('Description:', '').trim();
+                    var startDate = $content.find('p:contains("Start Date:")').text().replace('Start Date:', '').trim();
+                    var endDate = $content.find('p:contains("End Date:")').text().replace('End Date:', '').trim();
+                    var status = $content.find('p:contains("Status:")').text().replace('Status:', '').trim().toLowerCase();
+                    // Show edit form
+                    var formHtml = `
+                        <form id="edit-program-form">
+                            <div class="form-field">
+                                <label for="edit-program-name">Program Name</label>
+                                <input type="text" id="edit-program-name" name="program_name" value="${name}" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="edit-program-type">Program Type</label>
+                                <input type="text" id="edit-program-type" name="program_type" value="${type}">
+                            </div>
+                            <div class="form-field">
+                                <label for="edit-program-description">Description</label>
+                                <textarea id="edit-program-description" name="description">${description}</textarea>
+                            </div>
+                            <div class="form-field">
+                                <label for="edit-program-start-date">Start Date</label>
+                                <input type="date" id="edit-program-start-date" name="start_date" value="${startDate}">
+                            </div>
+                            <div class="form-field">
+                                <label for="edit-program-end-date">End Date</label>
+                                <input type="date" id="edit-program-end-date" name="end_date" value="${endDate}">
+                            </div>
+                            <div class="form-field">
+                                <label for="edit-program-status">Status</label>
+                                <select id="edit-program-status" name="status">
+                                    <option value="active" ${status === 'active' ? 'selected' : ''}>Active</option>
+                                    <option value="inactive" ${status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="button button-primary">Save Changes</button>
+                                <button type="button" class="button" id="cancel-edit-program">Cancel</button>
+                            </div>
+                        </form>
+                        <div id="edit-program-message"></div>
+                    `;
+                    $content.html(formHtml);
+                });
+                // Cancel edit handler
+                $(document).off('click', '#cancel-edit-program').on('click', '#cancel-edit-program', function() {
+                    $('#program-details-modal').removeClass('show');
+                });
+                // Submit edit form handler
+                $(document).off('submit', '#edit-program-form').on('submit', '#edit-program-form', function(e) {
+                    e.preventDefault();
+                    var $form = $(this);
+                    var data = $form.serializeArray();
+                    data.push({ name: 'action', value: 'edit_program' });
+                    data.push({ name: 'nonce', value: administration_plugin.nonce });
+                    data.push({ name: 'program_id', value: $('.edit-button').data('program-id') });
+                    $('#edit-program-message').html('<span class="loading">Saving...</span>');
+                    $.post(administration_plugin.ajax_url, data, function(response) {
+                        if (response.success) {
+                            $('#edit-program-message').html('<span class="success-message">Program updated successfully!</span>');
+                            Dashboard.refreshProgramsList();
+                            setTimeout(function() {
+                                $('#program-details-modal').removeClass('show');
+                            }, 1200);
+                        } else {
+                            $('#edit-program-message').html('<span class="error-message">' + (response.data || 'Error updating program.') + '</span>');
+                        }
+                    });
+                });
             }
         },
 

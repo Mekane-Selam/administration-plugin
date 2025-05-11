@@ -33,32 +33,4 @@ $programs = administration_plugin_get_programs();
         <h2>Program Details</h2>
         <div id="program-details-content"></div>
     </div>
-</div>
-
-<script>
-jQuery(document).ready(function($) {
-    $('.program-card').on('click', function() {
-        var programId = $(this).data('program-id');
-        // AJAX call to fetch program details
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'get_program_details',
-                program_id: programId,
-                nonce: '<?php echo wp_create_nonce("administration_plugin_nonce"); ?>'
-            },
-            success: function(response) {
-                if (response.success) {
-                    $('#program-details-content').html(response.data);
-                    $('#program-details-modal').addClass('show');
-                }
-            }
-        });
-    });
-
-    $('.close').on('click', function() {
-        $('#program-details-modal').removeClass('show');
-    });
-});
-</script> 
+</div> 

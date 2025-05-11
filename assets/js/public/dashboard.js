@@ -115,6 +115,29 @@
             if ($widget.length) {
                 // Load programs data
                 this.loadProgramsData();
+                // Set up click handler for program cards after AJAX load
+                $(document).off('click', '.program-card').on('click', '.program-card', function() {
+                    var programId = $(this).data('program-id');
+                    $.ajax({
+                        url: administration_plugin.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'get_program_details',
+                            program_id: programId,
+                            nonce: administration_plugin.nonce
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $('#program-details-content').html(response.data);
+                                $('#program-details-modal').addClass('show');
+                            }
+                        }
+                    });
+                });
+                // Close modal handler
+                $(document).off('click', '#program-details-modal .close').on('click', '#program-details-modal .close', function() {
+                    $('#program-details-modal').removeClass('show');
+                });
             }
         },
 

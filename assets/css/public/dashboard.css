@@ -479,4 +479,67 @@ body.administration-dashboard-public {
 
 #program-details-content .edit-button:hover {
     background: #005177;
+}
+
+/* Programs Content Main Layout */
+.programs-content-main {
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 0 0 0;
+}
+.programs-main-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: #1d2327;
+}
+.programs-content-columns {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+}
+.programs-content-left {
+    flex: 0 0 95%;
+    max-width: 95%;
+}
+.programs-content-right {
+    flex: 0 0 5%;
+    max-width: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding-top: 40px;
+}
+.programs-list-header {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+.programs-list-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #1d2327;
+    font-weight: 600;
+}
+.program-filters-horizontal {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: flex-end;
+}
+@media (max-width: 900px) {
+    .programs-content-columns {
+        flex-direction: column;
+    }
+    .programs-content-left, .programs-content-right {
+        max-width: 100%;
+        flex: 1 1 100%;
+    }
+    .programs-content-right {
+        align-items: flex-start;
+        padding-top: 0;
+        margin-bottom: 20px;
+    }
 } 

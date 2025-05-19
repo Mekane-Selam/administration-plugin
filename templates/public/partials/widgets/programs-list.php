@@ -9,28 +9,24 @@ if (!function_exists('administration_plugin_get_programs')) {
 }
 $programs = administration_plugin_get_programs();
 ?>
-<div class="widget-list programs-list">
-    <div class="widget-header">
-        <h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
-        <a href="#" class="view-all" data-page="programs">
-            <span class="dashicons dashicons-arrow-right-alt2"></span>
-        </a>
+<h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
+<a href="#" class="view-all" data-page="programs">
+    <span class="dashicons dashicons-arrow-right-alt2"></span>
+</a>
+<?php if ($programs && count($programs) > 0): ?>
+    <div class="programs-grid">
+        <?php foreach ($programs as $program): ?>
+            <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">
+                <h3><?php echo esc_html($program->ProgramName); ?></h3>
+                <p class="program-type"><?php echo esc_html($program->ProgramType); ?></p>
+                <p class="program-dates"><?php echo esc_html($program->StartDate); ?> - <?php echo esc_html($program->EndDate); ?></p>
+                <p class="program-status"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
+            </div>
+        <?php endforeach; ?>
     </div>
-    <?php if ($programs && count($programs) > 0): ?>
-        <div class="programs-grid">
-            <?php foreach ($programs as $program): ?>
-                <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">
-                    <h3><?php echo esc_html($program->ProgramName); ?></h3>
-                    <p class="program-type"><?php echo esc_html($program->ProgramType); ?></p>
-                    <p class="program-dates"><?php echo esc_html($program->StartDate); ?> - <?php echo esc_html($program->EndDate); ?></p>
-                    <p class="program-status"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
-                </div>
-            <?php endforeach; ?>
-        </div>
-    <?php else: ?>
-        <p>No programs found.</p>
-    <?php endif; ?>
-</div>
+<?php else: ?>
+    <p>No programs found.</p>
+<?php endif; ?>
 
 <!-- Program Details Modal -->
 <div id="program-details-modal" class="modal">

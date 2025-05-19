@@ -501,6 +501,7 @@ body.administration-dashboard-public {
 .programs-content-left {
     flex: 0 0 95%;
     max-width: 95%;
+    padding-right: 32px;
 }
 .programs-content-right {
     flex: 0 0 5%;
@@ -528,6 +529,7 @@ body.administration-dashboard-public {
     flex-direction: row;
     gap: 24px;
     align-items: flex-end;
+    flex-wrap: nowrap;
 }
 @media (max-width: 900px) {
     .programs-content-columns {
@@ -542,4 +544,33 @@ body.administration-dashboard-public {
         padding-top: 0;
         margin-bottom: 20px;
     }
+}
+
+/* Programs Overview Header */
+.programs-overview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.programs-overview-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #1d2327;
+    font-weight: 600;
+}
+
+.programs-content-left {
+    flex: 0 0 95%;
+    max-width: 95%;
+    padding-right: 32px;
+}
+
+.program-filters-horizontal {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: flex-end;
+    flex-wrap: nowrap;
 } 

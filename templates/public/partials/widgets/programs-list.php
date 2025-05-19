@@ -9,10 +9,12 @@ if (!function_exists('administration_plugin_get_programs')) {
 }
 $programs = administration_plugin_get_programs();
 ?>
-<h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
-<a href="#" class="view-all" data-page="programs">
-    <span class="dashicons dashicons-arrow-right-alt2"></span>
-</a>
+<div class="programs-overview-header">
+    <h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
+    <a href="#" class="view-all" data-page="programs">
+        <span class="dashicons dashicons-arrow-right-alt2"></span>
+    </a>
+</div>
 <?php if ($programs && count($programs) > 0): ?>
     <div class="programs-grid">
         <?php foreach ($programs as $program): ?>

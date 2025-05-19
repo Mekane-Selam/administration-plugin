@@ -389,4 +389,33 @@ body.administration-dashboard-public {
 
 #program-details-content .edit-button:hover {
     background: #005177;
+}
+
+/* Programs Header */
+.programs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.programs-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #1d2327;
+}
+
+#add-program-btn {
+    padding: 8px 16px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+#add-program-btn:hover {
+    background: #135e96;
 } 

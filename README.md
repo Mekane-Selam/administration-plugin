@@ -1,10 +1,9 @@
 # Administration Plugin
 
-WordPress plugin for managing program administration and user synchronization with Ultimate Member.
+WordPress plugin for managing program administration.
 
 ## Description
 This plugin provides functionality for:
-- User synchronization with Ultimate Member
 - Program management
 - Role management
 - Check-in system
@@ -16,14 +15,12 @@ This plugin provides functionality for:
 
 ## Requirements
 - WordPress 5.0 or higher
-- Ultimate Member plugin
 - PHP 7.4 or higher
 
 ## Changelog
 ### 1.0.0
 - Initial release
 - Basic functionality
-- User synchronization
 - Program management
 
 1. Directory Structure
@@ -37,7 +34,7 @@ administration/
 │   ├── api/                          # REST API endpoints
 │   ├── database/                     # DB schema, migrations, and data access
 │   ├── public/                       # Public-facing shortcodes, endpoints, and logic
-│   ├── sync/                         # User sync logic (e.g., Ultimate Member integration)
+│   ├── sync/                         # User sync logic
 │   └── ajax/                         # AJAX handlers
 │
 ├── assets/

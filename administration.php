@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Administration Plugin
  * Plugin URI: https://mekaneselam.org
- * Description: WordPress plugin for managing program administration and user synchronization with Ultimate Member.
+ * Description: WordPress plugin for managing program administration.
  * Version: 1.0.0
  * Author: Mekane Selam
  * Author URI: https://mekaneselam.org

@@ -7,11 +7,11 @@
     // Dashboard namespace
     const Dashboard = {
         init: function() {
-            this.bindEvents();
-            this.loadInitialContent();
+            this.initEventHandlers();
+            this.loadDashboardContent();
         },
 
-        bindEvents: function() {
+        initEventHandlers: function() {
             // Menu toggle
             $('#dashboard-menu-toggle').on('click', this.toggleMenu);
             
@@ -28,6 +28,11 @@
             $(document).on('click', '#add-program-btn', this.openAddProgramModal);
             $(document).on('click', '#close-add-program-modal, #cancel-add-program', this.closeAddProgramModal);
             $(document).on('submit', '#add-program-form', this.submitAddProgramForm);
+            $('.program-card').on('click', this.showProgramDetails);
+
+            // New filter event handlers
+            $('#filter-status, #filter-type').on('change', this.applyFilters);
+            $('#filter-date-start, #filter-date-end').on('change', this.applyFilters);
         },
 
         toggleMenu: function(e) {
@@ -98,7 +103,7 @@
             });
         },
 
-        loadInitialContent: function() {
+        loadDashboardContent: function() {
             this.loadPage('main');
         },
 
@@ -349,6 +354,59 @@
                 success: function(response) {
                     if (response.success) {
                         $('.programs-list').html(response.data);
+                    }
+                }
+            });
+        },
+        applyFilters: function() {
+            const status = $('#filter-status').val();
+            const type = $('#filter-type').val();
+            const startDate = $('#filter-date-start').val();
+            const endDate = $('#filter-date-end').val();
+
+            $('.program-card').each(function() {
+                const $card = $(this);
+                const cardStatus = $card.find('.program-status').text().toLowerCase();
+                const cardType = $card.find('.program-type').text().toLowerCase();
+                const cardStartDate = $card.find('.program-dates').text().split(' - ')[0];
+                const cardEndDate = $card.find('.program-dates').text().split(' - ')[1];
+
+                let show = true;
+
+                if (status && cardStatus !== status.toLowerCase()) {
+                    show = false;
+                }
+
+                if (type && cardType !== type.toLowerCase()) {
+                    show = false;
+                }
+
+                if (startDate && cardStartDate < startDate) {
+                    show = false;
+                }
+
+                if (endDate && cardEndDate > endDate) {
+                    show = false;
+                }
+
+                $card.toggle(show);
+            });
+        },
+        showProgramDetails: function(e) {
+            e.preventDefault();
+            var programId = $(this).data('program-id');
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_program_details',
+                    program_id: programId,
+                    nonce: administration_plugin.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#program-details-content').html(response.data);
+                        $('#program-details-modal').addClass('show');
                     }
                 }
             });

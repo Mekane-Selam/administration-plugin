@@ -165,16 +165,18 @@ class Administration_Plugin_Public {
         global $wpdb;
         $table = $wpdb->prefix . 'core_programs';
         $name = isset($_POST['program_name']) ? sanitize_text_field($_POST['program_name']) : '';
+        $type = isset($_POST['program_type']) ? sanitize_text_field($_POST['program_type']) : '';
         $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
         $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
         $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
-        if (!$name) {
-            wp_send_json_error('Program name is required.');
+        if (!$name || !$type) {
+            wp_send_json_error('Program name and type are required.');
         }
         $active_flag = ($status === 'active') ? 1 : 0;
         $result = $wpdb->insert($table, array(
             'ProgramName' => $name,
+            'ProgramType' => $type,
             'ProgramDescription' => $description,
             'ActiveFlag' => $active_flag,
             'StartDate' => $start_date,

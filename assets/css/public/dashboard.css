@@ -118,25 +118,32 @@ body.administration-dashboard-public {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 24px 10px 24px;
-    background: #f7fafd;
+    padding: 0 0 15px 0;
+    margin-bottom: 15px;
     border-bottom: 1px solid #e3e7ee;
 }
 .widget-header h2 {
     margin: 0;
     font-size: 1.2rem;
     color: #1d2327;
-    font-weight: 600;
 }
 .view-all {
     color: #2271b1;
     text-decoration: none;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
     font-weight: 500;
     transition: color 0.2s;
 }
 .view-all:hover {
     color: #135e96;
+}
+.view-all .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
 }
 .widget-content {
     padding: 20px 24px 24px 24px;
@@ -294,65 +301,148 @@ body.administration-dashboard-public {
     color: #d63638;
 }
 
-/* Programs Grid and Cards */
-.programs-grid {
+/* Programs Header */
+.programs-header {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f7fafd;
+    border-radius: 8px;
+    border: 1px solid #e3e7ee;
+}
+
+.programs-header-left {
+    flex: 0 0 90%;
+}
+
+.programs-header-right {
+    flex: 0 0 10%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.programs-header h2 {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    color: #1d2327;
+}
+
+.program-filters {
+    display: flex;
+    gap: 20px;
     flex-wrap: wrap;
-    gap: 18px;
-    padding: 10px 0 0 0;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-group label {
+    font-size: 0.9rem;
+    color: #646970;
+    font-weight: 500;
+}
+
+.filter-group select,
+.filter-group input {
+    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    min-width: 150px;
+}
+
+.filter-group input[type="date"] {
+    min-width: 140px;
+}
+
+.add-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #2271b1;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.add-button:hover {
+    background: #135e96;
+}
+
+.add-button .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Programs Grid */
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 20px;
 }
 
 .program-card {
-    background: #f9fafb;
+    background: #fff;
     border: 1px solid #e3e7ee;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    padding: 16px 18px;
-    margin: 0;
-    min-width: 220px;
-    max-width: 260px;
-    flex: 1 1 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-    cursor: pointer;
+    padding: 20px;
+    transition: all 0.2s ease;
 }
 
 .program-card:hover {
-    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     border-color: #2271b1;
-    box-shadow: 0 4px 16px rgba(34,113,177,0.10);
 }
 
 .program-card h3 {
-    margin: 0 0 6px 0;
-    font-size: 1.08rem;
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
     color: #1d2327;
-    font-weight: 600;
 }
 
 .program-type {
     color: #2271b1;
-    font-size: 0.92rem;
-    margin: 2px 0 6px 0;
+    font-size: 0.9rem;
+    margin: 0 0 8px 0;
     font-weight: 500;
 }
 
 .program-dates {
-    color: #888;
-    font-size: 0.88rem;
-    margin: 0 0 6px 0;
+    color: #646970;
+    font-size: 0.9rem;
+    margin: 0 0 8px 0;
 }
 
 .program-status {
     display: inline-block;
-    padding: 3px 10px;
-    border-radius: 4px;
-    font-size: 0.82rem;
-    background: #e0e0e0;
-    color: #333;
-    margin-top: 4px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    background: #f0f0f1;
+    color: #646970;
+}
+
+.program-status:contains('Active') {
+    background: #edfaef;
+    color: #00a32a;
+}
+
+.program-status:contains('Inactive') {
+    background: #fcf0f1;
+    color: #d63638;
 }
 
 /* Program Details Modal */
@@ -389,33 +479,4 @@ body.administration-dashboard-public {
 
 #program-details-content .edit-button:hover {
     background: #005177;
-}
-
-/* Programs Header */
-.programs-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.programs-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #1d2327;
-}
-
-#add-program-btn {
-    padding: 8px 16px;
-    background: #2271b1;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
-}
-
-#add-program-btn:hover {
-    background: #135e96;
 } 

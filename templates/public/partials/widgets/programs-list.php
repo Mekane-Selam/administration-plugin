@@ -4,12 +4,18 @@ if (!function_exists('administration_plugin_get_programs')) {
     function administration_plugin_get_programs() {
         global $wpdb;
         $table = $wpdb->prefix . 'core_programs';
-        return $wpdb->get_results("SELECT * FROM $table ORDER BY ProgramID DESC");
+        return $wpdb->get_results("SELECT * FROM $table ORDER BY ProgramID DESC LIMIT 5");
     }
 }
 $programs = administration_plugin_get_programs();
 ?>
 <div class="widget-list programs-list">
+    <div class="widget-header">
+        <h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
+        <a href="#" class="view-all" data-page="programs">
+            <span class="dashicons dashicons-arrow-right-alt2"></span>
+        </a>
+    </div>
     <?php if ($programs && count($programs) > 0): ?>
         <div class="programs-grid">
             <?php foreach ($programs as $program): ?>

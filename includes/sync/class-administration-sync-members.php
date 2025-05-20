@@ -3,13 +3,19 @@
  * Handles syncing users (members) with the core_person table.
  */
 class Administration_Sync_Members {
+    public function __construct() {
+        error_log('Administration_Sync_Members __construct called');
+    }
     public function init() {
         // Hook into Ultimate Member user registration
         add_action('um_registration_complete', [$this, 'sync_new_user'], 10, 2);
+        error_log('Hook um_registration_complete added');
         // Hook into Ultimate Member profile update
         add_action('um_user_profile_updated', [$this, 'sync_user_update'], 10, 1);
+        error_log('Hook um_user_profile_updated added');
         // Sync existing users
         add_action('admin_init', [$this, 'maybe_sync_existing_users']);
+        error_log('Hook admin_init added');
         error_log('Administration Sync Members initialized');
     }
 

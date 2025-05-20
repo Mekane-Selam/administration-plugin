@@ -27,6 +27,10 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_get_people_list', array($this, 'ajax_get_people_list'));
         add_action('wp_ajax_add_person', array($this, 'ajax_add_person'));
         add_action('wp_ajax_nopriv_add_person', array($this, 'ajax_add_person'));
+        add_action('wp_ajax_get_person', array($this, 'ajax_get_person'));
+        add_action('wp_ajax_nopriv_get_person', array($this, 'ajax_get_person'));
+        add_action('wp_ajax_edit_person', array($this, 'ajax_edit_person'));
+        add_action('wp_ajax_nopriv_edit_person', array($this, 'ajax_edit_person'));
     }
 
     /**
@@ -313,6 +317,14 @@ class Administration_Plugin_Public {
         global $wpdb;
         $table = $wpdb->prefix . 'core_person';
         $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+        $sort = isset($_POST['sort']) ? sanitize_text_field($_POST['sort']) : '';
+        $allowed_sorts = ['first_name', 'last_name', 'email'];
+        $order_by = 'LastName, FirstName';
+        if (in_array($sort, $allowed_sorts)) {
+            if ($sort === 'first_name') $order_by = 'FirstName, LastName';
+            if ($sort === 'last_name') $order_by = 'LastName, FirstName';
+            if ($sort === 'email') $order_by = 'Email, LastName';
+        }
         $where = '';
         $params = array();
         if ($search) {
@@ -320,7 +332,7 @@ class Administration_Plugin_Public {
             $like = '%' . $wpdb->esc_like($search) . '%';
             $params = array($like, $like, $like);
         }
-        $sql = "SELECT PersonID, FirstName, LastName, Email FROM $table $where ORDER BY LastName, FirstName";
+        $sql = "SELECT PersonID, FirstName, LastName, Email FROM $table $where ORDER BY $order_by";
         $people = $params ? $wpdb->get_results($wpdb->prepare($sql, ...$params)) : $wpdb->get_results($sql);
         ob_start();
         if ($people && count($people) > 0) {
@@ -367,6 +379,63 @@ class Administration_Plugin_Public {
             wp_send_json_success();
         } else {
             wp_send_json_error('Failed to add person.');
+        }
+    }
+
+    /**
+     * AJAX handler to get a person's data
+     */
+    public function ajax_get_person() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+        if (!$person_id) {
+            wp_send_json_error('Missing person ID.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        $person = $wpdb->get_row($wpdb->prepare("SELECT PersonID, FirstName, LastName, Email FROM $table WHERE PersonID = %s", $person_id));
+        if (!$person) {
+            wp_send_json_error('Person not found.');
+        }
+        wp_send_json_success($person);
+    }
+
+    /**
+     * AJAX handler to edit a person's data
+     */
+    public function ajax_edit_person() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+        $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
+        $last_name = isset($_POST['last_name']) ? sanitize_text_field($_POST['last_name']) : '';
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+        if (!$person_id || !$first_name || !$last_name || !$email) {
+            wp_send_json_error('All fields are required.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        // Check for duplicate email (exclude current person)
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE Email = %s AND PersonID != %s", $email, $person_id));
+        if ($exists) {
+            wp_send_json_error('A person with this email already exists.');
+        }
+        $person_data = [
+            'PersonID' => $person_id,
+            'FirstName' => $first_name,
+            'LastName' => $last_name,
+            'Email' => $email
+        ];
+        $result = Administration_Database::save_person($person_data);
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update person.');
         }
     }
 } 

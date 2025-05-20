@@ -36,17 +36,17 @@
 
             // Sync button
             $(document).on('click', '#sync-users-btn', this.handleSyncUsersClick);
-            $(document).on('click', '#add-person-btn', this.handleAddPersonClick);
+            $(document).on('click', '#add-person-btn, #add-person-content-btn', this.handleAddPersonClick);
 
             // Sync/Add/Sort for Persons-Content section
-            $(document).on('click', '#sync-users-content-btn', this.handleSyncUsersClick);
-            $(document).on('click', '#add-person-content-btn', this.handleAddPersonClick);
             $(document).on('click', '#sort-people-btn', function(e) {
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
             $(document).on('click', '#close-add-person-modal, #cancel-add-person', this.closeAddPersonModal);
             $(document).on('submit', '#add-person-form', this.submitAddPersonForm);
+            $(document).on('click', '.person-row', this.handleEditPersonClick);
+            $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
         },
 
         toggleMenu: function(e) {
@@ -479,9 +479,42 @@
             $('#add-person-modal').addClass('show');
         },
 
+        handleEditPersonClick: function(e) {
+            e.preventDefault();
+            var personId = $(this).data('person-id');
+            if (!personId) return;
+            // Fetch person data
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_person',
+                    nonce: administration_plugin.nonce,
+                    person_id: personId
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        $('#add-person-modal').addClass('show').attr('data-edit', '1').attr('data-person-id', personId);
+                        $('#add-person-modal h2').text('Edit Person');
+                        $('#add-person-form .button-primary').text('Save Changes');
+                        $('#person-first-name').val(response.data.FirstName);
+                        $('#person-last-name').val(response.data.LastName);
+                        $('#person-email').val(response.data.Email);
+                    } else {
+                        alert(response.data || 'Failed to load person.');
+                    }
+                },
+                error: function() {
+                    alert('Failed to load person.');
+                }
+            });
+        },
+
         closeAddPersonModal: function(e) {
             if (e) e.preventDefault();
-            $('#add-person-modal').removeClass('show');
+            $('#add-person-modal').removeClass('show').removeAttr('data-edit').removeAttr('data-person-id');
+            $('#add-person-modal h2').text('Add Person');
+            $('#add-person-form .button-primary').text('Save Person');
             $('#add-person-form')[0].reset();
             $('#add-person-message').html('');
         },
@@ -492,24 +525,32 @@
             var firstName = $('#person-first-name').val().trim();
             var lastName = $('#person-last-name').val().trim();
             var email = $('#person-email').val().trim();
+            var isEdit = $('#add-person-modal').attr('data-edit') === '1';
+            var personId = $('#add-person-modal').attr('data-person-id');
             if (!firstName || !lastName || !email) {
                 $('#add-person-message').html('<span class="error-message">All fields are required.</span>');
                 return;
             }
             $('#add-person-message').html('<span class="loading">Saving...</span>');
+            var ajaxData = {
+                nonce: administration_plugin.nonce,
+                first_name: firstName,
+                last_name: lastName,
+                email: email
+            };
+            if (isEdit) {
+                ajaxData.action = 'edit_person';
+                ajaxData.person_id = personId;
+            } else {
+                ajaxData.action = 'add_person';
+            }
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
-                data: {
-                    action: 'add_person',
-                    nonce: administration_plugin.nonce,
-                    first_name: firstName,
-                    last_name: lastName,
-                    email: email
-                },
+                data: ajaxData,
                 success: function(response) {
                     if (response.success) {
-                        $('#add-person-message').html('<span class="success-message">Person added successfully!</span>');
+                        $('#add-person-message').html('<span class="success-message">' + (isEdit ? 'Person updated!' : 'Person added successfully!') + '</span>');
                         setTimeout(function() {
                             Dashboard.closeAddPersonModal();
                             Dashboard.loadPeopleList();
@@ -524,11 +565,16 @@
             });
         },
 
-        initializePeopleContent: function() {
-            Dashboard.loadPeopleList();
-            $(document).off('input', '#people-content-filter-input').on('input', '#people-content-filter-input', Dashboard.debouncedPeopleFilter);
+        // Sort logic
+        handleSortPeopleClick: function(e) {
+            e.preventDefault();
+            var sortBy = $(this).text().toLowerCase().replace(' ', '_');
+            Dashboard.currentPeopleSort = sortBy;
+            $('.sort-dropdown').hide();
+            Dashboard.loadPeopleList($('#people-content-filter-input').val(), sortBy);
+            $('#sort-people-btn').html('Sort by <span class="dashicons dashicons-arrow-down"></span>');
         },
-        loadPeopleList: function(search) {
+        loadPeopleList: function(search, sort) {
             var $container = $('.people-list-content');
             $container.html('<div class="loading">Loading people...</div>');
             $.ajax({
@@ -537,7 +583,8 @@
                 data: {
                     action: 'get_people_list',
                     nonce: administration_plugin.nonce,
-                    search: search || ''
+                    search: search || '',
+                    sort: sort || ''
                 },
                 success: function(response) {
                     if (response.success) {
@@ -550,6 +597,11 @@
                     $container.html('<div class="error-message">Failed to load people.</div>');
                 }
             });
+        },
+
+        initializePeopleContent: function() {
+            Dashboard.loadPeopleList();
+            $(document).off('input', '#people-content-filter-input').on('input', '#people-content-filter-input', Dashboard.debouncedPeopleFilter);
         },
         debouncedPeopleFilter: function() {
             clearTimeout(Dashboard.peopleFilterTimeout);

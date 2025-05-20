@@ -38,9 +38,6 @@ class Administration_Plugin {
         
         // Load the sync class
         require_once ADMINISTRATION_PLUGIN_PATH . 'includes/sync/class-administration-sync-members.php';
-        if (class_exists('Administration_Sync_Members')) {
-            (new Administration_Sync_Members())->init();
-        }
         
         // Initialize the loader
         $this->loader = new Administration_Plugin_Loader();

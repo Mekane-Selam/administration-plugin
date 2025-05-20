@@ -389,8 +389,8 @@ body.administration-dashboard-public {
     min-width: 120px;
 }
 .filter-group-dates {
-    flex: 1 1 280px;
-    min-width: 280px;
+    flex: 1.05 1 294px;
+    min-width: 294px;
 }
 .filter-group-dates label {
     margin-bottom: 2px;
@@ -405,11 +405,13 @@ body.administration-dashboard-public {
     width: 100%;
 }
 .filter-group-dates input[type="date"] {
+    height: 40px;
+    padding: 8px 12px;
     flex: 1;
-    min-width: 130px;
+    min-width: 136px;
     max-width: none;
     font-size: 0.97rem;
-    padding: 8px 12px;
+    box-sizing: border-box;
 }
 .date-separator {
     margin: 0 4px;
@@ -768,8 +770,8 @@ body.administration-dashboard-public {
 }
 
 .filter-group-search {
-    flex: 3 1 400px;
-    min-width: 300px;
+    flex: 3.6 1 480px;
+    min-width: 360px;
     margin-right: 24px;
 }
 .filter-group-search input[type="text"] {
@@ -909,7 +911,7 @@ body.administration-dashboard-public {
     height: 40px;
     padding: 8px 12px;
     flex: 1;
-    min-width: 130px;
+    min-width: 136px;
     max-width: none;
     font-size: 0.97rem;
     box-sizing: border-box;

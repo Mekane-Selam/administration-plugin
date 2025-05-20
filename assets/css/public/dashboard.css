@@ -253,7 +253,7 @@ body.administration-dashboard-public {
     overflow-y: auto;
     width: 100%;
     max-width: 480px;
-    position: relative;
+    position: fixed;
     /* Add padding to preserve rounded corners with scrollbar */
     padding-right: 44px; /* Increased right padding to account for scrollbar */
     margin-right: -16px; /* Offset the extra padding */

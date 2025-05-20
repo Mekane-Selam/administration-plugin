@@ -486,4 +486,48 @@ class Administration_Database {
             throw new Exception('Failed to set up database tables. Please check the error log for details.');
         }
     }
+
+    /**
+     * Get a person by WordPress user ID
+     */
+    public static function get_person_by_user_id($user_id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE UserID = %d", $user_id));
+    }
+
+    /**
+     * Save a person (insert or update)
+     * $person_data: array with keys UserID, FirstName, LastName, Email, [PersonID]
+     * Returns PersonID on success, false on failure
+     */
+    public static function save_person($person_data) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        $fields = [
+            'UserID' => isset($person_data['UserID']) ? $person_data['UserID'] : null,
+            'FirstName' => isset($person_data['FirstName']) ? $person_data['FirstName'] : '',
+            'LastName' => isset($person_data['LastName']) ? $person_data['LastName'] : '',
+            'Email' => isset($person_data['Email']) ? $person_data['Email'] : '',
+        ];
+        if (!empty($person_data['PersonID'])) {
+            // Update existing
+            $result = $wpdb->update(
+                $table,
+                $fields,
+                ['PersonID' => $person_data['PersonID']]
+            );
+            return $result !== false ? $person_data['PersonID'] : false;
+        } else {
+            // Insert new, generate unique PersonID (PERSxxxxx)
+            do {
+                $unique_code = mt_rand(10000, 99999);
+                $person_id = 'PERS' . $unique_code;
+                $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE PersonID = %s", $person_id));
+            } while ($exists);
+            $fields['PersonID'] = $person_id;
+            $result = $wpdb->insert($table, $fields);
+            return $result ? $person_id : false;
+        }
+    }
 } 

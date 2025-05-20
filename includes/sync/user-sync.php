@@ -4,10 +4,10 @@
 
 error_log('user-sync.php loaded');
 
-add_action('um_after_new_user_register', 'administration_plugin_add_person_on_registration', 10, 2);
+add_action('um_registration_complete', 'administration_plugin_add_person_on_registration', 10, 2);
 
 function administration_plugin_add_person_on_registration($user_id, $args) {
-    error_log('um_after_new_user_register fired for user_id: ' . $user_id);
+    error_log('um_registration_complete fired for user_id: ' . $user_id);
     global $wpdb;
 
     // Log all user meta for debugging
@@ -59,4 +59,10 @@ function administration_plugin_add_person_on_registration($user_id, $args) {
     } else {
         error_log('Successfully inserted person: ' . $person_id);
     }
+}
+
+// Initialize the modular sync class for user/person sync
+require_once __DIR__ . '/class-administration-sync-members.php';
+if (class_exists('Administration_Sync_Members')) {
+    (new Administration_Sync_Members())->init();
 } 

@@ -36,7 +36,7 @@
 
             // Sync button
             $(document).on('click', '#sync-users-btn', this.handleSyncUsersClick);
-            $(document).on('click', '#add-person-btn, #add-person-content-btn', this.handleAddPersonClick);
+            $(document).on('click', '#add-person-btn, #add-person-content-btn', this.openAddPersonModal);
 
             // Sync/Add/Sort for Persons-Content section
             $(document).on('click', '#sort-people-btn', function(e) {
@@ -47,6 +47,11 @@
             $(document).on('submit', '#add-person-form', this.submitAddPersonForm);
             $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
+
+            // Use event delegation for Add Person modal open/close
+            $(document).off('click', '#add-person-btn, #add-person-content-btn').on('click', '#add-person-btn, #add-person-content-btn', this.openAddPersonModal);
+            $(document).off('click', '#close-add-person-modal, #cancel-add-person').on('click', '#close-add-person-modal, #cancel-add-person', this.closeAddPersonModal);
+            $(document).off('submit', '#add-person-form').on('submit', '#add-person-form', this.submitAddPersonForm);
         },
 
         toggleMenu: function(e) {
@@ -474,9 +479,14 @@
             });
         },
 
-        handleAddPersonClick: function(e) {
+        openAddPersonModal: function(e) {
             e.preventDefault();
-            $('#add-person-modal').addClass('show');
+            // Always open the modal, reset to add mode
+            $('#add-person-modal').addClass('show').removeAttr('data-edit').removeAttr('data-person-id');
+            $('#add-person-modal h2').text('Add Person');
+            $('#add-person-form .button-primary').text('Save Person');
+            $('#add-person-form')[0].reset();
+            $('#add-person-message').html('');
         },
 
         handleEditPersonClick: function(e) {

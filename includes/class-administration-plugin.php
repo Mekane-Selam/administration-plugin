@@ -19,6 +19,8 @@ class Administration_Plugin {
         $this->define_admin_hooks();
         $this->define_public_hooks();
         $this->define_api_hooks();
+        error_log('Calling define_sync_hooks');
+        $this->define_sync_hooks();
     }
 
     /**
@@ -81,6 +83,21 @@ class Administration_Plugin {
         
         // Register REST API routes
         $this->loader->add_action('rest_api_init', $api, 'register_routes');
+    }
+
+    /**
+     * Register all sync-related hooks
+     */
+    private function define_sync_hooks() {
+        error_log('define_sync_hooks called');
+        if (class_exists('Administration_Sync_Members')) {
+            error_log('Instantiating Administration_Sync_Members');
+            $sync = new Administration_Sync_Members();
+            $sync->init();
+            error_log('Administration_Sync_Members init called');
+        } else {
+            error_log('Administration_Sync_Members class does not exist');
+        }
     }
 
     /**

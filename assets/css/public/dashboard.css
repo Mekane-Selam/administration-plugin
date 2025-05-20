@@ -245,7 +245,7 @@ body.administration-dashboard-public {
 }
 .modal-content {
     background: #fff;
-    margin: auto;
+    margin: 0 auto; /* Changed from auto to 0 auto */
     border-radius: 10px;
     padding: 32px 28px 24px 28px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.18);
@@ -254,9 +254,11 @@ body.administration-dashboard-public {
     width: 100%;
     max-width: 480px;
     position: relative;
-    padding-right: 44px;
-    margin-right: -16px;
+    /* Add padding to preserve rounded corners with scrollbar */
+    padding-right: 44px; /* Increased right padding to account for scrollbar */
+    margin-right: -16px; /* Offset the extra padding */
 }
+/* Customize scrollbar for modal content */
 .modal-content::-webkit-scrollbar {
     width: 8px;
 }
@@ -276,8 +278,8 @@ body.administration-dashboard-public {
     .modal-content {
         max-width: 98vw;
         padding: 18px 6px 12px 6px;
-        padding-right: 30px;
-        margin-right: -8px;
+        padding-right: 30px; /* Adjusted for mobile */
+        margin-right: -8px; /* Adjusted for mobile */
     }
     .modal {
         padding: 12px 0;

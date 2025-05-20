@@ -27,6 +27,7 @@ require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-autoloader.php';
 require_once ADMINISTRATION_PLUGIN_PATH . 'includes/activator/class-administration-plugin-activator.php';
 require_once ADMINISTRATION_PLUGIN_PATH . 'includes/activator/class-administration-plugin-deactivator.php';
 require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-administration-plugin.php';
+require_once ADMINISTRATION_PLUGIN_PATH . 'includes/sync/user-sync.php';
 
 // Register autoloader
 Administration_Plugin_Autoloader::register();

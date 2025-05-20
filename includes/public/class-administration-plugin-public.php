@@ -46,13 +46,17 @@ class Administration_Plugin_Public {
             true
         );
 
+        // Define program types for localization
+        $program_types = array('Education', 'Health', 'Social');
+
         // Localize the script with new data for AJAX and nonce
         wp_localize_script(
             'administration-plugin-dashboard',
             'administration_plugin',
             array(
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('administration_plugin_nonce')
+                'nonce' => wp_create_nonce('administration_plugin_nonce'),
+                'program_types' => $program_types
             )
         );
     }

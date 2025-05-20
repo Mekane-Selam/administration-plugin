@@ -33,6 +33,7 @@
             // New filter event handlers
             $('#filter-status, #filter-type').on('change', this.applyFilters);
             $('#filter-date-start, #filter-date-end').on('change', this.applyFilters);
+            $('#filter-search').on('input', this.applyFilters);
         },
 
         toggleMenu: function(e) {
@@ -155,7 +156,11 @@
                     var startDate = $content.find('p:contains("Start Date:")').text().replace('Start Date:', '').trim();
                     var endDate = $content.find('p:contains("End Date:")').text().replace('End Date:', '').trim();
                     var status = $content.find('p:contains("Status:")').text().replace('Status:', '').trim().toLowerCase();
-                    // Show edit form
+                    // Show edit form with dropdown for type
+                    var typeOptions = Dashboard.programTypes.map(function(opt) {
+                        var selected = (opt.toLowerCase() === type.toLowerCase()) ? 'selected' : '';
+                        return `<option value="${opt.toLowerCase()}" ${selected}>${opt}</option>`;
+                    }).join('');
                     var formHtml = `
                         <form id="edit-program-form">
                             <div class="form-field">
@@ -164,7 +169,7 @@
                             </div>
                             <div class="form-field">
                                 <label for="edit-program-type">Program Type</label>
-                                <input type="text" id="edit-program-type" name="program_type" value="${type}">
+                                <select id="edit-program-type" name="program_type">${typeOptions}</select>
                             </div>
                             <div class="form-field">
                                 <label for="edit-program-description">Description</label>
@@ -363,32 +368,31 @@
             const type = $('#filter-type').val();
             const startDate = $('#filter-date-start').val();
             const endDate = $('#filter-date-end').val();
-
+            const search = $('#filter-search').val().toLowerCase();
             $('.program-card').each(function() {
                 const $card = $(this);
                 const cardStatus = $card.find('.program-status').text().toLowerCase();
                 const cardType = $card.find('.program-type').text().toLowerCase();
                 const cardStartDate = $card.find('.program-dates').text().split(' - ')[0];
                 const cardEndDate = $card.find('.program-dates').text().split(' - ')[1];
-
+                const cardName = $card.find('h3').text().toLowerCase();
+                const cardDesc = $card.data('description') ? $card.data('description').toLowerCase() : '';
                 let show = true;
-
                 if (status && cardStatus !== status.toLowerCase()) {
                     show = false;
                 }
-
                 if (type && cardType !== type.toLowerCase()) {
                     show = false;
                 }
-
                 if (startDate && cardStartDate < startDate) {
                     show = false;
                 }
-
                 if (endDate && cardEndDate > endDate) {
                     show = false;
                 }
-
+                if (search && !(cardName.includes(search) || cardType.includes(search) || cardDesc.includes(search))) {
+                    show = false;
+                }
                 $card.toggle(show);
             });
         },
@@ -410,7 +414,8 @@
                     }
                 }
             });
-        }
+        },
+        programTypes: (typeof administration_plugin !== 'undefined' && administration_plugin.program_types) ? administration_plugin.program_types : ['Education', 'Health', 'Social'],
     };
 
     // Initialize dashboard when document is ready

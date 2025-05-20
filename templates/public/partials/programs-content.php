@@ -8,6 +8,9 @@ if (!function_exists('administration_plugin_get_programs')) {
     }
 }
 $programs = administration_plugin_get_programs();
+
+// Define program types centrally
+$program_types = array('Education', 'Health', 'Social');
 ?>
 <h1 class="programs-main-title"><?php _e('Programs', 'administration-plugin'); ?></h1>
 <div class="programs-content-main">
@@ -17,6 +20,10 @@ $programs = administration_plugin_get_programs();
                 <h2><?php _e('Programs List', 'administration-plugin'); ?></h2>
                 <div class="programs-filters-row">
                     <div class="program-filters-horizontal">
+                        <div class="filter-group filter-group-search">
+                            <label for="filter-search"><?php _e('Search', 'administration-plugin'); ?></label>
+                            <input type="text" id="filter-search" placeholder="Search programs...">
+                        </div>
                         <div class="filter-group">
                             <label for="filter-status"><?php _e('Status', 'administration-plugin'); ?></label>
                             <select id="filter-status">
@@ -29,9 +36,9 @@ $programs = administration_plugin_get_programs();
                             <label for="filter-type"><?php _e('Type', 'administration-plugin'); ?></label>
                             <select id="filter-type">
                                 <option value=""><?php _e('All', 'administration-plugin'); ?></option>
-                                <option value="education"><?php _e('Education', 'administration-plugin'); ?></option>
-                                <option value="health"><?php _e('Health', 'administration-plugin'); ?></option>
-                                <option value="social"><?php _e('Social', 'administration-plugin'); ?></option>
+                                <?php foreach ($program_types as $type): ?>
+                                    <option value="<?php echo strtolower($type); ?>"><?php echo esc_html($type); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="filter-group filter-group-dates">
@@ -72,7 +79,7 @@ $programs = administration_plugin_get_programs();
 <!-- Add Program Modal -->
 <div id="add-program-modal" class="modal">
     <div class="modal-content">
-        <span class="close" id="close-add-program-modal">&times;</span>
+        <span class="close" id="close-add-program-modal" tabindex="0" role="button" aria-label="Close">&times;</span>
         <h2><?php _e('Add New Program', 'administration-plugin'); ?></h2>
         <form id="add-program-form">
             <div class="form-field">
@@ -82,9 +89,9 @@ $programs = administration_plugin_get_programs();
             <div class="form-field">
                 <label for="program-type"><?php _e('Program Type', 'administration-plugin'); ?></label>
                 <select id="program-type" name="program_type" required>
-                    <option value="education"><?php _e('Education', 'administration-plugin'); ?></option>
-                    <option value="health"><?php _e('Health', 'administration-plugin'); ?></option>
-                    <option value="social"><?php _e('Social', 'administration-plugin'); ?></option>
+                    <?php foreach ($program_types as $type): ?>
+                        <option value="<?php echo strtolower($type); ?>"><?php echo esc_html($type); ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="form-field">

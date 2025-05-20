@@ -12,9 +12,9 @@ $programs = administration_plugin_get_programs();
 <?php if ($programs && count($programs) > 0): ?>
     <div class="programs-grid">
         <?php foreach ($programs as $program): ?>
-            <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">
+            <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>" data-description="<?php echo esc_attr($program->ProgramDescription); ?>">
                 <h3><?php echo esc_html($program->ProgramName); ?></h3>
-                <p class="program-type"><?php echo esc_html($program->ProgramType); ?></p>
+                <p class="program-type"><?php echo esc_html(ucwords($program->ProgramType)); ?></p>
                 <p class="program-dates"><?php echo esc_html($program->StartDate); ?> - <?php echo esc_html($program->EndDate); ?></p>
                 <p class="program-status"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
             </div>

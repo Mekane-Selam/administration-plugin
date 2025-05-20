@@ -769,4 +769,126 @@ body.administration-dashboard-public {
     gap: 24px;
     align-items: flex-end;
     flex-wrap: nowrap;
+}
+
+.filter-group-search {
+    flex: 2 1 260px;
+    min-width: 180px;
+    margin-right: 24px;
+}
+.filter-group-search input[type="text"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border 0.2s;
+}
+.filter-group-search input[type="text"]:focus {
+    border-color: #2271b1;
+    outline: none;
+}
+.program-filters-horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-end;
+}
+.filter-group {
+    flex: 1 1 120px;
+    min-width: 120px;
+}
+.filter-group label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 0.97rem;
+    color: #444;
+    font-weight: 500;
+}
+.filter-group select,
+.filter-group input[type="date"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border 0.2s;
+}
+.filter-group select:focus,
+.filter-group input[type="date"]:focus {
+    border-color: #2271b1;
+    outline: none;
+}
+.programs-add-btn-container {
+    display: flex;
+    align-items: flex-end;
+    margin-left: 32px;
+}
+.add-button {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.add-button:hover {
+    background: #135e96;
+    box-shadow: 0 4px 16px rgba(34,113,177,0.13);
+}
+.modal .close {
+    cursor: pointer;
+    font-size: 2rem;
+    color: #888;
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    z-index: 10;
+    user-select: none;
+    transition: color 0.2s;
+}
+.modal .close:hover {
+    color: #2271b1;
+}
+.modal-content form .form-field {
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+}
+.modal-content form .form-field label {
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #333;
+}
+.modal-content form .form-field input,
+.modal-content form .form-field select,
+.modal-content form .form-field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border 0.2s;
+}
+.modal-content form .form-field input:focus,
+.modal-content form .form-field select:focus,
+.modal-content form .form-field textarea:focus {
+    border-color: #2271b1;
+    outline: none;
+}
+.modal-content form .form-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin-top: 8px;
 } 

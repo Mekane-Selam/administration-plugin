@@ -114,8 +114,7 @@ class Administration_Database {
             Zip VARCHAR(20),
             Birthday DATE,
             MissingInfoFlag TINYINT(1) DEFAULT 0,
-            PRIMARY KEY (PersonID),
-            CONSTRAINT fk_person_user FOREIGN KEY (UserID) REFERENCES {$wpdb->users}(ID) ON DELETE SET NULL
+            PRIMARY KEY (PersonID)
         ) $charset_collate;";
 
         // Person Relationships table
@@ -125,8 +124,8 @@ class Administration_Database {
             RelatedPersonID VARCHAR(25) NOT NULL,
             RelationshipType VARCHAR(50) NOT NULL,
             PRIMARY KEY (RelationshipID),
-            CONSTRAINT fk_relationship_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
-            CONSTRAINT fk_relationship_related_person FOREIGN KEY (RelatedPersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+            CONSTRAINT fk_relationship_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL,
+            CONSTRAINT fk_relationship_related_person FOREIGN KEY (RelatedPersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Roles table
@@ -144,8 +143,8 @@ class Administration_Database {
             ProgramID VARCHAR(25) NULL,
             ActiveFlag TINYINT(1) DEFAULT 1,
             PRIMARY KEY (PersonRoleID),
-            CONSTRAINT fk_person_role_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
-            CONSTRAINT fk_person_role_role FOREIGN KEY (RoleID) REFERENCES $roles_table(RoleID) ON DELETE CASCADE
+            CONSTRAINT fk_person_role_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL,
+            CONSTRAINT fk_person_role_role FOREIGN KEY (RoleID) REFERENCES $roles_table(RoleID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Programs table
@@ -171,8 +170,8 @@ class Administration_Database {
             EnrollmentDate DATE,
             CompletionDate DATE,
             PRIMARY KEY (EnrollmentID),
-            CONSTRAINT fk_enrollment_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
-            CONSTRAINT fk_enrollment_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE
+            CONSTRAINT fk_enrollment_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL,
+            CONSTRAINT fk_enrollment_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Program Sessions table
@@ -186,7 +185,7 @@ class Administration_Database {
             Notes TEXT,
             IsSelectedSession TINYINT(1) DEFAULT 0,
             PRIMARY KEY (ProgramSessionID),
-            CONSTRAINT fk_session_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE
+            CONSTRAINT fk_session_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Program Checkins table
@@ -200,9 +199,9 @@ class Administration_Database {
             CheckOutDate DATE,
             CheckOutTime TIME,
             PRIMARY KEY (CheckInID),
-            CONSTRAINT fk_checkin_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
-            CONSTRAINT fk_checkin_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE,
-            CONSTRAINT fk_checkin_session FOREIGN KEY (ProgramSessionID) REFERENCES $program_sessions_table(SessionID) ON DELETE SET NULL
+            CONSTRAINT fk_checkin_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL,
+            CONSTRAINT fk_checkin_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL,
+            CONSTRAINT fk_checkin_session FOREIGN KEY (ProgramSessionID) REFERENCES $program_sessions_table(ProgramSessionID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Events table
@@ -225,7 +224,7 @@ class Administration_Database {
             Skills TEXT,
             AvailabilityNotes TEXT,
             PRIMARY KEY (VolunteerID),
-            CONSTRAINT fk_volunteer_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+            CONSTRAINT fk_volunteer_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Volunteer Availability Table
@@ -238,7 +237,7 @@ class Administration_Database {
             LastUpdated DATETIME NOT NULL,
             Notes TEXT,
             PRIMARY KEY (AvailabilityID),
-            CONSTRAINT fk_availability_volunteer FOREIGN KEY (VolunteerID) REFERENCES $volunteers_table(VolunteerID) ON DELETE CASCADE
+            CONSTRAINT fk_availability_volunteer FOREIGN KEY (VolunteerID) REFERENCES $volunteers_table(VolunteerID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Task Definitions Table
@@ -265,8 +264,8 @@ class Administration_Database {
             TaskID VARCHAR(25) NOT NULL,
             SortOrder INT UNSIGNED NOT NULL,
             PRIMARY KEY (TaskGroupTaskID),
-            CONSTRAINT fk_taskgroup_taskgroup FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE CASCADE,
-            CONSTRAINT fk_taskgroup_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE CASCADE
+            CONSTRAINT fk_taskgroup_taskgroup FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE SET NULL,
+            CONSTRAINT fk_taskgroup_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Shift Templates Table
@@ -277,7 +276,7 @@ class Administration_Database {
             DefaultStartTime TIME NOT NULL,
             DefaultEndTime TIME NOT NULL,
             PRIMARY KEY (ShiftTemplateID),
-            CONSTRAINT fk_shifttemplate_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE
+            CONSTRAINT fk_shifttemplate_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Shift Template Task Groups Table
@@ -287,8 +286,8 @@ class Administration_Database {
             TaskGroupID VARCHAR(25) NOT NULL,
             SortOrder INT UNSIGNED NOT NULL,
             PRIMARY KEY (ShiftTemplateTaskGroupID),
-            CONSTRAINT fk_shifttemplate_taskgroup_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE CASCADE,
-            CONSTRAINT fk_shifttemplate_taskgroup_group FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE CASCADE
+            CONSTRAINT fk_shifttemplate_taskgroup_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE SET NULL,
+            CONSTRAINT fk_shifttemplate_taskgroup_group FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Shift Occurrences Table
@@ -302,9 +301,9 @@ class Administration_Database {
             ShiftTemplateID VARCHAR(25) NOT NULL,
             Notes TEXT,
             PRIMARY KEY (ShiftOccurrenceID),
-            CONSTRAINT fk_shiftoccurrence_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE,
-            CONSTRAINT fk_shiftoccurrence_volunteer FOREIGN KEY (VolunteerID) REFERENCES $volunteers_table(VolunteerID) ON DELETE CASCADE,
-            CONSTRAINT fk_shiftoccurrence_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE CASCADE
+            CONSTRAINT fk_shiftoccurrence_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL,
+            CONSTRAINT fk_shiftoccurrence_volunteer FOREIGN KEY (VolunteerID) REFERENCES $volunteers_table(VolunteerID) ON DELETE SET NULL,
+            CONSTRAINT fk_shiftoccurrence_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Shift Tasks Table
@@ -316,8 +315,8 @@ class Administration_Database {
             Status VARCHAR(50) NOT NULL,
             Notes TEXT,
             PRIMARY KEY (ShiftTaskID),
-            CONSTRAINT fk_shifttask_occurrence FOREIGN KEY (ShiftOccurrenceID) REFERENCES $shift_occurrences_table(ShiftOccurrenceID) ON DELETE CASCADE,
-            CONSTRAINT fk_shifttask_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE CASCADE
+            CONSTRAINT fk_shifttask_occurrence FOREIGN KEY (ShiftOccurrenceID) REFERENCES $shift_occurrences_table(ShiftOccurrenceID) ON DELETE SET NULL,
+            CONSTRAINT fk_shifttask_task FOREIGN KEY (TaskID) REFERENCES $task_definitions_table(TaskID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Job Postings Table
@@ -342,7 +341,7 @@ class Administration_Database {
             PRIMARY KEY (JobPostingID),
             CONSTRAINT fk_jobposting_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL,
             CONSTRAINT fk_jobposting_reports_to FOREIGN KEY (ReportsTo) REFERENCES $person_table(PersonID) ON DELETE SET NULL,
-            CONSTRAINT fk_jobposting_created_by FOREIGN KEY (CreatedBy) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+            CONSTRAINT fk_jobposting_created_by FOREIGN KEY (CreatedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Applications Table
@@ -359,7 +358,7 @@ class Administration_Database {
             CoverLetterURL VARCHAR(255),
             ReferralSource VARCHAR(100),
             PRIMARY KEY (ApplicationID),
-            CONSTRAINT fk_application_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE,
+            CONSTRAINT fk_application_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE SET NULL,
             CONSTRAINT fk_application_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
@@ -393,7 +392,7 @@ class Administration_Database {
             Status VARCHAR(50) NOT NULL DEFAULT 'Scheduled',
             Notes TEXT,
             PRIMARY KEY (InterviewID),
-            CONSTRAINT fk_interview_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE CASCADE
+            CONSTRAINT fk_interview_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Interviewers Table
@@ -406,8 +405,8 @@ class Administration_Database {
             Rating INT,
             FeedbackSubmitted TINYINT(1) DEFAULT 0,
             PRIMARY KEY (InterviewerAssignmentID),
-            CONSTRAINT fk_interviewer_interview FOREIGN KEY (InterviewID) REFERENCES $interview_schedules_table(InterviewID) ON DELETE CASCADE,
-            CONSTRAINT fk_interviewer_person FOREIGN KEY (InterviewerID) REFERENCES $person_table(PersonID) ON DELETE CASCADE
+            CONSTRAINT fk_interviewer_interview FOREIGN KEY (InterviewID) REFERENCES $interview_schedules_table(InterviewID) ON DELETE SET NULL,
+            CONSTRAINT fk_interviewer_person FOREIGN KEY (InterviewerID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Job Skills Table
@@ -417,7 +416,7 @@ class Administration_Database {
             SkillName VARCHAR(100) NOT NULL,
             Required TINYINT(1) DEFAULT 0,
             PRIMARY KEY (JobSkillID),
-            CONSTRAINT fk_jobskill_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE
+            CONSTRAINT fk_jobskill_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Application Skills Table
@@ -428,7 +427,7 @@ class Administration_Database {
             YearsExperience INT UNSIGNED,
             ProficiencyLevel VARCHAR(50),
             PRIMARY KEY (ApplicationSkillID),
-            CONSTRAINT fk_applicationskill_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE CASCADE
+            CONSTRAINT fk_applicationskill_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Job Workflows Table
@@ -442,7 +441,7 @@ class Administration_Database {
             CompletedBy VARCHAR(25) NULL,
             CompletedDate DATETIME,
             PRIMARY KEY (WorkflowID),
-            CONSTRAINT fk_workflow_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE,
+            CONSTRAINT fk_workflow_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE SET NULL,
             CONSTRAINT fk_workflow_role FOREIGN KEY (RequiredRole) REFERENCES $roles_table(RoleID) ON DELETE SET NULL,
             CONSTRAINT fk_workflow_completed_by FOREIGN KEY (CompletedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
@@ -462,7 +461,7 @@ class Administration_Database {
             ApprovalDate DATETIME,
             Notes TEXT,
             PRIMARY KEY (OfferID),
-            CONSTRAINT fk_offer_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE CASCADE,
+            CONSTRAINT fk_offer_application FOREIGN KEY (ApplicationID) REFERENCES $applications_table(ApplicationID) ON DELETE SET NULL,
             CONSTRAINT fk_offer_approved_by FOREIGN KEY (ApprovedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 

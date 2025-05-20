@@ -36,9 +36,11 @@ $programs = administration_plugin_get_programs();
                         </div>
                         <div class="filter-group filter-group-dates">
                             <label for="filter-date-start"><?php _e('Date Range', 'administration-plugin'); ?></label>
-                            <input type="date" id="filter-date-start">
-                            <span class="date-separator">-</span>
-                            <input type="date" id="filter-date-end">
+                            <div class="date-range-row">
+                                <input type="date" id="filter-date-start">
+                                <span class="date-separator">-</span>
+                                <input type="date" id="filter-date-end">
+                            </div>
                         </div>
                     </div>
                     <div class="programs-add-btn-container">

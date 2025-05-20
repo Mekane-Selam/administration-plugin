@@ -995,27 +995,35 @@ body.administration-dashboard-public {
 }
 .people-filter-input {
     width: 100%;
+    max-width: 100%;
     margin: 0 0 14px 0;
     display: block;
-    text-align: center;
-    padding-left: 12px;
+    text-align: left;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
     box-sizing: border-box;
 }
 .people-widget-actions {
     display: flex;
-    gap: 10px;
+    gap: 16px;
+    padding: 0 12px;
+    margin-bottom: 16px;
 }
 .people-widget-actions .button {
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 0.98rem;
-    padding: 6px 16px;
-    border-radius: 7px;
+    gap: 6px;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 6px;
     background: #f7fafd;
     border: 1px solid #e3e7ee;
     color: #2271b1;
     transition: background 0.2s, color 0.2s, border 0.2s;
+    white-space: nowrap;
 }
 .people-widget-actions .button.button-primary {
     background: #2271b1;
@@ -1033,7 +1041,7 @@ body.administration-dashboard-public {
     border-color: #135e96;
 }
 .people-list-content {
-    padding: 18px 4px 24px 4px;
+    padding: 18px 16px 24px 16px;
 }
 
 /* --- Persons-Content Two-Column Layout --- */

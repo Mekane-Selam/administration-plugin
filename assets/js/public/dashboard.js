@@ -11,6 +11,8 @@
         },
 
         initEventHandlers: function() {
+            console.log('Initializing event handlers...');
+            
             // Menu toggle
             $('#dashboard-menu-toggle').on('click', this.toggleMenu);
             
@@ -34,13 +36,31 @@
             $('#filter-date-start, #filter-date-end').on('change', Dashboard.applyFilters);
             $('#filter-search').on('input', Dashboard.applyFilters);
 
-            // Sync button - bind to both instances
-            $(document).on('click', '#sync-users-btn, .sync-users-btn', this.handleSyncUsersClick);
+            // Debug log for button existence
+            console.log('Add Person button exists:', $('#add-person-btn, #add-person-content-btn').length);
+            console.log('Sync button exists:', $('#sync-users-btn, .sync-users-btn').length);
+
+            // Sync button - bind to both instances with debug
+            $(document).on('click', '#sync-users-btn, .sync-users-btn', function(e) {
+                console.log('Sync button clicked');
+                Dashboard.handleSyncUsersClick.call(this, e);
+            });
             
-            // Add Person modal handlers - use direct binding
-            $('#add-person-btn, #add-person-content-btn').on('click', this.openAddPersonModal);
-            $('#close-add-person-modal, #cancel-add-person').on('click', this.closeAddPersonModal);
-            $('#add-person-form').on('submit', this.submitAddPersonForm);
+            // Add Person modal handlers with debug
+            $(document).on('click', '#add-person-btn, #add-person-content-btn', function(e) {
+                console.log('Add Person button clicked');
+                Dashboard.openAddPersonModal.call(this, e);
+            });
+            
+            $(document).on('click', '#close-add-person-modal, #cancel-add-person', function(e) {
+                console.log('Close modal button clicked');
+                Dashboard.closeAddPersonModal.call(this, e);
+            });
+            
+            $(document).on('submit', '#add-person-form', function(e) {
+                console.log('Add Person form submitted');
+                Dashboard.submitAddPersonForm.call(this, e);
+            });
 
             // Sort/Filter for Persons-Content section
             $(document).on('click', '#sort-people-btn', function(e) {
@@ -444,10 +464,13 @@
         programTypes: (typeof administration_plugin !== 'undefined' && administration_plugin.program_types) ? administration_plugin.program_types : ['Education', 'Health', 'Social'],
 
         handleSyncUsersClick: function(e) {
+            console.log('Handling sync users click...');
             e.preventDefault();
-            e.stopPropagation(); // Prevent event bubbling
+            e.stopPropagation();
             
             var $btn = $(this);
+            console.log('Sync button found:', $btn.length);
+            
             $btn.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> Syncing...');
             
             $.ajax({
@@ -458,6 +481,7 @@
                     nonce: administration_plugin.nonce
                 },
                 success: function(response) {
+                    console.log('Sync response:', response);
                     if (response.success) {
                         $btn.html('<span class="dashicons dashicons-yes"></span> Synced!');
                         setTimeout(function() {
@@ -466,13 +490,15 @@
                             Dashboard.loadPeopleList();
                         }, 1500);
                     } else {
+                        console.error('Sync failed:', response.data);
                         $btn.html('<span class="dashicons dashicons-warning"></span> Error');
                         setTimeout(function() {
                             $btn.prop('disabled', false).html('<span class="dashicons dashicons-update"></span> Sync');
                         }, 2000);
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('Sync AJAX error:', {xhr, status, error});
                     $btn.html('<span class="dashicons dashicons-warning"></span> Error');
                     setTimeout(function() {
                         $btn.prop('disabled', false).html('<span class="dashicons dashicons-update"></span> Sync');
@@ -482,11 +508,15 @@
         },
 
         openAddPersonModal: function(e) {
+            console.log('Opening Add Person modal...');
             e.preventDefault();
-            e.stopPropagation(); // Prevent event bubbling
+            e.stopPropagation();
             
             var $modal = $('#add-person-modal');
             var $form = $('#add-person-form');
+            
+            console.log('Modal element exists:', $modal.length);
+            console.log('Form element exists:', $form.length);
             
             // Reset form if it exists
             if ($form.length) {
@@ -501,6 +531,8 @@
             $modal.find('h2').text('Add Person');
             $modal.find('.button-primary').text('Save Person');
             $modal.find('#add-person-message').html('');
+            
+            console.log('Modal should be visible now');
         },
 
         handleEditPersonClick: function(e) {

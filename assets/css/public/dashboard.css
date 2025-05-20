@@ -994,16 +994,12 @@ body.administration-dashboard-public {
     border-bottom: 1px solid #e3e7ee;
 }
 .people-filter-input {
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 7px 14px;
-    font-size: 1rem;
-    width: 200px;
-    transition: border 0.2s;
-}
-.people-filter-input:focus {
-    border-color: #2271b1;
-    outline: none;
+    width: 100%;
+    margin: 0 0 14px 0;
+    display: block;
+    text-align: center;
+    padding-left: 12px;
+    box-sizing: border-box;
 }
 .people-widget-actions {
     display: flex;
@@ -1090,9 +1086,10 @@ body.administration-dashboard-public {
     border-radius: 7px;
     color: #2271b1;
     padding: 6px 14px;
-    font-size: 0.98rem;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: background 0.2s, color 0.2s, border 0.2s;
+    white-space: nowrap;
 }
 #sort-people-btn:hover, #sort-people-btn:focus {
     background: #eaf4fb;
@@ -1141,9 +1138,9 @@ body.administration-dashboard-public {
 }
 
 .person-row {
-    width: 120%;
-    max-width: 480px;
-    margin: 0 -10% 16px -10%;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 16px 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1151,10 +1148,11 @@ body.administration-dashboard-public {
     border: 1px solid #e3e7ee;
     border-radius: 10px;
     box-shadow: 0 1px 4px rgba(34,113,177,0.04);
-    padding: 18px 32px 14px 32px;
+    padding: 18px 24px 14px 24px;
     transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
     cursor: pointer;
     overflow: visible;
+    box-sizing: border-box;
 }
 .person-row:hover {
     background: #f7fafd;

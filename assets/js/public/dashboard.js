@@ -481,12 +481,22 @@
 
         openAddPersonModal: function(e) {
             e.preventDefault();
+            var $modal = $('#add-person-modal');
+            var $form = $('#add-person-form');
+            
+            // Reset form if it exists
+            if ($form.length) {
+                $form[0].reset();
+            }
+            
             // Always open the modal, reset to add mode
-            $('#add-person-modal').addClass('show').removeAttr('data-edit').removeAttr('data-person-id');
-            $('#add-person-modal h2').text('Add Person');
-            $('#add-person-form .button-primary').text('Save Person');
-            $('#add-person-form')[0].reset();
-            $('#add-person-message').html('');
+            $modal.addClass('show')
+                  .removeAttr('data-edit')
+                  .removeAttr('data-person-id');
+            
+            $modal.find('h2').text('Add Person');
+            $modal.find('.button-primary').text('Save Person');
+            $modal.find('#add-person-message').html('');
         },
 
         handleEditPersonClick: function(e) {
@@ -522,11 +532,21 @@
 
         closeAddPersonModal: function(e) {
             if (e) e.preventDefault();
-            $('#add-person-modal').removeClass('show').removeAttr('data-edit').removeAttr('data-person-id');
-            $('#add-person-modal h2').text('Add Person');
-            $('#add-person-form .button-primary').text('Save Person');
-            $('#add-person-form')[0].reset();
-            $('#add-person-message').html('');
+            var $modal = $('#add-person-modal');
+            var $form = $('#add-person-form');
+            
+            // Reset form if it exists
+            if ($form.length) {
+                $form[0].reset();
+            }
+            
+            $modal.removeClass('show')
+                  .removeAttr('data-edit')
+                  .removeAttr('data-person-id');
+            
+            $modal.find('h2').text('Add Person');
+            $modal.find('.button-primary').text('Save Person');
+            $modal.find('#add-person-message').html('');
         },
 
         submitAddPersonForm: function(e) {
@@ -586,7 +606,10 @@
         },
         loadPeopleList: function(search, sort) {
             var $container = $('.people-list-content');
+            if (!$container.length) return; // Guard against missing container
+            
             $container.html('<div class="loading">Loading people...</div>');
+            
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
@@ -594,7 +617,7 @@
                     action: 'get_people_list',
                     nonce: administration_plugin.nonce,
                     search: search || '',
-                    sort: sort || ''
+                    sort: sort || Dashboard.currentPeopleSort || 'name_asc' // Default sort if none specified
                 },
                 success: function(response) {
                     if (response.success) {
@@ -610,8 +633,17 @@
         },
 
         initializePeopleContent: function() {
+            // Load people list immediately
             Dashboard.loadPeopleList();
+            
+            // Set up filter handler
             $(document).off('input', '#people-content-filter-input').on('input', '#people-content-filter-input', Dashboard.debouncedPeopleFilter);
+            
+            // Set up sort handler
+            $(document).off('click', '#sort-people-btn').on('click', '#sort-people-btn', function(e) {
+                e.preventDefault();
+                $(this).siblings('.sort-dropdown').toggle();
+            });
         },
         debouncedPeopleFilter: function() {
             clearTimeout(Dashboard.peopleFilterTimeout);

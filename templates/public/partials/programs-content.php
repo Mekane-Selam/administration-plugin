@@ -15,32 +15,37 @@ $programs = administration_plugin_get_programs();
         <div class="programs-content-left">
             <div class="programs-list-header">
                 <h2><?php _e('Programs List', 'administration-plugin'); ?></h2>
-                <div class="program-filters-horizontal">
-                    <div class="filter-group">
-                        <label for="filter-status"><?php _e('Status', 'administration-plugin'); ?></label>
-                        <select id="filter-status">
-                            <option value=""><?php _e('All', 'administration-plugin'); ?></option>
-                            <option value="active"><?php _e('Active', 'administration-plugin'); ?></option>
-                            <option value="inactive"><?php _e('Inactive', 'administration-plugin'); ?></option>
-                        </select>
+                <div class="programs-filters-row">
+                    <div class="program-filters-horizontal">
+                        <div class="filter-group">
+                            <label for="filter-status"><?php _e('Status', 'administration-plugin'); ?></label>
+                            <select id="filter-status">
+                                <option value=""><?php _e('All', 'administration-plugin'); ?></option>
+                                <option value="active"><?php _e('Active', 'administration-plugin'); ?></option>
+                                <option value="inactive"><?php _e('Inactive', 'administration-plugin'); ?></option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-type"><?php _e('Type', 'administration-plugin'); ?></label>
+                            <select id="filter-type">
+                                <option value=""><?php _e('All', 'administration-plugin'); ?></option>
+                                <option value="education"><?php _e('Education', 'administration-plugin'); ?></option>
+                                <option value="health"><?php _e('Health', 'administration-plugin'); ?></option>
+                                <option value="social"><?php _e('Social', 'administration-plugin'); ?></option>
+                            </select>
+                        </div>
+                        <div class="filter-group filter-group-dates">
+                            <label for="filter-date-start"><?php _e('Date Range', 'administration-plugin'); ?></label>
+                            <input type="date" id="filter-date-start">
+                            <span class="date-separator">-</span>
+                            <input type="date" id="filter-date-end">
+                        </div>
                     </div>
-                    <div class="filter-group">
-                        <label for="filter-type"><?php _e('Type', 'administration-plugin'); ?></label>
-                        <select id="filter-type">
-                            <option value=""><?php _e('All', 'administration-plugin'); ?></option>
-                            <option value="education"><?php _e('Education', 'administration-plugin'); ?></option>
-                            <option value="health"><?php _e('Health', 'administration-plugin'); ?></option>
-                            <option value="social"><?php _e('Social', 'administration-plugin'); ?></option>
-                        </select>
+                    <div class="programs-add-btn-container">
+                        <button id="add-program-btn" class="add-button">
+                            <span class="dashicons dashicons-plus-alt"></span>
+                        </button>
                     </div>
-                    <div class="filter-group">
-                        <label for="filter-date"><?php _e('Date Range', 'administration-plugin'); ?></label>
-                        <input type="date" id="filter-date-start">
-                        <input type="date" id="filter-date-end">
-                    </div>
-                    <button id="add-program-btn" class="add-button" style="margin-left: 18px; margin-right: 8px;">
-                        <span class="dashicons dashicons-plus-alt"></span>
-                    </button>
                 </div>
                 <div class="programs-divider"></div>
             </div>

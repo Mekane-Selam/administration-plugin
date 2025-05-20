@@ -9,9 +9,6 @@ if (!function_exists('administration_plugin_get_programs')) {
 }
 $programs = administration_plugin_get_programs();
 ?>
-<a href="#programs-content" class="view-all go-to-programs-content" data-page="programs" title="View all programs">
-    <span class="dashicons dashicons-arrow-right-alt2"></span>
-</a>
 <?php if ($programs && count($programs) > 0): ?>
     <div class="programs-grid">
         <?php foreach ($programs as $program): ?>

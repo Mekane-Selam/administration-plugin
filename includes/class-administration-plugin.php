@@ -35,6 +35,9 @@ class Administration_Plugin {
         
         // Load the API class
         require_once ADMINISTRATION_PLUGIN_PATH . 'includes/api/class-administration-plugin-api.php';
+
+        // Load the database class
+        require_once ADMINISTRATION_PLUGIN_PATH . 'includes/database/class-administration-database.php';
         
         // Load the sync class
         require_once ADMINISTRATION_PLUGIN_PATH . 'includes/sync/class-administration-sync-members.php';

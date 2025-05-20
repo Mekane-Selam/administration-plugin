@@ -364,37 +364,77 @@
             });
         },
         applyFilters: function() {
-            const status = $('#filter-status').val();
-            const type = $('#filter-type').val();
+            const search = $('#filter-search').val().toLowerCase().trim();
+            const status = $('#filter-status').val().toLowerCase();
+            const type = $('#filter-type').val().toLowerCase();
             const startDate = $('#filter-date-start').val();
             const endDate = $('#filter-date-end').val();
-            const search = $('#filter-search').val().toLowerCase();
+
             $('.program-card').each(function() {
                 const $card = $(this);
-                const cardStatus = $card.find('.program-status').text().toLowerCase();
-                const cardType = $card.find('.program-type').text().toLowerCase();
-                const cardStartDate = $card.find('.program-dates').text().split(' - ')[0];
-                const cardEndDate = $card.find('.program-dates').text().split(' - ')[1];
                 const cardName = $card.find('h3').text().toLowerCase();
+                const cardType = $card.find('.program-type').text().toLowerCase();
+                const cardStatus = $card.find('.program-status').text().toLowerCase();
                 const cardDesc = $card.data('description') ? $card.data('description').toLowerCase() : '';
+                
+                // Get dates and convert to comparable format
+                const dates = $card.find('.program-dates').text().split(' - ');
+                const cardStartDate = dates[0] ? new Date(dates[0]) : null;
+                const cardEndDate = dates[1] ? new Date(dates[1]) : null;
+                const filterStartDate = startDate ? new Date(startDate) : null;
+                const filterEndDate = endDate ? new Date(endDate) : null;
+
                 let show = true;
-                if (status && cardStatus !== status.toLowerCase()) {
+
+                // Text search (matches name, type, or description)
+                if (search && !(cardName.includes(search) || 
+                               cardType.includes(search) || 
+                               cardDesc.includes(search))) {
                     show = false;
                 }
-                if (type && cardType !== type.toLowerCase()) {
+
+                // Status filter
+                if (status && cardStatus !== status) {
                     show = false;
                 }
-                if (startDate && cardStartDate < startDate) {
+
+                // Type filter
+                if (type && cardType !== type) {
                     show = false;
                 }
-                if (endDate && cardEndDate > endDate) {
+
+                // Date range filter
+                if (filterStartDate && cardStartDate && cardStartDate < filterStartDate) {
                     show = false;
                 }
-                if (search && !(cardName.includes(search) || cardType.includes(search) || cardDesc.includes(search))) {
+                if (filterEndDate && cardEndDate && cardEndDate > filterEndDate) {
                     show = false;
                 }
-                $card.toggle(show);
+
+                // Apply visual feedback
+                if (show) {
+                    $card.removeClass('filtered-out').show();
+                } else {
+                    $card.addClass('filtered-out');
+                    // Add a small delay before hiding to allow for animation
+                    setTimeout(() => {
+                        if (!$card.hasClass('filtered-out')) return; // Check if still filtered out
+                        $card.hide();
+                    }, 200);
+                }
             });
+
+            // Show "no results" message if all cards are filtered out
+            const visibleCards = $('.program-card:visible').length;
+            const $noResults = $('.no-results-message');
+            
+            if (visibleCards === 0) {
+                if ($noResults.length === 0) {
+                    $('.programs-grid').append('<p class="no-results-message">No programs match your filters.</p>');
+                }
+            } else {
+                $noResults.remove();
+            }
         },
         showProgramDetails: function(e) {
             e.preventDefault();

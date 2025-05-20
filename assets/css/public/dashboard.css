@@ -343,9 +343,8 @@ body.administration-dashboard-public {
 }
 
 .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex: 0 0 140px;
+    min-width: 140px;
 }
 
 .filter-group label {
@@ -390,11 +389,8 @@ body.administration-dashboard-public {
     min-width: 120px;
 }
 .filter-group-dates {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    min-width: 220px;
+    flex: 1 1 280px;
+    min-width: 280px;
 }
 .filter-group-dates label {
     margin-bottom: 2px;
@@ -404,16 +400,16 @@ body.administration-dashboard-public {
 }
 .filter-group-dates .date-range-row {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     width: 100%;
 }
 .filter-group-dates input[type="date"] {
-    min-width: 100px;
-    max-width: 120px;
+    flex: 1;
+    min-width: 130px;
+    max-width: none;
     font-size: 0.97rem;
-    padding: 6px 8px;
+    padding: 8px 12px;
 }
 .date-separator {
     margin: 0 4px;
@@ -796,8 +792,8 @@ body.administration-dashboard-public {
     align-items: flex-end;
 }
 .filter-group {
-    flex: 1 1 120px;
-    min-width: 120px;
+    flex: 0 0 140px;
+    min-width: 140px;
 }
 .filter-group label {
     display: block;
@@ -891,4 +887,27 @@ body.administration-dashboard-public {
     gap: 16px;
     justify-content: flex-end;
     margin-top: 8px;
+}
+
+/* Ensure consistent input heights across all filters */
+.filter-group select,
+.filter-group input[type="date"],
+.filter-group-search input[type="text"] {
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border 0.2s;
+}
+
+/* Add a subtle transition for filter changes */
+.program-card {
+    transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.program-card.filtered-out {
+    opacity: 0.4;
+    transform: scale(0.98);
 } 

@@ -239,7 +239,7 @@ body.administration-dashboard-public {
     padding: 40px 0; /* vertical gap at top and bottom */
 }
 .modal.show {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
 }
@@ -253,10 +253,9 @@ body.administration-dashboard-public {
     overflow-y: auto;
     width: 100%;
     max-width: 480px;
-    position: fixed;
-    /* Add padding to preserve rounded corners with scrollbar */
-    padding-right: 44px; /* Increased right padding to account for scrollbar */
-    margin-right: -16px; /* Offset the extra padding */
+    position: relative;
+    padding-right: 44px;
+    margin-right: -16px;
 }
 /* Customize scrollbar for modal content */
 .modal-content::-webkit-scrollbar {
@@ -1011,7 +1010,7 @@ body.administration-dashboard-public {
     gap: 12px;
     padding: 0;
     margin-bottom: 16px;
-    justify-content: flex-start;
+    justify-content: flex-end;
     width: 100%;
 }
 .people-widget-actions .button {
@@ -1027,6 +1026,8 @@ body.administration-dashboard-public {
     transition: background 0.2s, color 0.2s, border 0.2s;
     white-space: nowrap;
     flex: 0 1 auto;
+    min-width: 100px;
+    justify-content: center;
 }
 .people-widget-actions .button.button-primary {
     background: #2271b1;
@@ -1044,7 +1045,7 @@ body.administration-dashboard-public {
     border-color: #135e96;
 }
 .people-list-content {
-    padding: 18px 16px 24px 16px;
+    padding: 18px 0px 24px 0px;
 }
 
 /* --- Persons-Content Two-Column Layout --- */
@@ -1179,7 +1180,7 @@ body.administration-dashboard-public {
 }
 .person-email {
     display: block;
-    font-size: 0.93rem;
+    font-size: 0.85rem;
     color: #6b7280;
     margin-top: 2px;
     word-break: break-all;
@@ -1300,4 +1301,11 @@ body.administration-dashboard-public {
     display: flex;
     gap: 12px;
     justify-content: flex-end;
+}
+
+/* Ensure modal stays centered when closing */
+.modal.closing {
+    display: flex !important;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
 } 

@@ -534,20 +534,14 @@
             }
             
             // Always open the modal, reset to add mode
-            $modal.addClass('show')
+            $modal.removeClass('closing')
+                  .addClass('show')
                   .removeAttr('data-edit')
                   .removeAttr('data-person-id');
             
             $modal.find('h2').text('Add Person');
             $modal.find('.button-primary').text('Save Person');
             $modal.find('#add-person-message').html('');
-            
-            // Force modal to be visible
-            $modal.css({
-                'display': 'flex',
-                'opacity': '1',
-                'visibility': 'visible'
-            });
             
             console.log('Modal should be visible now');
         },
@@ -588,18 +582,24 @@
             var $modal = $('#add-person-modal');
             var $form = $('#add-person-form');
             
-            // Reset form if it exists
-            if ($form.length) {
-                $form[0].reset();
-            }
+            // Add closing class for transition
+            $modal.addClass('closing');
             
-            $modal.removeClass('show')
-                  .removeAttr('data-edit')
-                  .removeAttr('data-person-id');
-            
-            $modal.find('h2').text('Add Person');
-            $modal.find('.button-primary').text('Save Person');
-            $modal.find('#add-person-message').html('');
+            // Wait for transition to complete before hiding
+            setTimeout(function() {
+                // Reset form if it exists
+                if ($form.length) {
+                    $form[0].reset();
+                }
+                
+                $modal.removeClass('show closing')
+                      .removeAttr('data-edit')
+                      .removeAttr('data-person-id');
+                
+                $modal.find('h2').text('Add Person');
+                $modal.find('.button-primary').text('Save Person');
+                $modal.find('#add-person-message').html('');
+            }, 200);
         },
 
         submitAddPersonForm: function(e) {

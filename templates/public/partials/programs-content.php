@@ -38,7 +38,11 @@ $programs = administration_plugin_get_programs();
                         <input type="date" id="filter-date-start">
                         <input type="date" id="filter-date-end">
                     </div>
+                    <button id="add-program-btn" class="add-button" style="margin-left: 18px; margin-right: 8px;">
+                        <span class="dashicons dashicons-plus-alt"></span>
+                    </button>
                 </div>
+                <div class="programs-divider"></div>
             </div>
             <?php if ($programs && count($programs) > 0): ?>
                 <div class="programs-grid">
@@ -54,11 +58,6 @@ $programs = administration_plugin_get_programs();
             <?php else: ?>
                 <p>No programs found.</p>
             <?php endif; ?>
-        </div>
-        <div class="programs-content-right">
-            <button id="add-program-btn" class="add-button">
-                <span class="dashicons dashicons-plus-alt"></span>
-            </button>
         </div>
     </div>
 </div>

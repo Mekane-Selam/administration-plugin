@@ -11,7 +11,7 @@ $programs = administration_plugin_get_programs();
 ?>
 <div class="programs-overview-header">
     <h2><?php _e('Programs Overview', 'administration-plugin'); ?></h2>
-    <a href="#" class="view-all" data-page="programs">
+    <a href="#programs-content" class="view-all go-to-programs-content" data-page="programs" title="View all programs">
         <span class="dashicons dashicons-arrow-right-alt2"></span>
     </a>
 </div>

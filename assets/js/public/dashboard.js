@@ -13,6 +13,10 @@
         initEventHandlers: function() {
             console.log('Initializing event handlers...');
             
+            // Debug all potential button selectors
+            console.log('All potential add buttons:', $('[id*="add-person"], [class*="add-person"]').length);
+            console.log('All potential sync buttons:', $('[id*="sync"], [class*="sync"]').length);
+            
             // Menu toggle
             $('#dashboard-menu-toggle').on('click', this.toggleMenu);
             
@@ -36,29 +40,25 @@
             $('#filter-date-start, #filter-date-end').on('change', Dashboard.applyFilters);
             $('#filter-search').on('input', Dashboard.applyFilters);
 
-            // Debug log for button existence
-            console.log('Add Person button exists:', $('#add-person-btn, #add-person-content-btn').length);
-            console.log('Sync button exists:', $('#sync-users-btn, .sync-users-btn').length);
-
-            // Sync button - bind to both instances with debug
-            $(document).on('click', '#sync-users-btn, .sync-users-btn', function(e) {
-                console.log('Sync button clicked');
+            // Sync button - bind to all possible selectors
+            $(document).on('click', '[id*="sync"], [class*="sync"]', function(e) {
+                console.log('Sync button clicked:', this);
                 Dashboard.handleSyncUsersClick.call(this, e);
             });
             
-            // Add Person modal handlers with debug
-            $(document).on('click', '#add-person-btn, #add-person-content-btn', function(e) {
-                console.log('Add Person button clicked');
+            // Add Person modal handlers - bind to all possible selectors
+            $(document).on('click', '[id*="add-person"], [class*="add-person"]', function(e) {
+                console.log('Add Person button clicked:', this);
                 Dashboard.openAddPersonModal.call(this, e);
             });
             
-            $(document).on('click', '#close-add-person-modal, #cancel-add-person', function(e) {
-                console.log('Close modal button clicked');
+            $(document).on('click', '[id*="close-add-person"], [id*="cancel-add-person"]', function(e) {
+                console.log('Close modal button clicked:', this);
                 Dashboard.closeAddPersonModal.call(this, e);
             });
             
-            $(document).on('submit', '#add-person-form', function(e) {
-                console.log('Add Person form submitted');
+            $(document).on('submit', '[id*="add-person-form"]', function(e) {
+                console.log('Add Person form submitted:', this);
                 Dashboard.submitAddPersonForm.call(this, e);
             });
 
@@ -469,7 +469,12 @@
             e.stopPropagation();
             
             var $btn = $(this);
-            console.log('Sync button found:', $btn.length);
+            console.log('Sync button found:', $btn.length, 'Button HTML:', $btn.prop('outerHTML'));
+            
+            if (!$btn.length) {
+                console.error('Sync button not found!');
+                return;
+            }
             
             $btn.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> Syncing...');
             
@@ -518,6 +523,11 @@
             console.log('Modal element exists:', $modal.length);
             console.log('Form element exists:', $form.length);
             
+            if (!$modal.length) {
+                console.error('Modal element not found!');
+                return;
+            }
+            
             // Reset form if it exists
             if ($form.length) {
                 $form[0].reset();
@@ -531,6 +541,13 @@
             $modal.find('h2').text('Add Person');
             $modal.find('.button-primary').text('Save Person');
             $modal.find('#add-person-message').html('');
+            
+            // Force modal to be visible
+            $modal.css({
+                'display': 'flex',
+                'opacity': '1',
+                'visibility': 'visible'
+            });
             
             console.log('Modal should be visible now');
         },

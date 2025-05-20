@@ -23,6 +23,10 @@ class Administration_Plugin_Public {
         // Register AJAX handler for force syncing users
         add_action('wp_ajax_administration_force_sync_users', array($this, 'ajax_force_sync_users'));
         add_action('wp_ajax_nopriv_administration_force_sync_users', array($this, 'ajax_force_sync_users'));
+        add_action('wp_ajax_get_people_list', array($this, 'ajax_get_people_list'));
+        add_action('wp_ajax_nopriv_get_people_list', array($this, 'ajax_get_people_list'));
+        add_action('wp_ajax_add_person', array($this, 'ajax_add_person'));
+        add_action('wp_ajax_nopriv_add_person', array($this, 'ajax_add_person'));
     }
 
     /**
@@ -299,5 +303,70 @@ class Administration_Plugin_Public {
         $sync = new Administration_Sync_Members();
         $sync->force_sync_all_users();
         wp_send_json_success(['message' => 'User synchronization completed.']);
+    }
+
+    /**
+     * AJAX handler to get all people for the people list
+     */
+    public function ajax_get_people_list() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+        $where = '';
+        $params = array();
+        if ($search) {
+            $where = "WHERE FirstName LIKE %s OR LastName LIKE %s OR Email LIKE %s";
+            $like = '%' . $wpdb->esc_like($search) . '%';
+            $params = array($like, $like, $like);
+        }
+        $sql = "SELECT PersonID, FirstName, LastName, Email FROM $table $where ORDER BY LastName, FirstName";
+        $people = $params ? $wpdb->get_results($wpdb->prepare($sql, ...$params)) : $wpdb->get_results($sql);
+        ob_start();
+        if ($people && count($people) > 0) {
+            foreach ($people as $person) {
+                echo '<div class="person-row" data-person-id="' . esc_attr($person->PersonID) . '">';
+                echo '<span class="person-name">' . esc_html($person->FirstName . ' ' . $person->LastName) . '</span>';
+                echo '<span class="person-email">' . esc_html($person->Email) . '</span>';
+                echo '</div>';
+            }
+        } else {
+            echo '<div class="no-people">No people found.</div>';
+        }
+        $html = ob_get_clean();
+        wp_send_json_success($html);
+    }
+
+    /**
+     * AJAX handler to add a new person
+     */
+    public function ajax_add_person() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
+        $last_name = isset($_POST['last_name']) ? sanitize_text_field($_POST['last_name']) : '';
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+        if (!$first_name || !$last_name || !$email) {
+            wp_send_json_error('All fields are required.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE Email = %s", $email));
+        if ($exists) {
+            wp_send_json_error('A person with this email already exists.');
+        }
+        $person_data = [
+            'FirstName' => $first_name,
+            'LastName' => $last_name,
+            'Email' => $email
+        ];
+        $result = Administration_Database::save_person($person_data);
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to add person.');
+        }
     }
 } 

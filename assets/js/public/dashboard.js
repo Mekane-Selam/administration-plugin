@@ -45,6 +45,8 @@
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
+            $(document).on('click', '#close-add-person-modal, #cancel-add-person', this.closeAddPersonModal);
+            $(document).on('submit', '#add-person-form', this.submitAddPersonForm);
         },
 
         toggleMenu: function(e) {
@@ -118,6 +120,10 @@
             this.initializeParishWidget();
             this.initializeCalendarWidget();
             this.initializeHRWidget();
+            // Initialize people-content if present
+            if ($('.parish-content.two-column-layout').length) {
+                Dashboard.initializePeopleContent();
+            }
         },
 
         initializeProgramsWidget: function() {
@@ -470,8 +476,87 @@
 
         handleAddPersonClick: function(e) {
             e.preventDefault();
-            // Stub: open modal (to be implemented)
-            alert('Add Person modal coming soon!');
+            $('#add-person-modal').addClass('show');
+        },
+
+        closeAddPersonModal: function(e) {
+            if (e) e.preventDefault();
+            $('#add-person-modal').removeClass('show');
+            $('#add-person-form')[0].reset();
+            $('#add-person-message').html('');
+        },
+
+        submitAddPersonForm: function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var firstName = $('#person-first-name').val().trim();
+            var lastName = $('#person-last-name').val().trim();
+            var email = $('#person-email').val().trim();
+            if (!firstName || !lastName || !email) {
+                $('#add-person-message').html('<span class="error-message">All fields are required.</span>');
+                return;
+            }
+            $('#add-person-message').html('<span class="loading">Saving...</span>');
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'add_person',
+                    nonce: administration_plugin.nonce,
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#add-person-message').html('<span class="success-message">Person added successfully!</span>');
+                        setTimeout(function() {
+                            Dashboard.closeAddPersonModal();
+                            Dashboard.loadPeopleList();
+                        }, 800);
+                    } else {
+                        $('#add-person-message').html('<span class="error-message">' + (response.data || 'Error saving person.') + '</span>');
+                    }
+                },
+                error: function() {
+                    $('#add-person-message').html('<span class="error-message">Error saving person.</span>');
+                }
+            });
+        },
+
+        initializePeopleContent: function() {
+            Dashboard.loadPeopleList();
+            $(document).off('input', '#people-content-filter-input').on('input', '#people-content-filter-input', Dashboard.debouncedPeopleFilter);
+        },
+        loadPeopleList: function(search) {
+            var $container = $('.people-list-content');
+            $container.html('<div class="loading">Loading people...</div>');
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_people_list',
+                    nonce: administration_plugin.nonce,
+                    search: search || ''
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $container.html(response.data);
+                    } else {
+                        $container.html('<div class="error-message">Failed to load people.</div>');
+                    }
+                },
+                error: function() {
+                    $container.html('<div class="error-message">Failed to load people.</div>');
+                }
+            });
+        },
+        debouncedPeopleFilter: function() {
+            clearTimeout(Dashboard.peopleFilterTimeout);
+            Dashboard.peopleFilterTimeout = setTimeout(function() {
+                var search = $('#people-content-filter-input').val();
+                Dashboard.loadPeopleList(search);
+            }, 250);
         }
     };
 

@@ -9,8 +9,8 @@ if (!function_exists('administration_plugin_get_programs')) {
 }
 $programs = administration_plugin_get_programs();
 ?>
+<h1 class="programs-main-title"><?php _e('Programs', 'administration-plugin'); ?></h1>
 <div class="programs-content-main">
-    <h1 class="programs-main-title"><?php _e('Programs', 'administration-plugin'); ?></h1>
     <div class="programs-content-columns">
         <div class="programs-content-left">
             <div class="programs-list-header">

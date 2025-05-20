@@ -553,14 +553,14 @@ body.administration-dashboard-public {
     border: 1px solid #e3e7ee;
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(34,113,177,0.08), 0 1.5px 6px rgba(0,0,0,0.03);
-    padding: 32px 32px 40px 32px;
-    margin: 40px auto 0 auto;
+    padding: 40px 48px 48px 48px;
+    margin: 48px auto 0 auto;
     max-width: 1100px;
 }
 .programs-main-title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 28px;
+    margin-bottom: 32px;
     color: #1d2327;
     letter-spacing: 0.01em;
 }
@@ -733,6 +733,10 @@ body.administration-dashboard-public {
         align-items: flex-start;
         padding-top: 0;
         margin-bottom: 20px;
+    }
+    .programs-content-main {
+        padding: 24px 10px 32px 10px;
+        margin: 24px auto 0 auto;
     }
 }
 

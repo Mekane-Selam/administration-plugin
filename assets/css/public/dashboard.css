@@ -675,7 +675,7 @@ body.administration-dashboard-public {
 .programs-content-main {
     width: 100%;
     margin: 0 auto;
-    padding: 32px 32px 0 0;
+    padding: 32px 0 0 0;
 }
 .programs-main-title {
     font-size: 2rem;
@@ -692,6 +692,7 @@ body.administration-dashboard-public {
     flex: 0 0 95%;
     max-width: 95%;
     padding-right: 32px;
+    padding-left: 32px;
 }
 .programs-content-right {
     flex: 0 0 5%;
@@ -759,6 +760,7 @@ body.administration-dashboard-public {
     flex: 0 0 95%;
     max-width: 95%;
     padding-right: 32px;
+    padding-left: 32px;
 }
 
 .program-filters-horizontal {

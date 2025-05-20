@@ -110,8 +110,8 @@
         initializeWidgets: function() {
             // Initialize any widget-specific functionality
             this.initializeProgramsWidget();
-            this.initializePeopleWidget();
-            this.initializeVolunteerOpsWidget();
+            this.initializeParishWidget();
+            this.initializeCalendarWidget();
             this.initializeHRWidget();
         },
 
@@ -222,19 +222,19 @@
             }
         },
 
-        initializePeopleWidget: function() {
-            const $widget = $('#people-overview');
+        initializeParishWidget: function() {
+            const $widget = $('#parish-overview');
             if ($widget.length) {
-                // Load people data
-                this.loadPeopleData();
+                // Load parish data
+                this.loadParishData();
             }
         },
 
-        initializeVolunteerOpsWidget: function() {
-            const $widget = $('#volunteer-ops-overview');
+        initializeCalendarWidget: function() {
+            const $widget = $('#calendar-overview');
             if ($widget.length) {
-                // Load volunteer operations data
-                this.loadVolunteerOpsData();
+                // Load calendar data
+                this.loadCalendarData();
             }
         },
 
@@ -262,7 +262,7 @@
             });
         },
 
-        loadPeopleData: function() {
+        loadParishData: function() {
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
@@ -272,13 +272,13 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('.people-list').html(response.data);
+                        $('.parish-list').html(response.data);
                     }
                 }
             });
         },
 
-        loadVolunteerOpsData: function() {
+        loadCalendarData: function() {
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
@@ -288,7 +288,7 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        $('.volunteer-ops-list').html(response.data);
+                        $('.calendar-list').html(response.data);
                     }
                 }
             });
@@ -330,13 +330,13 @@
             $.post(administration_plugin.ajax_url, data, function(response) {
                 if (response.success) {
                     $('#add-program-message').html('<span class="success-message">Program added successfully!</span>');
-                    // Refresh the programs list widget
-                    Dashboard.refreshProgramsList();
                     setTimeout(function() {
-                        $('#add-program-modal').fadeOut(200);
+                        $('#add-program-modal').removeClass('show');
                         $('#add-program-form')[0].reset();
                         $('#add-program-message').html('');
-                    }, 1200);
+                        // Reload the program-content view
+                        Dashboard.loadPage('programs');
+                    }, 800);
                 } else {
                     $('#add-program-message').html('<span class="error-message">' + (response.data || 'Error saving program.') + '</span>');
                 }

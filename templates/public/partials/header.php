@@ -26,15 +26,15 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="menu-item" data-page="people">
+                <a href="#" class="menu-item" data-page="parish">
                     <span class="dashicons dashicons-groups"></span>
-                    <?php _e('People', 'administration-plugin'); ?>
+                    <?php _e('Parish', 'administration-plugin'); ?>
                 </a>
             </li>
             <li>
-                <a href="#" class="menu-item" data-page="volunteer-ops">
-                    <span class="dashicons dashicons-businessperson"></span>
-                    <?php _e('Volunteer Operations', 'administration-plugin'); ?>
+                <a href="#" class="menu-item" data-page="calendar">
+                    <span class="dashicons dashicons-calendar"></span>
+                    <?php _e('Calendar', 'administration-plugin'); ?>
                 </a>
             </li>
             <li>

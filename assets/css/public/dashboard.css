@@ -449,7 +449,7 @@ body.administration-dashboard-public {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 28px;
-    padding: 20px 0 0 0;
+    padding: 20px 0 20px 0;
 }
 
 .program-card {

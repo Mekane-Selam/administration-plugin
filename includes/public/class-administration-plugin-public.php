@@ -93,10 +93,10 @@ class Administration_Plugin_Public {
             case 'programs':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/programs-content.php';
                 break;
-            case 'people':
+            case 'parish':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
                 break;
-            case 'volunteer-ops':
+            case 'calendar':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/volunteer-ops-content.php';
                 break;
             case 'hr':

@@ -18,28 +18,28 @@
             </div>
         </div>
 
-        <!-- People Overview -->
-        <div class="dashboard-widget" id="people-overview">
+        <!-- Parish Overview -->
+        <div class="dashboard-widget" id="parish-overview">
             <div class="widget-header">
-                <h2><?php _e('People Overview', 'administration-plugin'); ?></h2>
+                <h2><?php _e('Parish Overview', 'administration-plugin'); ?></h2>
             </div>
             <div class="widget-content">
-                <div class="people-list">
-                    <!-- People will be loaded via JavaScript -->
-                    <div class="loading"><?php _e('Loading people...', 'administration-plugin'); ?></div>
+                <div class="parish-list">
+                    <!-- Parish will be loaded via JavaScript -->
+                    <div class="loading"><?php _e('Loading parish...', 'administration-plugin'); ?></div>
                 </div>
             </div>
         </div>
 
-        <!-- Volunteer Operations -->
-        <div class="dashboard-widget" id="volunteer-ops-overview">
+        <!-- Calendar Overview -->
+        <div class="dashboard-widget" id="calendar-overview">
             <div class="widget-header">
-                <h2><?php _e('Volunteer Operations', 'administration-plugin'); ?></h2>
+                <h2><?php _e('Calendar Overview', 'administration-plugin'); ?></h2>
             </div>
             <div class="widget-content">
-                <div class="volunteer-ops-list">
-                    <!-- Volunteer operations will be loaded via JavaScript -->
-                    <div class="loading"><?php _e('Loading volunteer operations...', 'administration-plugin'); ?></div>
+                <div class="calendar-list">
+                    <!-- Calendar will be loaded via JavaScript -->
+                    <div class="loading"><?php _e('Loading calendar...', 'administration-plugin'); ?></div>
                 </div>
             </div>
         </div>

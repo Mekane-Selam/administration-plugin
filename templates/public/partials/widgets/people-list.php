@@ -1,3 +1,3 @@
-<div class="widget-list people-list">
-    <p>People list will appear here.</p>
+<div class="widget-list parish-list">
+    <p>Parish list will appear here.</p>
 </div> 

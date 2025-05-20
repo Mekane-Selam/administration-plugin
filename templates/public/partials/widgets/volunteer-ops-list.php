@@ -1,3 +1,3 @@
-<div class="widget-list volunteer-ops-list">
-    <p>Volunteer operations list will appear here.</p>
+<div class="widget-list calendar-list">
+    <p>Calendar list will appear here.</p>
 </div> 

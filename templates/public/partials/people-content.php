@@ -1,4 +1,4 @@
-<div class="dashboard-section people-content">
-    <h2>People</h2>
-    <p>People content coming soon.</p>
+<div class="dashboard-section parish-content">
+    <h2>Parish</h2>
+    <p>Parish content coming soon.</p>
 </div> 

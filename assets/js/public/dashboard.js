@@ -37,6 +37,14 @@
             // Sync button
             $(document).on('click', '#sync-users-btn', this.handleSyncUsersClick);
             $(document).on('click', '#add-person-btn', this.handleAddPersonClick);
+
+            // Sync/Add/Sort for Persons-Content section
+            $(document).on('click', '#sync-users-content-btn', this.handleSyncUsersClick);
+            $(document).on('click', '#add-person-content-btn', this.handleAddPersonClick);
+            $(document).on('click', '#sort-people-btn', function(e) {
+                e.preventDefault();
+                $(this).siblings('.sort-dropdown').toggle();
+            });
         },
 
         toggleMenu: function(e) {

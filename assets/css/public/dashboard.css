@@ -982,4 +982,156 @@ body.administration-dashboard-public {
 .program-card.filtered-out {
     opacity: 0.4;
     transform: scale(0.98);
+}
+
+/* --- People Widget & Persons-Content Styles --- */
+.people-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px 10px 24px;
+    background: transparent;
+    border-bottom: 1px solid #e3e7ee;
+}
+.people-filter-input {
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 1rem;
+    width: 200px;
+    transition: border 0.2s;
+}
+.people-filter-input:focus {
+    border-color: #2271b1;
+    outline: none;
+}
+.people-widget-actions {
+    display: flex;
+    gap: 10px;
+}
+.people-widget-actions .button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.98rem;
+    padding: 6px 16px;
+    border-radius: 7px;
+    background: #f7fafd;
+    border: 1px solid #e3e7ee;
+    color: #2271b1;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.people-widget-actions .button.button-primary {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+}
+.people-widget-actions .button:hover, .people-widget-actions .button:focus {
+    background: #eaf4fb;
+    color: #135e96;
+    border-color: #b6d4ef;
+}
+.people-widget-actions .button.button-primary:hover, .people-widget-actions .button.button-primary:focus {
+    background: #135e96;
+    color: #fff;
+    border-color: #135e96;
+}
+.people-list-content {
+    padding: 18px 24px 24px 24px;
+}
+
+/* --- Persons-Content Two-Column Layout --- */
+.two-column-layout {
+    display: flex;
+    gap: 32px;
+    margin-top: 18px;
+}
+.left-column {
+    flex: 0 0 320px;
+    background: #f7fafd;
+    border-radius: 14px;
+    border: 1px solid #e3e7ee;
+    padding: 24px 18px 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 260px;
+}
+.right-column {
+    flex: 1 1 0%;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e3e7ee;
+    padding: 24px 24px 24px 24px;
+    min-width: 0;
+}
+.people-filters {
+    margin-bottom: 8px;
+}
+.people-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.sort-dropdown-wrapper {
+    position: relative;
+}
+#sort-people-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f7fafd;
+    border: 1px solid #e3e7ee;
+    border-radius: 7px;
+    color: #2271b1;
+    padding: 6px 14px;
+    font-size: 0.98rem;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+}
+#sort-people-btn:hover, #sort-people-btn:focus {
+    background: #eaf4fb;
+    color: #135e96;
+    border-color: #b6d4ef;
+}
+.sort-dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    background: #fff;
+    border: 1px solid #e3e7ee;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(34,113,177,0.08);
+    min-width: 140px;
+    z-index: 10;
+}
+.sort-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 6px 0;
+}
+.sort-dropdown li a {
+    display: block;
+    padding: 8px 18px;
+    color: #2271b1;
+    text-decoration: none;
+    font-size: 0.97rem;
+    transition: background 0.2s, color 0.2s;
+}
+.sort-dropdown li a:hover, .sort-dropdown li a:focus {
+    background: #eaf4fb;
+    color: #135e96;
+}
+@media screen and (max-width: 900px) {
+    .two-column-layout {
+        flex-direction: column;
+        gap: 18px;
+    }
+    .left-column, .right-column {
+        min-width: 0;
+        width: 100%;
+        padding: 16px 8px;
+    }
 } 

@@ -20,6 +20,9 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_program_details', array($this, 'ajax_get_program_details'));
         add_action('wp_ajax_edit_program', array($this, 'ajax_edit_program'));
         add_action('wp_ajax_get_people_for_owner_select', array($this, 'ajax_get_people_for_owner_select'));
+        // Register AJAX handler for force syncing users
+        add_action('wp_ajax_administration_force_sync_users', array($this, 'ajax_force_sync_users'));
+        add_action('wp_ajax_nopriv_administration_force_sync_users', array($this, 'ajax_force_sync_users'));
     }
 
     /**
@@ -279,5 +282,22 @@ class Administration_Plugin_Public {
         $table = $wpdb->prefix . 'core_person';
         $people = $wpdb->get_results("SELECT PersonID, FirstName, LastName FROM $table ORDER BY LastName, FirstName");
         wp_send_json_success($people);
+    }
+
+    /**
+     * AJAX handler to force sync all users to core_person
+     */
+    public function ajax_force_sync_users() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        // Ensure the sync class is loaded
+        if (!class_exists('Administration_Sync_Members')) {
+            require_once ADMINISTRATION_PLUGIN_PATH . 'includes/sync/class-administration-sync-members.php';
+        }
+        $sync = new Administration_Sync_Members();
+        $sync->force_sync_all_users();
+        wp_send_json_success(['message' => 'User synchronization completed.']);
     }
 } 

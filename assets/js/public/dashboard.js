@@ -33,6 +33,10 @@
             $('#filter-status, #filter-type').on('change', Dashboard.applyFilters);
             $('#filter-date-start, #filter-date-end').on('change', Dashboard.applyFilters);
             $('#filter-search').on('input', Dashboard.applyFilters);
+
+            // Sync button
+            $(document).on('click', '#sync-users-btn', this.handleSyncUsersClick);
+            $(document).on('click', '#add-person-btn', this.handleAddPersonClick);
         },
 
         toggleMenu: function(e) {
@@ -421,7 +425,46 @@
             $('#filter-search').off('input').on('input', Dashboard.applyFilters);
         },
 
-        programTypes: (typeof administration_plugin !== 'undefined' && administration_plugin.program_types) ? administration_plugin.program_types : ['Education', 'Health', 'Social']
+        programTypes: (typeof administration_plugin !== 'undefined' && administration_plugin.program_types) ? administration_plugin.program_types : ['Education', 'Health', 'Social'],
+
+        handleSyncUsersClick: function(e) {
+            e.preventDefault();
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> Syncing...');
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'administration_force_sync_users',
+                    nonce: administration_plugin.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $btn.html('<span class="dashicons dashicons-yes"></span> Synced!');
+                        setTimeout(function() {
+                            $btn.prop('disabled', false).html('<span class="dashicons dashicons-update"></span> Sync');
+                        }, 1500);
+                    } else {
+                        $btn.html('<span class="dashicons dashicons-warning"></span> Error');
+                        setTimeout(function() {
+                            $btn.prop('disabled', false).html('<span class="dashicons dashicons-update"></span> Sync');
+                        }, 2000);
+                    }
+                },
+                error: function() {
+                    $btn.html('<span class="dashicons dashicons-warning"></span> Error');
+                    setTimeout(function() {
+                        $btn.prop('disabled', false).html('<span class="dashicons dashicons-update"></span> Sync');
+                    }, 2000);
+                }
+            });
+        },
+
+        handleAddPersonClick: function(e) {
+            e.preventDefault();
+            // Stub: open modal (to be implemented)
+            alert('Add Person modal coming soon!');
+        }
     };
 
     // Initialize dashboard when document is ready

@@ -344,7 +344,6 @@ body.administration-dashboard-public {
 
 .filter-group {
     flex: 0 0 140px;
-    min-width: 140px;
 }
 
 .filter-group label {
@@ -771,8 +770,8 @@ body.administration-dashboard-public {
 
 .filter-group-search {
     flex: 4.68 1 624px;
-    min-width: 468px;
-    margin-right: 24px;
+    min-width: 250px;
+    margin-right: 1px;
 }
 .filter-group-search input[type="text"] {
     width: 100%;

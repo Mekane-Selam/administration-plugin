@@ -9,6 +9,16 @@ if (!function_exists('administration_plugin_get_programs')) {
 }
 $programs = administration_plugin_get_programs();
 
+// Fetch people for Program Owner select
+if (!function_exists('administration_plugin_get_people')) {
+    function administration_plugin_get_people() {
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        return $wpdb->get_results("SELECT PersonID, FirstName, LastName FROM $table ORDER BY LastName, FirstName");
+    }
+}
+$people = administration_plugin_get_people();
+
 // Define program types centrally
 $program_types = array('Education', 'Health', 'Social');
 ?>
@@ -111,6 +121,15 @@ $program_types = array('Education', 'Health', 'Social');
                 <select id="program-status" name="status">
                     <option value="active"><?php _e('Active', 'administration-plugin'); ?></option>
                     <option value="inactive"><?php _e('Inactive', 'administration-plugin'); ?></option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="program-owner"><?php _e('Program Owner', 'administration-plugin'); ?></label>
+                <select id="program-owner" name="program_owner" required>
+                    <option value=""><?php _e('Select Owner', 'administration-plugin'); ?></option>
+                    <?php foreach ($people as $person): ?>
+                        <option value="<?php echo esc_attr($person->PersonID); ?>"><?php echo esc_html($person->FirstName . ' ' . $person->LastName); ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="form-actions">

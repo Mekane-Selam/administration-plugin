@@ -174,8 +174,9 @@ class Administration_Plugin_Public {
         $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
         $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
-        if (!$name || !$type) {
-            wp_send_json_error('Program name and type are required.');
+        $owner = isset($_POST['program_owner']) ? intval($_POST['program_owner']) : null;
+        if (!$name || !$type || !$owner) {
+            wp_send_json_error('Program name, type, and owner are required.');
         }
         $active_flag = ($status === 'active') ? 1 : 0;
         $result = $wpdb->insert($table, array(
@@ -184,7 +185,8 @@ class Administration_Plugin_Public {
             'ProgramDescription' => $description,
             'ActiveFlag' => $active_flag,
             'StartDate' => $start_date,
-            'EndDate' => $end_date
+            'EndDate' => $end_date,
+            'ProgramOwner' => $owner
         ));
         if ($result) {
             wp_send_json_success();
@@ -242,7 +244,8 @@ class Administration_Plugin_Public {
         $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
         $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
-        if (!$program_id || !$name) {
+        $owner = isset($_POST['program_owner']) ? intval($_POST['program_owner']) : null;
+        if (!$program_id || !$name || !$owner) {
             wp_send_json_error('Missing required fields.');
         }
         $active_flag = ($status === 'active') ? 1 : 0;
@@ -254,7 +257,8 @@ class Administration_Plugin_Public {
                 'ProgramDescription' => $description,
                 'StartDate' => $start_date,
                 'EndDate' => $end_date,
-                'ActiveFlag' => $active_flag
+                'ActiveFlag' => $active_flag,
+                'ProgramOwner' => $owner
             ),
             array('ProgramID' => $program_id)
         );

@@ -31,9 +31,9 @@
             $('.program-card').on('click', this.showProgramDetails);
 
             // New filter event handlers
-            $('#filter-status, #filter-type').on('change', this.applyFilters);
-            $('#filter-date-start, #filter-date-end').on('change', this.applyFilters);
-            $('#filter-search').on('input', this.applyFilters);
+            $('#filter-status, #filter-type').on('change', Dashboard.applyFilters);
+            $('#filter-date-start, #filter-date-end').on('change', Dashboard.applyFilters);
+            $('#filter-search').on('input', Dashboard.applyFilters);
         },
 
         toggleMenu: function(e) {
@@ -458,9 +458,9 @@
         },
         programTypes: (typeof administration_plugin !== 'undefined' && administration_plugin.program_types) ? administration_plugin.program_types : ['Education', 'Health', 'Social'],
         rebindProgramFilters: function() {
-            $('#filter-status, #filter-type').off('change').on('change', this.applyFilters);
-            $('#filter-date-start, #filter-date-end').off('change').on('change', this.applyFilters);
-            $('#filter-search').off('input').on('input', this.applyFilters);
+            $('#filter-status, #filter-type').off('change').on('change', Dashboard.applyFilters);
+            $('#filter-date-start, #filter-date-end').off('change').on('change', Dashboard.applyFilters);
+            $('#filter-search').off('input').on('input', Dashboard.applyFilters);
         },
     };
 

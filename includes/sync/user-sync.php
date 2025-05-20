@@ -2,10 +2,16 @@
 // User synchronization logic for Administration Plugin
 // Hooks into Ultimate Member registration to sync with core_person table
 
+error_log('user-sync.php loaded');
+
 add_action('um_after_new_user_register', 'administration_plugin_add_person_on_registration', 10, 2);
 
 function administration_plugin_add_person_on_registration($user_id, $args) {
+    error_log('um_after_new_user_register fired for user_id: ' . $user_id);
     global $wpdb;
+
+    // Log all user meta for debugging
+    error_log('All user meta: ' . print_r(get_user_meta($user_id), true));
 
     // Get user data
     $user = get_userdata($user_id);

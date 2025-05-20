@@ -770,8 +770,8 @@ body.administration-dashboard-public {
 }
 
 .filter-group-search {
-    flex: 3.6 1 480px;
-    min-width: 360px;
+    flex: 4.68 1 624px;
+    min-width: 468px;
     margin-right: 24px;
 }
 .filter-group-search input[type="text"] {
@@ -871,6 +871,9 @@ body.administration-dashboard-public {
 .modal-content form .form-field select,
 .modal-content form .form-field textarea {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     padding: 10px 12px;
     border: 1px solid #d1d5db;
     border-radius: 6px;

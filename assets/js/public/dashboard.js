@@ -91,6 +91,7 @@
                     if (response.success) {
                         $('.administration-dashboard-content').html(response.data);
                         Dashboard.initializeWidgets();
+                        Dashboard.rebindProgramFilters();
                     } else {
                         console.error('Error loading dashboard page:', response.data);
                     }
@@ -456,6 +457,11 @@
             });
         },
         programTypes: (typeof administration_plugin !== 'undefined' && administration_plugin.program_types) ? administration_plugin.program_types : ['Education', 'Health', 'Social'],
+        rebindProgramFilters: function() {
+            $('#filter-status, #filter-type').off('change').on('change', this.applyFilters);
+            $('#filter-date-start, #filter-date-end').off('change').on('change', this.applyFilters);
+            $('#filter-search').off('input').on('input', this.applyFilters);
+        },
     };
 
     // Initialize dashboard when document is ready

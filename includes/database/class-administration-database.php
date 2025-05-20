@@ -99,8 +99,8 @@ class Administration_Database {
 
         // Person table
         $sql[] = "CREATE TABLE IF NOT EXISTS $person_table (
-            PersonID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            UserID BIGINT(20) UNSIGNED NULL,
+            PersonID VARCHAR(25) NOT NULL,
+            UserID VARCHAR(25) NULL,
             FirstName VARCHAR(50) NOT NULL,
             LastName VARCHAR(50) NOT NULL,
             Title VARCHAR(50),
@@ -120,9 +120,9 @@ class Administration_Database {
 
         // Person Relationships table
         $sql[] = "CREATE TABLE IF NOT EXISTS $person_relationships_table (
-            RelationshipID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            PersonID BIGINT(20) UNSIGNED NOT NULL,
-            RelatedPersonID BIGINT(20) UNSIGNED NOT NULL,
+            RelationshipID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NOT NULL,
+            RelatedPersonID VARCHAR(25) NOT NULL,
             RelationshipType VARCHAR(50) NOT NULL,
             PRIMARY KEY (RelationshipID),
             CONSTRAINT fk_relationship_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
@@ -131,17 +131,17 @@ class Administration_Database {
 
         // Roles table
         $sql[] = "CREATE TABLE IF NOT EXISTS $roles_table (
-            RoleID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            RoleID VARCHAR(25) NOT NULL,
             RoleName VARCHAR(50) NOT NULL,
             PRIMARY KEY (RoleID)
         ) $charset_collate;";
 
         // Person Roles table
         $sql[] = "CREATE TABLE IF NOT EXISTS $person_roles_table (
-            PersonRoleID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            PersonID BIGINT(20) UNSIGNED NOT NULL,
-            RoleID BIGINT(20) UNSIGNED NOT NULL,
-            ProgramID BIGINT(20) UNSIGNED NULL,
+            PersonRoleID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NOT NULL,
+            RoleID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NULL,
             ActiveFlag TINYINT(1) DEFAULT 1,
             PRIMARY KEY (PersonRoleID),
             CONSTRAINT fk_person_role_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
@@ -150,23 +150,23 @@ class Administration_Database {
 
         // Programs table
         $sql[] = "CREATE TABLE IF NOT EXISTS $programs_table (
-            ProgramID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ProgramID VARCHAR(25) NOT NULL,
             ProgramName VARCHAR(100) NOT NULL,
             ProgramType VARCHAR(50) NOT NULL,
             ProgramDescription TEXT,
             ActiveFlag TINYINT(1) DEFAULT 1,
             StartDate DATE,
             EndDate DATE,
-            ProgramOwner BIGINT(20) UNSIGNED NULL,
+            ProgramOwner VARCHAR(25) NULL,
             PRIMARY KEY (ProgramID),
             CONSTRAINT fk_program_owner FOREIGN KEY (ProgramOwner) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Program Enrollments table
         $sql[] = "CREATE TABLE IF NOT EXISTS $program_enrollments_table (
-            EnrollmentID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            PersonID BIGINT(20) UNSIGNED NOT NULL,
-            ProgramID BIGINT(20) UNSIGNED NOT NULL,
+            EnrollmentID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NOT NULL,
             ActiveFlag TINYINT(1) DEFAULT 1,
             EnrollmentDate DATE,
             CompletionDate DATE,
@@ -177,8 +177,8 @@ class Administration_Database {
 
         // Program Sessions table
         $sql[] = "CREATE TABLE IF NOT EXISTS $program_sessions_table (
-            ProgramSessionID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ProgramID BIGINT(20) UNSIGNED NOT NULL,
+            ProgramSessionID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NOT NULL,
             SessionDate DATE,
             StartTime TIME,
             EndTime TIME,
@@ -191,10 +191,10 @@ class Administration_Database {
 
         // Program Checkins table
         $sql[] = "CREATE TABLE IF NOT EXISTS $program_checkins_table (
-            CheckInID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            PersonID BIGINT(20) UNSIGNED NOT NULL,
-            ProgramID BIGINT(20) UNSIGNED NOT NULL,
-            ProgramSessionID BIGINT(20) UNSIGNED NULL,
+            CheckInID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NOT NULL,
+            ProgramSessionID VARCHAR(25) NULL,
             CheckInDate DATE,
             CheckInTime TIME,
             CheckOutDate DATE,
@@ -202,13 +202,13 @@ class Administration_Database {
             PRIMARY KEY (CheckInID),
             CONSTRAINT fk_checkin_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
             CONSTRAINT fk_checkin_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE,
-            CONSTRAINT fk_checkin_session FOREIGN KEY (ProgramSessionID) REFERENCES $program_sessions_table(ProgramSessionID) ON DELETE SET NULL
+            CONSTRAINT fk_checkin_session FOREIGN KEY (ProgramSessionID) REFERENCES $program_sessions_table(SessionID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // Events table
         $sql[] = "CREATE TABLE IF NOT EXISTS $events_table (
-            EventID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ProgramID BIGINT(20) UNSIGNED NULL,
+            EventID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NULL,
             EventName VARCHAR(100) NOT NULL,
             EventType VARCHAR(50),
             StartDateTime DATETIME,
@@ -220,8 +220,8 @@ class Administration_Database {
 
         // Volunteers Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $volunteers_table (
-            VolunteerID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            PersonID BIGINT(20) UNSIGNED NOT NULL,
+            VolunteerID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NOT NULL,
             Skills TEXT,
             AvailabilityNotes TEXT,
             PRIMARY KEY (VolunteerID),
@@ -230,8 +230,8 @@ class Administration_Database {
 
         // Volunteer Availability Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $volunteer_availability_table (
-            AvailabilityID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            VolunteerID BIGINT(20) UNSIGNED NOT NULL,
+            AvailabilityID VARCHAR(25) NOT NULL,
+            VolunteerID VARCHAR(25) NOT NULL,
             StartDateTime DATETIME NOT NULL,
             EndDateTime DATETIME NOT NULL,
             AvailabilityType VARCHAR(50) NOT NULL,
@@ -243,7 +243,7 @@ class Administration_Database {
 
         // Task Definitions Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $task_definitions_table (
-            TaskID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            TaskID VARCHAR(25) NOT NULL,
             TaskName VARCHAR(100) NOT NULL,
             TaskDescription TEXT,
             DefaultDuration INT UNSIGNED,
@@ -252,7 +252,7 @@ class Administration_Database {
 
         // Task Groups Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $task_groups_table (
-            TaskGroupID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            TaskGroupID VARCHAR(25) NOT NULL,
             TaskGroupName VARCHAR(100) NOT NULL,
             Description TEXT,
             PRIMARY KEY (TaskGroupID)
@@ -260,9 +260,9 @@ class Administration_Database {
 
         // Task Group Tasks Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $task_group_tasks_table (
-            TaskGroupTaskID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            TaskGroupID BIGINT(20) UNSIGNED NOT NULL,
-            TaskID BIGINT(20) UNSIGNED NOT NULL,
+            TaskGroupTaskID VARCHAR(25) NOT NULL,
+            TaskGroupID VARCHAR(25) NOT NULL,
+            TaskID VARCHAR(25) NOT NULL,
             SortOrder INT UNSIGNED NOT NULL,
             PRIMARY KEY (TaskGroupTaskID),
             CONSTRAINT fk_taskgroup_taskgroup FOREIGN KEY (TaskGroupID) REFERENCES $task_groups_table(TaskGroupID) ON DELETE CASCADE,
@@ -271,9 +271,9 @@ class Administration_Database {
 
         // Shift Templates Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $shift_templates_table (
-            ShiftTemplateID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ShiftTemplateID VARCHAR(25) NOT NULL,
             ShiftTemplateName VARCHAR(100) NOT NULL,
-            ProgramID BIGINT(20) UNSIGNED NOT NULL,
+            ProgramID VARCHAR(25) NOT NULL,
             DefaultStartTime TIME NOT NULL,
             DefaultEndTime TIME NOT NULL,
             PRIMARY KEY (ShiftTemplateID),
@@ -282,9 +282,9 @@ class Administration_Database {
 
         // Shift Template Task Groups Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $shift_template_task_groups_table (
-            ShiftTemplateTaskGroupID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ShiftTemplateID BIGINT(20) UNSIGNED NOT NULL,
-            TaskGroupID BIGINT(20) UNSIGNED NOT NULL,
+            ShiftTemplateTaskGroupID VARCHAR(25) NOT NULL,
+            ShiftTemplateID VARCHAR(25) NOT NULL,
+            TaskGroupID VARCHAR(25) NOT NULL,
             SortOrder INT UNSIGNED NOT NULL,
             PRIMARY KEY (ShiftTemplateTaskGroupID),
             CONSTRAINT fk_shifttemplate_taskgroup_template FOREIGN KEY (ShiftTemplateID) REFERENCES $shift_templates_table(ShiftTemplateID) ON DELETE CASCADE,
@@ -293,13 +293,13 @@ class Administration_Database {
 
         // Shift Occurrences Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $shift_occurrences_table (
-            ShiftOccurrenceID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ProgramID BIGINT(20) UNSIGNED NOT NULL,
-            VolunteerID BIGINT(20) UNSIGNED NOT NULL,
+            ShiftOccurrenceID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NOT NULL,
+            VolunteerID VARCHAR(25) NOT NULL,
             ScheduledDate DATE NOT NULL,
             StartTime TIME NOT NULL,
             EndTime TIME NOT NULL,
-            ShiftTemplateID BIGINT(20) UNSIGNED NOT NULL,
+            ShiftTemplateID VARCHAR(25) NOT NULL,
             Notes TEXT,
             PRIMARY KEY (ShiftOccurrenceID),
             CONSTRAINT fk_shiftoccurrence_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE CASCADE,
@@ -309,9 +309,9 @@ class Administration_Database {
 
         // Shift Tasks Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $shift_tasks_table (
-            ShiftTaskID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ShiftOccurrenceID BIGINT(20) UNSIGNED NOT NULL,
-            TaskID BIGINT(20) UNSIGNED NOT NULL,
+            ShiftTaskID VARCHAR(25) NOT NULL,
+            ShiftOccurrenceID VARCHAR(25) NOT NULL,
+            TaskID VARCHAR(25) NOT NULL,
             IsModified TINYINT(1) DEFAULT 0,
             Status VARCHAR(50) NOT NULL,
             Notes TEXT,
@@ -322,8 +322,8 @@ class Administration_Database {
 
         // HR Job Postings Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $job_postings_table (
-            JobPostingID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ProgramID BIGINT(20) UNSIGNED NULL,
+            JobPostingID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NULL,
             Title VARCHAR(100) NOT NULL,
             Description TEXT,
             Requirements TEXT,
@@ -335,8 +335,8 @@ class Administration_Database {
             PostedDate DATETIME,
             ClosingDate DATETIME,
             DepartmentName VARCHAR(100),
-            ReportsTo BIGINT(20) UNSIGNED NULL,
-            CreatedBy BIGINT(20) UNSIGNED NOT NULL,
+            ReportsTo VARCHAR(25) NULL,
+            CreatedBy VARCHAR(25) NOT NULL,
             LastModifiedDate DATETIME NOT NULL,
             IsInternal TINYINT(1) DEFAULT 0,
             PRIMARY KEY (JobPostingID),
@@ -347,10 +347,10 @@ class Administration_Database {
 
         // HR Applications Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $applications_table (
-            ApplicationID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            JobPostingID BIGINT(20) UNSIGNED NOT NULL,
-            PersonID BIGINT(20) UNSIGNED NULL,
-            ExternalApplicantID BIGINT(20) UNSIGNED NULL,
+            ApplicationID VARCHAR(25) NOT NULL,
+            JobPostingID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NULL,
+            ExternalApplicantID VARCHAR(25) NULL,
             Status VARCHAR(50) NOT NULL DEFAULT 'New',
             SubmissionDate DATETIME NOT NULL,
             LastModifiedDate DATETIME NOT NULL,
@@ -365,7 +365,7 @@ class Administration_Database {
 
         // HR External Applicants Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $external_applicants_table (
-            ExternalApplicantID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            ExternalApplicantID VARCHAR(25) NOT NULL,
             FirstName VARCHAR(50) NOT NULL,
             LastName VARCHAR(50) NOT NULL,
             Email VARCHAR(100) NOT NULL,
@@ -377,15 +377,15 @@ class Administration_Database {
             Zip VARCHAR(20),
             CreatedDate DATETIME NOT NULL,
             LastModifiedDate DATETIME NOT NULL,
-            ConvertedToPersonID BIGINT(20) UNSIGNED NULL,
+            ConvertedToPersonID VARCHAR(25) NULL,
             PRIMARY KEY (ExternalApplicantID),
             CONSTRAINT fk_externalapplicant_person FOREIGN KEY (ConvertedToPersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         // HR Interview Schedules Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $interview_schedules_table (
-            InterviewID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ApplicationID BIGINT(20) UNSIGNED NOT NULL,
+            InterviewID VARCHAR(25) NOT NULL,
+            ApplicationID VARCHAR(25) NOT NULL,
             InterviewRound INT UNSIGNED NOT NULL,
             ScheduledDateTime DATETIME NOT NULL,
             Location VARCHAR(100),
@@ -398,9 +398,9 @@ class Administration_Database {
 
         // HR Interviewers Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $interviewers_table (
-            InterviewerAssignmentID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            InterviewID BIGINT(20) UNSIGNED NOT NULL,
-            InterviewerID BIGINT(20) UNSIGNED NOT NULL,
+            InterviewerAssignmentID VARCHAR(25) NOT NULL,
+            InterviewID VARCHAR(25) NOT NULL,
+            InterviewerID VARCHAR(25) NOT NULL,
             Status VARCHAR(50) NOT NULL DEFAULT 'Invited',
             Feedback TEXT,
             Rating INT,
@@ -412,8 +412,8 @@ class Administration_Database {
 
         // HR Job Skills Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $job_skills_table (
-            JobSkillID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            JobPostingID BIGINT(20) UNSIGNED NOT NULL,
+            JobSkillID VARCHAR(25) NOT NULL,
+            JobPostingID VARCHAR(25) NOT NULL,
             SkillName VARCHAR(100) NOT NULL,
             Required TINYINT(1) DEFAULT 0,
             PRIMARY KEY (JobSkillID),
@@ -422,8 +422,8 @@ class Administration_Database {
 
         // HR Application Skills Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $application_skills_table (
-            ApplicationSkillID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ApplicationID BIGINT(20) UNSIGNED NOT NULL,
+            ApplicationSkillID VARCHAR(25) NOT NULL,
+            ApplicationID VARCHAR(25) NOT NULL,
             SkillName VARCHAR(100) NOT NULL,
             YearsExperience INT UNSIGNED,
             ProficiencyLevel VARCHAR(50),
@@ -433,13 +433,13 @@ class Administration_Database {
 
         // HR Job Workflows Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $job_workflows_table (
-            WorkflowID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            JobPostingID BIGINT(20) UNSIGNED NOT NULL,
+            WorkflowID VARCHAR(25) NOT NULL,
+            JobPostingID VARCHAR(25) NOT NULL,
             StepNumber INT UNSIGNED NOT NULL,
             StepName VARCHAR(100) NOT NULL,
-            RequiredRole BIGINT(20) UNSIGNED NULL,
+            RequiredRole VARCHAR(25) NULL,
             IsComplete TINYINT(1) DEFAULT 0,
-            CompletedBy BIGINT(20) UNSIGNED NULL,
+            CompletedBy VARCHAR(25) NULL,
             CompletedDate DATETIME,
             PRIMARY KEY (WorkflowID),
             CONSTRAINT fk_workflow_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE CASCADE,
@@ -449,8 +449,8 @@ class Administration_Database {
 
         // HR Offers Table
         $sql[] = "CREATE TABLE IF NOT EXISTS $offers_table (
-            OfferID BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-            ApplicationID BIGINT(20) UNSIGNED NOT NULL,
+            OfferID VARCHAR(25) NOT NULL,
+            ApplicationID VARCHAR(25) NOT NULL,
             OfferDate DATETIME NOT NULL,
             Status VARCHAR(50) NOT NULL DEFAULT 'Draft',
             StartDate DATE,
@@ -458,7 +458,7 @@ class Administration_Database {
             Position VARCHAR(100),
             Department VARCHAR(100),
             ApprovalStatus VARCHAR(50) DEFAULT 'Pending',
-            ApprovedBy BIGINT(20) UNSIGNED NULL,
+            ApprovedBy VARCHAR(25) NULL,
             ApprovalDate DATETIME,
             Notes TEXT,
             PRIMARY KEY (OfferID),

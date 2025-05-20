@@ -19,6 +19,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_add_program', array($this, 'ajax_add_program'));
         add_action('wp_ajax_get_program_details', array($this, 'ajax_get_program_details'));
         add_action('wp_ajax_edit_program', array($this, 'ajax_edit_program'));
+        add_action('wp_ajax_get_people_for_owner_select', array($this, 'ajax_get_people_for_owner_select'));
     }
 
     /**
@@ -267,5 +268,16 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to update program.');
         }
+    }
+
+    public function ajax_get_people_for_owner_select() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        $people = $wpdb->get_results("SELECT PersonID, FirstName, LastName FROM $table ORDER BY LastName, FirstName");
+        wp_send_json_success($people);
     }
 } 

@@ -127,9 +127,13 @@ $program_types = array('Education', 'Health', 'Social');
                 <label for="program-owner"><?php _e('Program Owner', 'administration-plugin'); ?></label>
                 <select id="program-owner" name="program_owner" required>
                     <option value=""><?php _e('Select Owner', 'administration-plugin'); ?></option>
-                    <?php foreach ($people as $person): ?>
-                        <option value="<?php echo esc_attr($person->PersonID); ?>"><?php echo esc_html($person->FirstName . ' ' . $person->LastName); ?></option>
-                    <?php endforeach; ?>
+                    <?php if (!empty($people)): ?>
+                        <?php foreach ($people as $person): ?>
+                            <option value="<?php echo esc_attr($person->PersonID); ?>"><?php echo esc_html($person->FirstName . ' ' . $person->LastName); ?></option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="" disabled><?php _e('No people found. Please add people first.', 'administration-plugin'); ?></option>
+                    <?php endif; ?>
                 </select>
             </div>
             <div class="form-actions">

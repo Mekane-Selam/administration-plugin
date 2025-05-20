@@ -157,48 +157,73 @@
                     var startDate = $content.find('p:contains("Start Date:")').text().replace('Start Date:', '').trim();
                     var endDate = $content.find('p:contains("End Date:")').text().replace('End Date:', '').trim();
                     var status = $content.find('p:contains("Status:")').text().replace('Status:', '').trim().toLowerCase();
-                    // Show edit form with dropdown for type
-                    var typeOptions = Dashboard.programTypes.map(function(opt) {
-                        var selected = (opt.toLowerCase() === type.toLowerCase()) ? 'selected' : '';
-                        return `<option value="${opt.toLowerCase()}" ${selected}>${opt}</option>`;
-                    }).join('');
-                    var formHtml = `
-                        <form id="edit-program-form">
-                            <div class="form-field">
-                                <label for="edit-program-name">Program Name</label>
-                                <input type="text" id="edit-program-name" name="program_name" value="${name}" required>
-                            </div>
-                            <div class="form-field">
-                                <label for="edit-program-type">Program Type</label>
-                                <select id="edit-program-type" name="program_type">${typeOptions}</select>
-                            </div>
-                            <div class="form-field">
-                                <label for="edit-program-description">Description</label>
-                                <textarea id="edit-program-description" name="description">${description}</textarea>
-                            </div>
-                            <div class="form-field">
-                                <label for="edit-program-start-date">Start Date</label>
-                                <input type="date" id="edit-program-start-date" name="start_date" value="${startDate}">
-                            </div>
-                            <div class="form-field">
-                                <label for="edit-program-end-date">End Date</label>
-                                <input type="date" id="edit-program-end-date" name="end_date" value="${endDate}">
-                            </div>
-                            <div class="form-field">
-                                <label for="edit-program-status">Status</label>
-                                <select id="edit-program-status" name="status">
-                                    <option value="active" ${status === 'active' ? 'selected' : ''}>Active</option>
-                                    <option value="inactive" ${status === 'inactive' ? 'selected' : ''}>Inactive</option>
-                                </select>
-                            </div>
-                            <div class="form-actions">
-                                <button type="submit" class="button button-primary">Save Changes</button>
-                                <button type="button" class="button" id="cancel-edit-program">Cancel</button>
-                            </div>
-                        </form>
-                        <div id="edit-program-message"></div>
-                    `;
-                    $content.html(formHtml);
+                    // Fetch people for owner select
+                    $.ajax({
+                        url: administration_plugin.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'get_people_for_owner_select',
+                            nonce: administration_plugin.nonce
+                        },
+                        success: function(resp) {
+                            var people = resp.success && Array.isArray(resp.data) ? resp.data : [];
+                            var ownerOptions = '<option value="">Select Owner</option>';
+                            var currentOwner = $content.find('p:contains("Owner:")').text().replace('Owner:', '').trim();
+                            people.forEach(function(person) {
+                                var fullName = person.FirstName + ' ' + person.LastName;
+                                var selected = (fullName === currentOwner) ? 'selected' : '';
+                                ownerOptions += `<option value="${person.PersonID}" ${selected}>${fullName}</option>`;
+                            });
+                            if (people.length === 0) {
+                                ownerOptions += '<option value="" disabled>No people found. Please add people first.</option>';
+                            }
+                            var typeOptions = Dashboard.programTypes.map(function(opt) {
+                                var selected = (opt.toLowerCase() === type.toLowerCase()) ? 'selected' : '';
+                                return `<option value="${opt.toLowerCase()}" ${selected}>${opt}</option>`;
+                            }).join('');
+                            var formHtml = `
+                                <form id="edit-program-form">
+                                    <div class="form-field">
+                                        <label for="edit-program-name">Program Name</label>
+                                        <input type="text" id="edit-program-name" name="program_name" value="${name}" required>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="edit-program-type">Program Type</label>
+                                        <select id="edit-program-type" name="program_type">${typeOptions}</select>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="edit-program-description">Description</label>
+                                        <textarea id="edit-program-description" name="description">${description}</textarea>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="edit-program-start-date">Start Date</label>
+                                        <input type="date" id="edit-program-start-date" name="start_date" value="${startDate}">
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="edit-program-end-date">End Date</label>
+                                        <input type="date" id="edit-program-end-date" name="end_date" value="${endDate}">
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="edit-program-status">Status</label>
+                                        <select id="edit-program-status" name="status">
+                                            <option value="active" ${status === 'active' ? 'selected' : ''}>Active</option>
+                                            <option value="inactive" ${status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="edit-program-owner">Program Owner</label>
+                                        <select id="edit-program-owner" name="program_owner" required>${ownerOptions}</select>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="button button-primary">Save Changes</button>
+                                        <button type="button" class="button" id="cancel-edit-program">Cancel</button>
+                                    </div>
+                                </form>
+                                <div id="edit-program-message"></div>
+                            `;
+                            $content.html(formHtml);
+                        }
+                    });
                 });
                 // Cancel edit handler
                 $(document).off('click', '#cancel-edit-program').on('click', '#cancel-edit-program', function() {

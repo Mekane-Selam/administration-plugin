@@ -1033,7 +1033,7 @@ body.administration-dashboard-public {
     border-color: #135e96;
 }
 .people-list-content {
-    padding: 18px 24px 24px 24px;
+    padding: 18px 4px 24px 4px;
 }
 
 /* --- Persons-Content Two-Column Layout --- */
@@ -1173,11 +1173,12 @@ body.administration-dashboard-public {
     word-break: break-all;
 }
 .people-filter-input {
-    width: 120%;
+    width: 180%;
     max-width: 480px;
-    margin: 0 -10% 14px -10%;
+    margin: 0 10% 0% 10%;
     display: block;
     text-align: center;
+    justify-self: center;
 }
 @media screen and (max-width: 600px) {
     .left-column, .people-filter-input, .person-row {

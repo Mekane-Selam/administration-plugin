@@ -34,24 +34,21 @@
             $('#filter-date-start, #filter-date-end').on('change', Dashboard.applyFilters);
             $('#filter-search').on('input', Dashboard.applyFilters);
 
-            // Sync button
-            $(document).on('click', '#sync-users-btn', this.handleSyncUsersClick);
-            $(document).on('click', '#add-person-btn, #add-person-content-btn', this.openAddPersonModal);
+            // Sync button - bind to both instances
+            $(document).on('click', '#sync-users-btn, .sync-users-btn', this.handleSyncUsersClick);
+            
+            // Add Person modal handlers - use direct binding
+            $('#add-person-btn, #add-person-content-btn').on('click', this.openAddPersonModal);
+            $('#close-add-person-modal, #cancel-add-person').on('click', this.closeAddPersonModal);
+            $('#add-person-form').on('submit', this.submitAddPersonForm);
 
-            // Sync/Add/Sort for Persons-Content section
+            // Sort/Filter for Persons-Content section
             $(document).on('click', '#sort-people-btn', function(e) {
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
-            $(document).on('click', '#close-add-person-modal, #cancel-add-person', this.closeAddPersonModal);
-            $(document).on('submit', '#add-person-form', this.submitAddPersonForm);
             $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
-
-            // Use event delegation for Add Person modal open/close
-            $(document).off('click', '#add-person-btn, #add-person-content-btn').on('click', '#add-person-btn, #add-person-content-btn', this.openAddPersonModal);
-            $(document).off('click', '#close-add-person-modal, #cancel-add-person').on('click', '#close-add-person-modal, #cancel-add-person', this.closeAddPersonModal);
-            $(document).off('submit', '#add-person-form').on('submit', '#add-person-form', this.submitAddPersonForm);
         },
 
         toggleMenu: function(e) {
@@ -448,8 +445,11 @@
 
         handleSyncUsersClick: function(e) {
             e.preventDefault();
+            e.stopPropagation(); // Prevent event bubbling
+            
             var $btn = $(this);
             $btn.prop('disabled', true).html('<span class="dashicons dashicons-update spin"></span> Syncing...');
+            
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
@@ -462,6 +462,8 @@
                         $btn.html('<span class="dashicons dashicons-yes"></span> Synced!');
                         setTimeout(function() {
                             $btn.prop('disabled', false).html('<span class="dashicons dashicons-update"></span> Sync');
+                            // Reload the people list after sync
+                            Dashboard.loadPeopleList();
                         }, 1500);
                     } else {
                         $btn.html('<span class="dashicons dashicons-warning"></span> Error');
@@ -481,6 +483,8 @@
 
         openAddPersonModal: function(e) {
             e.preventDefault();
+            e.stopPropagation(); // Prevent event bubbling
+            
             var $modal = $('#add-person-modal');
             var $form = $('#add-person-form');
             

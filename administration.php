@@ -1,4 +1,5 @@
 <?php
+error_log('administration.php loaded');
 /**
  * Plugin Name: Administration Plugin
  * Plugin URI: https://mekaneselam.org

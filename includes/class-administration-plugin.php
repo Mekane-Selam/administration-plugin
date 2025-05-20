@@ -14,6 +14,7 @@ class Administration_Plugin {
      * Initialize the plugin
      */
     public function __construct() {
+        error_log('Administration_Plugin constructor called');
         $this->load_dependencies();
         $this->define_admin_hooks();
         $this->define_public_hooks();
@@ -24,6 +25,7 @@ class Administration_Plugin {
      * Load required dependencies
      */
     private function load_dependencies() {
+        error_log('Administration_Plugin::load_dependencies called');
         // Load the loader class
         require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-loader.php';
         

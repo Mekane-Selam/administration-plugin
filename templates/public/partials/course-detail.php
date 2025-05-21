@@ -5,7 +5,7 @@
   <button class="tab-button" data-tab="grades">Grades</button>
   <button class="tab-button" data-tab="attendance">Attendance</button>
 </div>
-<div class="course-detail-tab-content">
+<div class="course-detail-tab-content" data-course-id="<?php echo isset($course->CourseID) ? esc_attr($course->CourseID) : ''; ?>">
   <div class="tab-pane active" id="enrollments">
     <?php include plugin_dir_path(__FILE__) . 'course-detail-enrollments.php'; ?>
   </div>

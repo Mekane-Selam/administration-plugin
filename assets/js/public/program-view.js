@@ -394,7 +394,7 @@
             $(document).on('click', '.course-card', function() {
                 var courseName = $(this).find('.course-card-title').text();
                 var programId = $('#program-view-container').data('program-id');
-                var courseId = null;
+                var courseId = $('#course-detail-modal .course-detail-tab-content').data('course-id');
                 $(this).closest('.courses-list-enhanced').find('.course-card').each(function() {
                     if ($(this).find('.course-card-title').text() === courseName) {
                         courseId = $(this).data('course-id');
@@ -540,15 +540,7 @@
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',
-                    data: {
-                        action: 'add_course_enrollment',
-                        nonce: administration_plugin.nonce,
-                        CourseID: courseId,
-                        PersonID: personId,
-                        ActiveFlag: 1,
-                        EnrollmentDate: enrollmentDate,
-                        CourseEnrollmentID: courseEnrollmentId
-                    },
+                    data: payload,
                     success: function(response) {
                         if (response.success) {
                             $message.html('<span class="success-message">Enrollment added successfully!</span>');

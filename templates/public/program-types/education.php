@@ -53,7 +53,7 @@
         <?php if (!empty($courses)) : ?>
           <div class="courses-list-enhanced">
             <?php foreach ($courses as $course) : ?>
-              <div class="course-card">
+              <div class="course-card" data-course-id="<?php echo esc_attr($course->CourseID); ?>">
                 <div class="course-card-icon"><span class="dashicons dashicons-welcome-learn-more"></span></div>
                 <div class="course-card-details">
                   <div class="course-card-title"><?php echo esc_html($course->CourseName); ?></div>
@@ -80,6 +80,9 @@
         <button type="submit" class="button button-primary">Add</button>
         <button type="button" class="button add-enrollment-cancel-btn">Cancel</button>
       </form>
+      <div class="enrollment-search-bar">
+        <input type="text" class="enrollment-search-input" placeholder="Search enrollments by name..." autocomplete="off" />
+      </div>
       <?php
       // Fetch enrollments for this program and join with people
       if (!function_exists('administration_plugin_get_enrollments_for_program')) {

@@ -35,6 +35,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_program_full_view', array($this, 'ajax_get_program_full_view'));
         add_action('wp_ajax_add_edu_course', array($this, 'ajax_add_edu_course'));
         add_action('wp_ajax_add_edu_enrollment', array($this, 'ajax_add_edu_enrollment'));
+        add_action('wp_ajax_get_course_detail_and_enrollments', array($this, 'ajax_get_course_detail_and_enrollments'));
     }
 
     /**
@@ -575,5 +576,30 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to add enrollment.');
         }
+    }
+
+    /**
+     * AJAX handler to get course details and enrollments
+     */
+    public function ajax_get_course_detail_and_enrollments() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        if (!$course_id || !$program_id) {
+            wp_send_json_error('Missing required fields.');
+        }
+        $course = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}progtype_edu_courses WHERE CourseID = %s AND ProgramID = %s", $course_id, $program_id));
+        $enrollments = $wpdb->get_results($wpdb->prepare("SELECT ce.*, p.FirstName, p.LastName FROM {$wpdb->prefix}progtype_edu_courseenrollments ce LEFT JOIN {$wpdb->prefix}core_person p ON ce.PersonID = p.PersonID WHERE ce.CourseID = %s ORDER BY ce.EnrollmentDate DESC", $course_id));
+        ob_start();
+        include dirname(__FILE__,3) . '/templates/public/partials/course-detail-overview.php';
+        $overview_html = ob_get_clean();
+        ob_start();
+        include dirname(__FILE__,3) . '/templates/public/partials/course-detail-enrollments.php';
+        $enrollments_html = ob_get_clean();
+        wp_send_json_success(['overview_html' => $overview_html, 'enrollments_html' => $enrollments_html]);
     }
 } 

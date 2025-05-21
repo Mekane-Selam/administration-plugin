@@ -351,6 +351,97 @@
                     }
                 });
             };
+
+            // Enrollment search functionality
+            $(document).on('input', '.enrollment-search-input', function() {
+                var query = $(this).val().toLowerCase();
+                $('.enrollment-list-enhanced .enrollment-card').each(function() {
+                    var name = $(this).find('.enrollment-card-title').text().toLowerCase();
+                    if (name.includes(query)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                // Show/hide placeholder if no results
+                var visible = $('.enrollment-list-enhanced .enrollment-card:visible').length;
+                var $placeholder = $('.program-enrollment-list-placeholder');
+                if (visible === 0) {
+                    if ($placeholder.length === 0) {
+                        $('.enrollment-list-enhanced').after('<div class="program-enrollment-list-placeholder">No enrollments found for this search.</div>');
+                    } else {
+                        $placeholder.show().text('No enrollments found for this search.');
+                    }
+                } else {
+                    $placeholder.hide();
+                }
+            });
+
+            // Add course detail modal template if not present
+            if ($('#course-detail-modal').length === 0) {
+                $('body').append(`
+                    <div id="course-detail-modal" class="modal course-detail-modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <div class="course-detail-modal-sections">
+                                <div class="course-detail-overview-section"></div>
+                                <div class="course-detail-enrollments-section"></div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+            // Open course detail modal on course card click
+            $(document).on('click', '.course-card', function() {
+                var courseName = $(this).find('.course-card-title').text();
+                var programId = $('#program-view-container').data('program-id');
+                // Find course ID by matching name (could be improved with data attribute)
+                var courseId = null;
+                $(this).closest('.courses-list-enhanced').find('.course-card').each(function() {
+                    if ($(this).find('.course-card-title').text() === courseName) {
+                        courseId = $(this).data('course-id');
+                    }
+                });
+                // Fallback: try to get from data attribute
+                if (!courseId) {
+                    courseId = $(this).data('course-id');
+                }
+                if (!courseId) {
+                    // Try to get from PHP if rendered
+                    courseId = $(this).attr('data-course-id');
+                }
+                if (!courseId) {
+                    alert('Could not determine course ID.');
+                    return;
+                }
+                // Fetch course details and enrollments
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_course_detail_and_enrollments',
+                        nonce: administration_plugin.nonce,
+                        course_id: courseId,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            $('#course-detail-modal .course-detail-overview-section').html(response.data.overview_html);
+                            $('#course-detail-modal .course-detail-enrollments-section').html(response.data.enrollments_html);
+                            $('#course-detail-modal').addClass('show');
+                        } else {
+                            alert(response.data || 'Failed to load course details.');
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to load course details.');
+                    }
+                });
+            });
+            // Close course detail modal
+            $(document).on('click', '#course-detail-modal .close', function() {
+                $('#course-detail-modal').removeClass('show');
+            });
         }
     };
     $(document).ready(function() {

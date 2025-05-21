@@ -912,7 +912,7 @@
     font-weight: 500;
     font-size: 0.95rem;
     text-align: right;
-    max-width: 60%;
+    max-width: 90%;
     overflow: hidden;
     text-overflow: ellipsis;
 }

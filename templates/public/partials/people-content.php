@@ -22,7 +22,29 @@
         </div>
     </div>
     <div class="right-column">
-        <!-- Reserved for future use -->
+        <div id="person-details-panel" class="person-details-panel" style="display:none;">
+            <div class="person-details-section person-details-general">
+                <div class="person-details-section-header">
+                    <h3>General</h3>
+                    <button class="button person-details-edit-btn" data-section="general"><span class="dashicons dashicons-edit"></span> Edit</button>
+                </div>
+                <div class="person-details-section-content" id="person-details-general-content"></div>
+            </div>
+            <div class="person-details-section person-details-family">
+                <div class="person-details-section-header">
+                    <h3>Family</h3>
+                    <button class="button person-details-edit-btn" data-section="family"><span class="dashicons dashicons-edit"></span> Edit</button>
+                </div>
+                <div class="person-details-section-content" id="person-details-family-content"></div>
+            </div>
+            <div class="person-details-section person-details-roles">
+                <div class="person-details-section-header">
+                    <h3>Roles</h3>
+                    <button class="button person-details-edit-btn" data-section="roles"><span class="dashicons dashicons-edit"></span> Edit</button>
+                </div>
+                <div class="person-details-section-content" id="person-details-roles-content"></div>
+            </div>
+        </div>
     </div>
 </div>
 <!-- Add Person Modal -->

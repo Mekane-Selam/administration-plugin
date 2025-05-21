@@ -127,6 +127,7 @@ class Administration_Database {
             Zip VARCHAR(20),
             Birthday DATE,
             MissingInfoFlag TINYINT(1) DEFAULT 0,
+            RegisterDate DATE,
             PRIMARY KEY (PersonID)
         ) $charset_collate;";
 
@@ -497,6 +498,8 @@ class Administration_Database {
             Description TEXT,
             Level VARCHAR(50),
             PrimaryInstructorID VARCHAR(25) NULL,
+            BackUpTeacher1ID VARCHAR(25) NULL,
+            BackUpTeacher2ID VARCHAR(25) NULL,
             StartDate DATE,
             EndDate DATE,
             PRIMARY KEY (CourseID),

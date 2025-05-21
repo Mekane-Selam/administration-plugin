@@ -45,6 +45,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_add_staff_member', array($this, 'ajax_add_staff_member'));
         add_action('wp_ajax_get_program_staff_list', array($this, 'ajax_get_program_staff_list'));
         add_action('wp_ajax_update_course_instructors', array($this, 'ajax_update_course_instructors'));
+        add_action('wp_ajax_get_full_person_details', array(
+            $this, 'ajax_get_full_person_details'));
     }
 
     /**
@@ -897,5 +899,93 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to update instructors.');
         }
+    }
+
+    /**
+     * AJAX handler to get full person details (general, family, roles)
+     */
+    public function ajax_get_full_person_details() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+        if (!$person_id) {
+            wp_send_json_error('Missing person ID.');
+        }
+        $person_table = $wpdb->prefix . 'core_person';
+        $rel_table = $wpdb->prefix . 'core_person_relationships';
+        $roles_table = $wpdb->prefix . 'core_roles';
+        $person_roles_table = $wpdb->prefix . 'core_person_roles';
+        $programs_table = $wpdb->prefix . 'core_programs';
+
+        // General info
+        $general = $wpdb->get_row($wpdb->prepare("SELECT * FROM $person_table WHERE PersonID = %s", $person_id), ARRAY_A);
+        if (!$general) {
+            wp_send_json_error('Person not found.');
+        }
+
+        // Family relationships
+        $family = [
+            'Father' => '',
+            'Mother' => '',
+            'Children' => '',
+            'Other' => ''
+        ];
+        $rels = $wpdb->get_results($wpdb->prepare("SELECT * FROM $rel_table WHERE PersonID = %s OR RelatedPersonID = %s", $person_id, $person_id));
+        $children = [];
+        $other = [];
+        foreach ($rels as $rel) {
+            if ($rel->PersonID === $person_id) {
+                // This person is the subject
+                if (strtolower($rel->RelationshipType) === 'father') {
+                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
+                    if ($p) $family['Father'] = $p->FirstName . ' ' . $p->LastName;
+                } elseif (strtolower($rel->RelationshipType) === 'mother') {
+                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
+                    if ($p) $family['Mother'] = $p->FirstName . ' ' . $p->LastName;
+                } elseif (strtolower($rel->RelationshipType) === 'child') {
+                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
+                    if ($p) $children[] = $p->FirstName . ' ' . $p->LastName;
+                } else {
+                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
+                    if ($p) $other[] = $rel->RelationshipType . ': ' . $p->FirstName . ' ' . $p->LastName;
+                }
+            } elseif ($rel->RelatedPersonID === $person_id) {
+                // This person is the related person (e.g. child of X)
+                if (strtolower($rel->RelationshipType) === 'child') {
+                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->PersonID));
+                    if ($p) $family['Children'] .= ($family['Children'] ? ', ' : '') . $p->FirstName . ' ' . $p->LastName;
+                } else {
+                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->PersonID));
+                    if ($p) $other[] = $rel->RelationshipType . ' of ' . $p->FirstName . ' ' . $p->LastName;
+                }
+            }
+        }
+        if (!empty($children)) $family['Children'] = implode(', ', $children);
+        if (!empty($other)) $family['Other'] = implode('; ', $other);
+
+        // Roles (with program)
+        $roles = $wpdb->get_results($wpdb->prepare(
+            "SELECT pr.PersonRoleID, r.RoleName, p.ProgramName FROM $person_roles_table pr
+            LEFT JOIN $roles_table r ON pr.RoleID = r.RoleID
+            LEFT JOIN $programs_table p ON pr.ProgramID = p.ProgramID
+            WHERE pr.PersonID = %s AND pr.ActiveFlag = 1",
+            $person_id
+        ));
+        $roles_arr = [];
+        foreach ($roles as $role) {
+            $roles_arr[] = [
+                'RoleName' => $role->RoleName,
+                'ProgramName' => $role->ProgramName
+            ];
+        }
+
+        wp_send_json_success([
+            'general' => $general,
+            'family' => $family,
+            'roles' => $roles_arr
+        ]);
     }
 } 

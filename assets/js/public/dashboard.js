@@ -69,6 +69,63 @@
             });
             $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
+
+            // Load person details in right column when a person is clicked
+            $(document).on('click', '.person-row', function() {
+                var personId = $(this).data('person-id');
+                $('.person-row').removeClass('selected');
+                $(this).addClass('selected');
+                $('#person-details-panel').hide();
+                $('#person-details-general-content, #person-details-family-content, #person-details-roles-content').html('<div class="loading">Loading...</div>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_full_person_details',
+                        nonce: administration_plugin.nonce,
+                        person_id: personId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            var d = response.data;
+                            // General
+                            var generalHtml = '';
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name:</span> <span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name:</span> <span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email:</span> <span class='person-detail-value'>${d.general.Email || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone:</span> <span class='person-detail-value'>${d.general.Phone || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address:</span> <span class='person-detail-value'>${d.general.AddressLine1 || ''} ${d.general.AddressLine2 || ''} ${d.general.City || ''} ${d.general.State || ''} ${d.general.Zip || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Occupation:</span> <span class='person-detail-value'>${d.general.Occupation || ''}</span></div>`;
+                            $('#person-details-general-content').html(generalHtml);
+                            // Family
+                            var familyHtml = '';
+                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Father:</span> <span class='person-detail-value'>${d.family.Father || ''}</span></div>`;
+                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Mother:</span> <span class='person-detail-value'>${d.family.Mother || ''}</span></div>`;
+                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Children:</span> <span class='person-detail-value'>${d.family.Children || ''}</span></div>`;
+                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Other Relationships:</span> <span class='person-detail-value'>${d.family.Other || ''}</span></div>`;
+                            $('#person-details-family-content').html(familyHtml);
+                            // Roles
+                            var rolesHtml = '';
+                            if (d.roles && d.roles.length) {
+                                d.roles.forEach(function(role) {
+                                    rolesHtml += `<div class='person-detail-row'><span class='person-detail-label'>${role.ProgramName}:</span> <span class='person-detail-value'>${role.RoleName}</span></div>`;
+                                });
+                            } else {
+                                rolesHtml = '<div class="person-detail-row"><span class="person-detail-value">No roles found.</span></div>';
+                            }
+                            $('#person-details-roles-content').html(rolesHtml);
+                            $('#person-details-panel').show();
+                        } else {
+                            $('#person-details-general-content, #person-details-family-content, #person-details-roles-content').html('<div class="error-message">Failed to load details.</div>');
+                            $('#person-details-panel').show();
+                        }
+                    },
+                    error: function() {
+                        $('#person-details-general-content, #person-details-family-content, #person-details-roles-content').html('<div class="error-message">Failed to load details.</div>');
+                        $('#person-details-panel').show();
+                    }
+                });
+            });
         },
 
         toggleMenu: function(e) {

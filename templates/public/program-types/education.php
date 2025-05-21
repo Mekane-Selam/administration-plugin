@@ -120,11 +120,39 @@
   </div>
 </div>
 
+<!-- Add Staff Container -->
 <div class="program-view-edu-staff">
-    <h2 class="program-view-edu-title">Staff</h2>
+    <h3 class="program-view-edu-staff-title">Program Staff</h3>
     <div class="program-view-edu-staff-content">
-        <div class="staff-list">
-            <!-- Staff will be loaded here -->
-        </div>
+        <?php
+        // Get program staff members
+        global $wpdb;
+        $staff_members = $wpdb->get_results($wpdb->prepare(
+            "SELECT p.*, ps.Role 
+            FROM {$wpdb->prefix}progtype_edu_program_staff ps 
+            LEFT JOIN {$wpdb->prefix}core_person p ON ps.PersonID = p.PersonID 
+            WHERE ps.ProgramID = %s 
+            ORDER BY ps.Role, p.LastName, p.FirstName",
+            $program->ProgramID
+        ));
+        
+        if ($staff_members) {
+            foreach ($staff_members as $staff) {
+                ?>
+                <div class="staff-member-card">
+                    <div class="staff-member-icon">
+                        <span class="dashicons dashicons-businessperson"></span>
+                    </div>
+                    <div class="staff-member-details">
+                        <div class="staff-member-name"><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></div>
+                        <div class="staff-member-role"><?php echo esc_html($staff->Role); ?></div>
+                    </div>
+                </div>
+                <?php
+            }
+        } else {
+            echo '<div class="program-enrollment-list-placeholder">No staff members assigned.</div>';
+        }
+        ?>
     </div>
 </div> 

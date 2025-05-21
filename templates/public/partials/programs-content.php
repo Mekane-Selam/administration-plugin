@@ -22,12 +22,67 @@ $people = administration_plugin_get_people();
 // Define program types centrally
 $program_types = array('Education', 'Health', 'Social');
 ?>
-<div class="programs-content">
-    <div class="programs-actions">
-        <button class="add-program-btn">Add New Program</button>
-    </div>
-    <div class="programs-list">
-        <!-- Programs will be loaded here -->
+<h1 class="programs-main-title"><?php _e('Programs', 'administration-plugin'); ?></h1>
+<div class="programs-content-main">
+    <div class="programs-content-columns">
+        <div class="programs-content-left">
+            <div class="programs-list-header">
+                <h2><?php _e('Programs List', 'administration-plugin'); ?></h2>
+                <div class="programs-filters-row">
+                    <div class="program-filters-horizontal">
+                        <div class="filter-group filter-group-search">
+                            <label for="filter-search"><?php _e('Search', 'administration-plugin'); ?></label>
+                            <input type="text" id="filter-search" placeholder="Search programs...">
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-status"><?php _e('Status', 'administration-plugin'); ?></label>
+                            <select id="filter-status">
+                                <option value=""><?php _e('All', 'administration-plugin'); ?></option>
+                                <option value="active"><?php _e('Active', 'administration-plugin'); ?></option>
+                                <option value="inactive"><?php _e('Inactive', 'administration-plugin'); ?></option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="filter-type"><?php _e('Type', 'administration-plugin'); ?></label>
+                            <select id="filter-type">
+                                <option value=""><?php _e('All', 'administration-plugin'); ?></option>
+                                <?php foreach ($program_types as $type): ?>
+                                    <option value="<?php echo strtolower($type); ?>"><?php echo esc_html($type); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="filter-group filter-group-dates">
+                            <label for="filter-date-start"><?php _e('Date Range', 'administration-plugin'); ?></label>
+                            <div class="date-range-row">
+                                <input type="date" id="filter-date-start">
+                                <span class="date-separator">-</span>
+                                <input type="date" id="filter-date-end">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="programs-add-btn-container">
+                        <button id="add-program-btn" class="add-button">
+                            <span class="dashicons dashicons-plus-alt"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="programs-divider"></div>
+            </div>
+            <?php if ($programs && count($programs) > 0): ?>
+                <div class="programs-grid">
+                    <?php foreach ($programs as $program): ?>
+                        <div class="program-card" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">
+                            <h3><?php echo esc_html($program->ProgramName); ?></h3>
+                            <p class="program-type"><?php echo esc_html($program->ProgramType); ?></p>
+                            <p class="program-dates"><?php echo esc_html($program->StartDate); ?> - <?php echo esc_html($program->EndDate); ?></p>
+                            <p class="program-status"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <p>No programs found.</p>
+            <?php endif; ?>
+        </div>
     </div>
 </div>
 

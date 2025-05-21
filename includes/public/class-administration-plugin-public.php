@@ -31,6 +31,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_get_person', array($this, 'ajax_get_person'));
         add_action('wp_ajax_edit_person', array($this, 'ajax_edit_person'));
         add_action('wp_ajax_nopriv_edit_person', array($this, 'ajax_edit_person'));
+        // Register new AJAX handler
+        add_action('wp_ajax_get_program_full_view', array($this, 'ajax_get_program_full_view'));
     }
 
     /**
@@ -451,5 +453,37 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to update person.');
         }
+    }
+
+    /**
+     * AJAX handler to get the full program-specific view
+     */
+    public function ajax_get_program_full_view() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_programs';
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        if (!$program_id) {
+            wp_send_json_error('Invalid program ID.');
+        }
+        $program = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE ProgramID = %s", $program_id));
+        if (!$program) {
+            wp_send_json_error('Program not found.');
+        }
+        $type = strtolower($program->ProgramType);
+        $template_file = ADMINISTRATION_PLUGIN_PATH . 'templates/public/program-types/' . $type . '.php';
+        if (!file_exists($template_file)) {
+            wp_send_json_error('No template for this program type.');
+        }
+        ob_start();
+        include $template_file;
+        $html = ob_get_clean();
+        wp_send_json_success([
+            'html' => $html,
+            'program' => $program
+        ]);
     }
 } 

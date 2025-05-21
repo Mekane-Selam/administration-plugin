@@ -1,0 +1,22 @@
+/* Program View Styles */
+.program-view-container {
+    display: none;
+    background: #fff;
+    min-height: 100vh;
+    padding: 32px 24px;
+}
+.program-view-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+.program-view-back-btn {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-right: 18px;
+} 

@@ -69,16 +69,6 @@
             });
             $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
-
-            // Add handler for Go to Program button
-            $(document).off('click', '.program-goto-btn').on('click', '.program-goto-btn', function(e) {
-                e.preventDefault();
-                var $modal = $(this).closest('.modal');
-                var programId = $modal.find('.edit-button').data('program-id');
-                if (programId) {
-                    window.location.href = '/program/' + programId;
-                }
-            });
         },
 
         toggleMenu: function(e) {
@@ -802,6 +792,20 @@
     // Initialize dashboard when document is ready
     $(document).ready(function() {
         Dashboard.init();
+        // Ensure program view container exists
+        if ($('.program-view-container').length === 0) {
+            $('body').append('<div class="program-view-container" id="program-view-container" style="display:none;"></div>');
+        }
+        // Delegate Go to Program button click
+        $(document).on('click', '.program-goto-btn', function(e) {
+            e.preventDefault();
+            var programId = $(this).closest('.program-details-modal-content').find('.edit-button').data('program-id');
+            if (programId) {
+                $('#program-details-modal').removeClass('show');
+                $('.administration-public-dashboard').hide();
+                ProgramView.show(programId);
+            }
+        });
     });
 
 })(jQuery); 

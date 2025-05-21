@@ -520,6 +520,7 @@ class Administration_Database {
         $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_staffroles_table (
             StaffRoleID VARCHAR(25) NOT NULL,
             StaffRoleDescription VARCHAR(100),
+            RoleTitle VARCHAR(50),
             PaidFlag TINYINT(1) DEFAULT 0,
             PRIMARY KEY (StaffRoleID)
         ) $charset_collate;";

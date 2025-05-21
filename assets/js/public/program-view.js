@@ -801,6 +801,54 @@
                     }
                 });
             });
+
+            // Staff details split view logic
+            $(document).on('click', '.program-view-edu-staff-card', function() {
+                var personId = $(this).data('person-id');
+                var $panel = $('.program-view-edu-staff-details-panel');
+                $panel.html('<div class="loading">Loading staff details...</div>').show();
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_person_details',
+                        nonce: administration_plugin.nonce,
+                        person_id: personId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            var person = response.data;
+                            var detailsHtml = `
+                                <button class="program-view-edu-staff-details-close" title="Close">&times;</button>
+                                <h3 class="person-details-title">${person.FirstName} ${person.LastName}</h3>
+                                <div class="person-details-content">
+                                    <div class="person-detail-row">
+                                        <span class="person-detail-label">ID:</span>
+                                        <span class="person-detail-value">${person.PersonID}</span>
+                                    </div>
+                                    <div class="person-detail-row">
+                                        <span class="person-detail-label">Email:</span>
+                                        <span class="person-detail-value">${person.Email || 'N/A'}</span>
+                                    </div>
+                                    <div class="person-detail-row">
+                                        <span class="person-detail-label">Phone:</span>
+                                        <span class="person-detail-value">${person.Phone || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            `;
+                            $panel.html(detailsHtml).show();
+                        } else {
+                            $panel.html('<div class="error-message">Failed to load staff details.</div>');
+                        }
+                    },
+                    error: function() {
+                        $panel.html('<div class="error-message">Failed to load staff details.</div>');
+                    }
+                });
+            });
+            $(document).on('click', '.program-view-edu-staff-details-close', function() {
+                $('.program-view-edu-staff-details-panel').hide().empty();
+            });
         }
     };
     $(document).ready(function() {

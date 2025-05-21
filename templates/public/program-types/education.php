@@ -51,16 +51,19 @@
         }
         ?>
         <?php if (!empty($courses)) : ?>
-          <ul class="courses-list">
+          <div class="courses-list-enhanced">
             <?php foreach ($courses as $course) : ?>
-              <li class="course-item">
-                <span class="course-name"><?php echo esc_html($course->CourseName); ?></span>
-                <?php if (!empty($course->Level)) : ?>
-                  <span class="course-level">(<?php echo esc_html($course->Level); ?>)</span>
-                <?php endif; ?>
-              </li>
+              <div class="course-card">
+                <div class="course-card-icon"><span class="dashicons dashicons-welcome-learn-more"></span></div>
+                <div class="course-card-details">
+                  <div class="course-card-title"><?php echo esc_html($course->CourseName); ?></div>
+                  <?php if (!empty($course->Level)) : ?>
+                    <div class="course-card-meta">Level: <span><?php echo esc_html($course->Level); ?></span></div>
+                  <?php endif; ?>
+                </div>
+              </div>
             <?php endforeach; ?>
-          </ul>
+          </div>
         <?php else : ?>
           <div class="program-courses-list-placeholder">No courses found for this program.</div>
         <?php endif; ?>

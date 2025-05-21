@@ -648,6 +648,8 @@ class Administration_Plugin_Public {
         $table = $wpdb->prefix . 'progtype_edu_courseenrollments';
         $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
         $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
+        $active_flag = isset($_POST['ActiveFlag']) ? intval($_POST['ActiveFlag']) : 1;
+        $enrollment_date = isset($_POST['EnrollmentDate']) ? sanitize_text_field($_POST['EnrollmentDate']) : current_time('mysql', 1);
         if (!$course_id || !$person_id) {
             wp_send_json_error('Missing required fields.');
         }
@@ -661,8 +663,8 @@ class Administration_Plugin_Public {
             'CourseEnrollmentID' => $enroll_id,
             'CourseID' => $course_id,
             'PersonID' => $person_id,
-            'ActiveFlag' => 1,
-            'EnrollmentDate' => current_time('mysql', 1)
+            'ActiveFlag' => $active_flag,
+            'EnrollmentDate' => $enrollment_date
         ));
         if ($result) {
             wp_send_json_success(['CourseEnrollmentID' => $enroll_id]);

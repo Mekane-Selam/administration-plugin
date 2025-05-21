@@ -839,9 +839,8 @@
 
 .course-detail-enrollments-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
-  background: #f8fafc;
   padding: 10px 0 10px 0;
   border-bottom: 1px solid #e3e7ee;
   margin-bottom: 16px;

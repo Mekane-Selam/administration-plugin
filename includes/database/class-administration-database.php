@@ -54,6 +54,7 @@ class Administration_Database {
         $progtype_edu_courses_table = $wpdb->prefix . 'progtype_edu_courses';
         $progtype_edu_staff_table = $wpdb->prefix . 'progtype_edu_staff';
         $progtype_edu_staffroles_table = $wpdb->prefix . 'progtype_edu_staffroles';
+        $progtype_edu_courseenrollments_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
 
 
         // List of all tables
@@ -88,7 +89,8 @@ class Administration_Database {
             $progtype_edu_enrollment_table,
             $progtype_edu_courses_table,
             $progtype_edu_staff_table,
-            $progtype_edu_staffroles_table
+            $progtype_edu_staffroles_table,
+            progtype_edu_courseenrollments_table
         ];
 
         // Check if tables already exist

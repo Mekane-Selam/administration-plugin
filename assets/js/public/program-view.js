@@ -583,11 +583,6 @@
                 var personId = $card.data('person-id');
                 var $enrollmentsContainer = $card.closest('.course-detail-enrollments');
                 
-                // Add split view class if not already present
-                if (!$enrollmentsContainer.hasClass('split-view')) {
-                    $enrollmentsContainer.addClass('split-view');
-                }
-                
                 // Remove person details if already present
                 $enrollmentsContainer.find('.course-enrollment-person-details').remove();
                 
@@ -607,9 +602,6 @@
                         if (response.success && response.data) {
                             var person = response.data;
                             var detailsHtml = `
-                                <button class="close-person-details" title="Close details">
-                                    <span class="dashicons dashicons-no-alt"></span>
-                                </button>
                                 <h3 class="person-details-title">${person.FirstName} ${person.LastName}</h3>
                                 <div class="person-details-content">
                                     <div class="person-detail-row">
@@ -635,16 +627,6 @@
                         $enrollmentsContainer.find('.course-enrollment-person-details').html('<div class="error-message">Failed to load person details.</div>');
                     }
                 });
-            });
-
-            // Handle closing person details
-            $(document).on('click', '.close-person-details', function() {
-                var $details = $(this).closest('.course-enrollment-person-details');
-                var $enrollmentsContainer = $details.closest('.course-detail-enrollments');
-                $details.remove();
-                if ($enrollmentsContainer.find('.course-enrollment-person-details').length === 0) {
-                    $enrollmentsContainer.removeClass('split-view');
-                }
             });
         }
     };

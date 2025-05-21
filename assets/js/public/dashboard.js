@@ -69,6 +69,16 @@
             });
             $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
+
+            // Add handler for Go to Program button
+            $(document).off('click', '.program-goto-btn').on('click', '.program-goto-btn', function(e) {
+                e.preventDefault();
+                var $modal = $(this).closest('.modal');
+                var programId = $modal.find('.edit-button').data('program-id');
+                if (programId) {
+                    window.location.href = '/program/' + programId;
+                }
+            });
         },
 
         toggleMenu: function(e) {

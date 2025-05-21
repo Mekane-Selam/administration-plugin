@@ -845,4 +845,51 @@
   border-bottom: 1px solid #e3e7ee;
   margin-bottom: 16px;
   border-radius: 8px 8px 0 0;
+}
+
+.course-detail-enrollments.split-view {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+}
+.course-detail-enrollments.split-view .course-detail-enrollments-list {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.course-enrollment-person-details {
+  flex: 0 0 320px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
+  border: 1px solid #e3e7ee;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+  padding: 22px 20px 18px 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  min-width: 220px;
+  max-width: 340px;
+}
+.close-person-details {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #2271b1;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+.close-person-details:hover {
+  color: #e74c3c;
+}
+.person-details-content h3 {
+  margin-top: 0;
+  color: #2271b1;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 } 

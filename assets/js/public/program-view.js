@@ -517,7 +517,7 @@
                 e.preventDefault();
                 var $form = $(this);
                 var $message = $('#add-course-enrollment-message');
-                var courseId = $('#course-detail-modal .course-card').data('course-id') || $('#course-detail-modal').find('[data-course-id]').first().data('course-id');
+                var courseId = $('#course-detail-modal .course-detail-tab-content').data('course-id');
                 var personId = $('#course-enrollment-person').val();
                 var today = new Date();
                 var enrollmentDate = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');

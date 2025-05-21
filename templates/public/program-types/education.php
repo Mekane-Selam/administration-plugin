@@ -219,13 +219,10 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    flex: 1;
-    justify-content: flex-end;
 }
 
 .program-view-edu-enrollment-search-container {
     width: 300px;
-    margin-right: 16px;
 }
 
 .program-view-edu-enrollment-search {
@@ -242,12 +239,6 @@
     border-color: #2271b1;
     box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
     outline: none;
-}
-
-.program-view-edu-enrollment-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
 }
 
 .program-view-edu-add-enrollment-btn {
@@ -267,7 +258,6 @@
     width: 36px;
     height: 36px;
     flex-shrink: 0;
-    margin-left: auto;
 }
 
 .program-view-edu-add-enrollment-btn:hover {

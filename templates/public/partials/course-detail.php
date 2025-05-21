@@ -42,6 +42,7 @@
     border-bottom: 1px solid #e3e7ee;
     margin-bottom: 20px;
     padding: 0 20px;
+    margin: 0 10px 0 10px;
 }
 
 .tab-button {
@@ -87,7 +88,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 16px 0;
+    padding: 0 0 0 0;
     border-bottom: 1px solid #e3e7ee;
     margin-bottom: 20px;
 }

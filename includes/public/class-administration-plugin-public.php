@@ -44,6 +44,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_add_staff_role', array($this, 'ajax_add_staff_role'));
         add_action('wp_ajax_add_staff_member', array($this, 'ajax_add_staff_member'));
         add_action('wp_ajax_get_program_staff_list', array($this, 'ajax_get_program_staff_list'));
+        add_action('wp_ajax_update_course_instructors', array($this, 'ajax_update_course_instructors'));
     }
 
     /**
@@ -863,5 +864,38 @@ class Administration_Plugin_Public {
             $program_id
         ));
         wp_send_json_success($staff);
+    }
+
+    /**
+     * AJAX handler to update course instructors
+     */
+    public function ajax_update_course_instructors() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'progtype_edu_courses';
+        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
+        $primary = isset($_POST['PrimaryInstructorID']) ? sanitize_text_field($_POST['PrimaryInstructorID']) : '';
+        $backup1 = isset($_POST['BackUpTeacher1ID']) ? sanitize_text_field($_POST['BackUpTeacher1ID']) : '';
+        $backup2 = isset($_POST['BackUpTeacher2ID']) ? sanitize_text_field($_POST['BackUpTeacher2ID']) : '';
+        if (!$course_id || !$primary) {
+            wp_send_json_error('Missing required fields.');
+        }
+        $result = $wpdb->update(
+            $table,
+            array(
+                'PrimaryInstructorID' => $primary,
+                'BackUpTeacher1ID' => $backup1,
+                'BackUpTeacher2ID' => $backup2
+            ),
+            array('CourseID' => $course_id)
+        );
+        if ($result !== false) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update instructors.');
+        }
     }
 } 

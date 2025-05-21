@@ -118,4 +118,30 @@
       <?php endif; ?>
     </div>
   </div>
+</div>
+
+<div class="program-view-edu-staff">
+    <div class="program-view-edu-title">Staff</div>
+    <div class="program-view-edu-staff-content">
+        <div class="staff-search-bar">
+            <input type="text" class="staff-search-input" placeholder="Search staff...">
+        </div>
+        <div class="staff-list-enhanced">
+            <?php if ($staff && count($staff) > 0): ?>
+                <?php foreach ($staff as $member): ?>
+                    <div class="staff-card" data-person-id="<?php echo esc_attr($member->PersonID); ?>">
+                        <div class="staff-card-icon">
+                            <span class="dashicons dashicons-businessperson"></span>
+                        </div>
+                        <div class="staff-card-details">
+                            <div class="staff-card-title"><?php echo esc_html($member->FirstName . ' ' . $member->LastName); ?></div>
+                            <div class="staff-card-meta"><?php echo esc_html($member->Role); ?></div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="program-staff-list-placeholder">No staff members found.</div>
+            <?php endif; ?>
+        </div>
+    </div>
 </div> 

@@ -1,6 +1,5 @@
 <div class="course-detail-enrollments">
-  <h2 class="course-detail-title">Course Enrollments</h2>
-  <div class="course-detail-enrollments-actions">
+  <div class="course-detail-enrollments-toolbar">
     <button class="add-course-enrollment-btn" title="Add Enrollment"><span class="dashicons dashicons-plus"></span> Add Enrollment</button>
   </div>
   <?php if (!empty($enrollments)) : ?>

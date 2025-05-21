@@ -37,6 +37,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_add_edu_enrollment', array($this, 'ajax_add_edu_enrollment'));
         add_action('wp_ajax_get_course_detail_and_enrollments', array($this, 'ajax_get_course_detail_and_enrollments'));
         add_action('wp_ajax_get_course_detail_tabs', array($this, 'ajax_get_course_detail_tabs'));
+        add_action('wp_ajax_add_course_enrollment', array($this, 'ajax_add_course_enrollment'));
     }
 
     /**
@@ -622,15 +623,50 @@ class Administration_Plugin_Public {
         $course_table = $wpdb->prefix . 'progtype_edu_courses';
         $course = $wpdb->get_row($wpdb->prepare("SELECT * FROM $course_table WHERE CourseID = %s", $course_id));
         // Fetch enrollments for this program (not by course)
-        $enroll_table = $wpdb->prefix . 'progtype_edu_enrollment';
+        $enroll_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
         $person_table = $wpdb->prefix . 'core_person';
         $enrollments = $wpdb->get_results($wpdb->prepare(
-            "SELECT e.*, p.FirstName, p.LastName FROM {$enroll_table} AS e LEFT JOIN {$person_table} AS p ON e.PersonID = p.PersonID WHERE e.ProgramID = %s ORDER BY e.EnrollmentDate DESC",
-            $program_id
+            "SELECT e.*, p.FirstName, p.LastName FROM {$enroll_table} AS e LEFT JOIN {$person_table} AS p ON e.PersonID = p.PersonID WHERE e.CourseID = %s ORDER BY e.EnrollmentDate DESC",
+            $course_id
         ));
         ob_start();
         include plugin_dir_path(__FILE__) . '../../templates/public/partials/course-detail.php';
         $html = ob_get_clean();
         wp_send_json_success(['html' => $html]);
+    }
+
+    /**
+     * AJAX handler to add an enrollment to a course (progtype_edu_courseenrollments)
+     */
+    public function ajax_add_course_enrollment() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'progtype_edu_courseenrollments';
+        $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
+        $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
+        if (!$course_id || !$person_id) {
+            wp_send_json_error('Missing required fields.');
+        }
+        // Generate unique CourseEnrollmentID
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $enroll_id = 'COURSEENROLL' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE CourseEnrollmentID = %s", $enroll_id));
+        } while ($exists);
+        $result = $wpdb->insert($table, array(
+            'CourseEnrollmentID' => $enroll_id,
+            'CourseID' => $course_id,
+            'PersonID' => $person_id,
+            'ActiveFlag' => 1,
+            'EnrollmentDate' => current_time('mysql', 1)
+        ));
+        if ($result) {
+            wp_send_json_success(['CourseEnrollmentID' => $enroll_id]);
+        } else {
+            wp_send_json_error('Failed to add enrollment.');
+        }
     }
 } 

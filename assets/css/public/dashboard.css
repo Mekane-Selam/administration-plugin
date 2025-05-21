@@ -1024,10 +1024,6 @@ body.administration-dashboard-public {
 .people-widget-actions .button-row:last-child {
     justify-content: stretch;
 }
-.people-widget-actions .button-row:last-child .button {
-    flex: 1;
-    justify-content: center;
-}
 .people-widget-actions .button {
     display: flex;
     align-items: center;
@@ -1044,20 +1040,9 @@ body.administration-dashboard-public {
     min-width: 100px;
     justify-content: center;
 }
-.people-widget-actions .button.button-primary {
-    background: #2271b1;
-    color: #fff;
-    border: 1px solid #2271b1;
-}
-.people-widget-actions .button:hover, .people-widget-actions .button:focus {
-    background: #eaf4fb;
-    color: #135e96;
-    border-color: #b6d4ef;
-}
-.people-widget-actions .button.button-primary:hover, .people-widget-actions .button.button-primary:focus {
-    background: #135e96;
-    color: #fff;
-    border-color: #135e96;
+.people-widget-actions .button-row:last-child .button {
+    flex: 1;
+    width: 100%;
 }
 .people-list-content {
     padding: 18px 0px 24px 0px;
@@ -1323,4 +1308,31 @@ body.administration-dashboard-public {
     display: flex !important;
     opacity: 0;
     transition: opacity 0.2s ease-out;
+}
+
+/* Dashboard specific styles - separate from People-Content */
+.dashboard-widget .people-widget-actions {
+    display: flex;
+    gap: 12px;
+    padding: 0;
+    margin-bottom: 16px;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.dashboard-widget .people-widget-actions .button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: #f7fafd;
+    border: 1px solid #e3e7ee;
+    color: #2271b1;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    min-width: 100px;
+    justify-content: center;
 } 

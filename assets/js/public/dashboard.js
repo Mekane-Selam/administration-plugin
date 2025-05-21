@@ -67,6 +67,7 @@
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
+            $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
         },
 
@@ -549,6 +550,11 @@
             e.preventDefault();
             var personId = $(this).data('person-id');
             if (!personId) return;
+            
+            // Open the add person modal in edit mode
+            var $modal = $('#add-person-modal');
+            var $form = $('#add-person-form');
+            
             // Fetch person data
             $.ajax({
                 url: administration_plugin.ajax_url,
@@ -560,9 +566,15 @@
                 },
                 success: function(response) {
                     if (response.success && response.data) {
-                        $('#add-person-modal').addClass('show').attr('data-edit', '1').attr('data-person-id', personId);
-                        $('#add-person-modal h2').text('Edit Person');
-                        $('#add-person-form .button-primary').text('Save Changes');
+                        $modal.removeClass('closing')
+                              .addClass('show')
+                              .attr('data-edit', '1')
+                              .attr('data-person-id', personId);
+                        
+                        $modal.find('h2').text('Edit Person');
+                        $modal.find('.button-primary').text('Save Changes');
+                        
+                        // Populate form fields
                         $('#person-first-name').val(response.data.FirstName);
                         $('#person-last-name').val(response.data.LastName);
                         $('#person-email').val(response.data.Email);
@@ -658,7 +670,7 @@
         },
         loadPeopleList: function(search, sort) {
             var $container = $('.people-list-content');
-            if (!$container.length) return; // Guard against missing container
+            if (!$container.length) return;
             
             $container.html('<div class="loading">Loading people...</div>');
             
@@ -669,10 +681,30 @@
                     action: 'get_people_list',
                     nonce: administration_plugin.nonce,
                     search: search || '',
-                    sort: sort || Dashboard.currentPeopleSort || 'name_asc' // Default sort if none specified
+                    sort: sort || Dashboard.currentPeopleSort || 'name_asc'
                 },
                 success: function(response) {
                     if (response.success) {
+                        // Wrap buttons in rows for People-Content area
+                        if ($container.closest('.people-content').length) {
+                            var $actions = $container.find('.people-widget-actions');
+                            if ($actions.length) {
+                                var $buttons = $actions.children('.button');
+                                if ($buttons.length) {
+                                    var $topRow = $('<div class="button-row"></div>');
+                                    var $bottomRow = $('<div class="button-row"></div>');
+                                    
+                                    // Move Add and Sync buttons to top row
+                                    $buttons.filter('[id*="add-person"], [class*="add-person"], [id*="sync"], [class*="sync"]').appendTo($topRow);
+                                    
+                                    // Move Sort button to bottom row
+                                    $buttons.filter('[id*="sort"]').appendTo($bottomRow);
+                                    
+                                    // Add rows to actions container
+                                    $actions.append($topRow).append($bottomRow);
+                                }
+                            }
+                        }
                         $container.html(response.data);
                     } else {
                         $container.html('<div class="error-message">Failed to load people.</div>');
@@ -696,28 +728,6 @@
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
-
-            // Wrap buttons in rows for People-Content section
-            var $peopleContent = $('.people-content');
-            if ($peopleContent.length) {
-                var $actions = $peopleContent.find('.people-widget-actions');
-                if ($actions.length) {
-                    var $buttons = $actions.find('.button');
-                    if ($buttons.length >= 3) {
-                        // Create two rows
-                        var $topRow = $('<div class="button-row"></div>');
-                        var $bottomRow = $('<div class="button-row"></div>');
-                        
-                        // Move Add and Sync buttons to top row
-                        $buttons.slice(0, 2).appendTo($topRow);
-                        // Move Sort button to bottom row
-                        $buttons.slice(2).appendTo($bottomRow);
-                        
-                        // Clear and append rows
-                        $actions.empty().append($topRow, $bottomRow);
-                    }
-                }
-            }
         },
         debouncedPeopleFilter: function() {
             clearTimeout(Dashboard.peopleFilterTimeout);

@@ -216,6 +216,39 @@
     </div>
 </div>
 
+<!-- Add Staff Modal -->
+<div id="add-staff-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Staff Member</h2>
+        <form id="add-staff-form">
+            <div class="form-field">
+                <label for="staff-person-search">Search Person</label>
+                <input type="text" id="staff-person-search" placeholder="Search people..." autocomplete="off" />
+                <select id="staff-person-select" name="PersonID" required size="6" style="margin-top:8px;"></select>
+            </div>
+            <div class="form-field">
+                <label for="staff-role-select">Staff Role</label>
+                <select id="staff-role-select" name="StaffRolesID" required>
+                    <option value="">Select Role</option>
+                    <?php
+                    global $wpdb;
+                    $roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}progtype_edu_staffroles ORDER BY RoleTitle");
+                    foreach ($roles as $role) {
+                        echo '<option value="' . esc_attr($role->StaffRoleID) . '">' . esc_html($role->RoleTitle) . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button button-primary">Add Staff</button>
+                <button type="button" class="button" id="cancel-add-staff">Cancel</button>
+            </div>
+        </form>
+        <div id="add-staff-message"></div>
+    </div>
+</div>
+
 <style>
 .program-view-edu-enrollment {
     margin-top: 0;

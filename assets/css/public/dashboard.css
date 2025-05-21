@@ -257,7 +257,6 @@ body.administration-dashboard-public {
     max-width: 480px;
     position: relative;
     padding-right: 44px;
-    margin-right: -16px;
     left: 0;
     top: 0;
     transform: none;
@@ -1335,4 +1334,75 @@ body.administration-dashboard-public {
     display: flex !important;
     align-items: center;
     justify-content: center;
+}
+
+/* Program Details Modal Themed Styles */
+.program-details-modal-content {
+    padding: 8px 0 0 0;
+}
+.program-details-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1d2327;
+    margin-bottom: 18px;
+    text-align: center;
+}
+.program-details-fields {
+    margin-bottom: 28px;
+}
+.program-details-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+}
+.program-details-label {
+    min-width: 120px;
+    font-weight: 500;
+    color: #444;
+    margin-right: 10px;
+    display: inline-block;
+}
+.program-details-value {
+    color: #222;
+    font-weight: 400;
+    flex: 1 1 auto;
+    word-break: break-word;
+}
+.program-details-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 18px;
+}
+.program-details-actions .button {
+    font-size: 1rem;
+    padding: 8px 22px;
+    border-radius: 6px;
+    border: 1px solid #e3e7ee;
+    background: #f7fafd;
+    color: #2271b1;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+}
+.program-details-actions .button.button-primary,
+.program-details-actions .edit-button.button-primary {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+}
+.program-details-actions .button:hover,
+.program-details-actions .button:focus {
+    background: #eaf4fb;
+    color: #135e96;
+    border-color: #b6d4ef;
+}
+.program-details-actions .button.button-primary:hover,
+.program-details-actions .edit-button.button-primary:hover {
+    background: #135e96;
+    color: #fff;
+    border-color: #135e96;
 } 

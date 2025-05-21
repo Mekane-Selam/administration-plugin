@@ -234,13 +234,20 @@ class Administration_Plugin_Public {
         }
         ob_start();
         ?>
-        <h3><?php echo esc_html($program->ProgramName); ?></h3>
-        <p><strong>Type:</strong> <?php echo esc_html($program->ProgramType); ?></p>
-        <p><strong>Description:</strong> <?php echo esc_html($program->ProgramDescription); ?></p>
-        <p><strong>Start Date:</strong> <?php echo esc_html($program->StartDate); ?></p>
-        <p><strong>End Date:</strong> <?php echo esc_html($program->EndDate); ?></p>
-        <p><strong>Status:</strong> <?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></p>
-        <button class="edit-button" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">Edit Program</button>
+        <div class="program-details-modal-content">
+            <h3 class="program-details-title"><?php echo esc_html($program->ProgramName); ?></h3>
+            <div class="program-details-fields">
+                <div class="program-details-row"><span class="program-details-label">Type:</span> <span class="program-details-value"><?php echo esc_html($program->ProgramType); ?></span></div>
+                <div class="program-details-row"><span class="program-details-label">Description:</span> <span class="program-details-value"><?php echo esc_html($program->ProgramDescription); ?></span></div>
+                <div class="program-details-row"><span class="program-details-label">Start Date:</span> <span class="program-details-value"><?php echo esc_html($program->StartDate); ?></span></div>
+                <div class="program-details-row"><span class="program-details-label">End Date:</span> <span class="program-details-value"><?php echo esc_html($program->EndDate); ?></span></div>
+                <div class="program-details-row"><span class="program-details-label">Status:</span> <span class="program-details-value"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></span></div>
+            </div>
+            <div class="program-details-actions">
+                <a href="#" class="button program-goto-btn" style="margin-right: 12px;">Go to Program</a>
+                <button class="edit-button button button-primary" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">Edit Program</button>
+            </div>
+        </div>
         <?php
         $html = ob_get_clean();
         wp_send_json_success($html);

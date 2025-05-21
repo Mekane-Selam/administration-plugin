@@ -519,6 +519,10 @@
                 var $message = $('#add-course-enrollment-message');
                 var courseId = $('#course-detail-modal .course-card').data('course-id') || $('#course-detail-modal').find('[data-course-id]').first().data('course-id');
                 var personId = $('#course-enrollment-person').val();
+                var today = new Date();
+                var enrollmentDate = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+                // Generate unique CourseEnrollmentID (client-side, for now)
+                var courseEnrollmentId = 'CORENROL' + Math.floor(10000 + Math.random() * 90000);
                 if (!personId) {
                     $message.html('<span class="error-message">Person is required.</span>');
                     return;
@@ -531,7 +535,10 @@
                         action: 'add_course_enrollment',
                         nonce: administration_plugin.nonce,
                         course_id: courseId,
-                        PersonID: personId
+                        PersonID: personId,
+                        ActiveFlag: 1,
+                        EnrollmentDate: enrollmentDate,
+                        CourseEnrollmentID: courseEnrollmentId
                     },
                     success: function(response) {
                         if (response.success) {

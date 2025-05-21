@@ -650,24 +650,26 @@ class Administration_Plugin_Public {
         $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
         $active_flag = isset($_POST['ActiveFlag']) ? intval($_POST['ActiveFlag']) : 1;
         $enrollment_date = isset($_POST['EnrollmentDate']) ? sanitize_text_field($_POST['EnrollmentDate']) : current_time('mysql', 1);
+        $course_enrollment_id = isset($_POST['CourseEnrollmentID']) ? sanitize_text_field($_POST['CourseEnrollmentID']) : '';
         if (!$course_id || !$person_id) {
             wp_send_json_error('Missing required fields.');
         }
-        // Generate unique CourseEnrollmentID
-        do {
-            $unique_code = mt_rand(10000, 99999);
-            $enroll_id = 'COURSEENROLL' . $unique_code;
-            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE CourseEnrollmentID = %s", $enroll_id));
-        } while ($exists);
+        if (!$course_enrollment_id) {
+            do {
+                $unique_code = mt_rand(10000, 99999);
+                $course_enrollment_id = 'CORENROL' . $unique_code;
+                $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE CourseEnrollmentID = %s", $course_enrollment_id));
+            } while ($exists);
+        }
         $result = $wpdb->insert($table, array(
-            'CourseEnrollmentID' => $enroll_id,
+            'CourseEnrollmentID' => $course_enrollment_id,
             'CourseID' => $course_id,
             'PersonID' => $person_id,
             'ActiveFlag' => $active_flag,
             'EnrollmentDate' => $enrollment_date
         ));
         if ($result) {
-            wp_send_json_success(['CourseEnrollmentID' => $enroll_id]);
+            wp_send_json_success(['CourseEnrollmentID' => $course_enrollment_id]);
         } else {
             wp_send_json_error('Failed to add enrollment.');
         }

@@ -2,7 +2,10 @@
 (function($) {
     'use strict';
     window.ProgramView = {
+        currentProgramId: null,
+        
         show: function(programId) {
+            this.currentProgramId = programId;
             var $container = $('#program-view-container');
             $container.html('<div class="loading">Loading program...</div>').show();
             $.ajax({
@@ -53,6 +56,7 @@
             });
         },
         hide: function() {
+            this.currentProgramId = null;
             $('#program-view-container').hide().empty();
             $('.administration-public-dashboard').show();
         },
@@ -80,20 +84,18 @@
             $(document).on('submit', '.overview-edit-mode', function(e) {
                 e.preventDefault();
                 var $form = $(this);
-                var $card = $form.closest('.program-view-edu-overview');
                 var data = $form.serializeArray();
-                var programId = $('#program-view-container').data('program-id');
                 data.push({name: 'action', value: 'edit_program'});
                 data.push({name: 'nonce', value: administration_plugin.nonce});
-                data.push({name: 'program_id', value: programId});
+                data.push({name: 'program_id', value: ProgramView.currentProgramId});
+                
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',
                     data: data,
                     success: function(response) {
                         if (response.success) {
-                            // Reload the program view to reflect changes
-                            ProgramView.show(programId);
+                            ProgramView.show(ProgramView.currentProgramId);
                         } else {
                             alert(response.data || 'Failed to save changes.');
                         }
@@ -106,46 +108,177 @@
             // Add Course button
             $(document).on('click', '.program-view-edu-add-course-btn', function(e) {
                 e.preventDefault();
-                var $card = $(this).closest('.program-view-edu-courses');
-                $card.find('.add-course-form').show();
-                $card.find('.program-courses-list-placeholder').hide();
+                var modalHtml = `
+                    <div id="add-course-modal" class="modal show">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h2>Add Course</h2>
+                            <form id="add-course-form">
+                                <div class="form-field">
+                                    <label for="course-name">Course Name</label>
+                                    <input type="text" id="course-name" name="CourseName" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="course-level">Level</label>
+                                    <input type="text" id="course-level" name="Level">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="button button-primary">Add Course</button>
+                                    <button type="button" class="button" id="cancel-add-course">Cancel</button>
+                                </div>
+                            </form>
+                            <div id="add-course-message"></div>
+                        </div>
+                    </div>
+                `;
+                $('body').append(modalHtml);
             });
             // Add Course Cancel
-            $(document).on('click', '.add-course-cancel-btn', function(e) {
+            $(document).on('click', '#cancel-add-course, #add-course-modal .close', function(e) {
                 e.preventDefault();
-                var $form = $(this).closest('.add-course-form');
-                $form.hide();
-                $form.siblings('.program-courses-list-placeholder').show();
+                $('#add-course-modal').remove();
             });
             // Add Course Save
-            $(document).on('submit', '.add-course-form', function(e) {
+            $(document).on('submit', '#add-course-form', function(e) {
                 e.preventDefault();
-                // TODO: AJAX to add course, then reload list
-                alert('Course add functionality coming soon!');
-                $(this).hide();
-                $(this).siblings('.program-courses-list-placeholder').show();
+                var $form = $(this);
+                var $message = $('#add-course-message');
+                var data = $form.serializeArray();
+                data.push({name: 'action', value: 'add_edu_course'});
+                data.push({name: 'nonce', value: administration_plugin.nonce});
+                data.push({name: 'program_id', value: ProgramView.currentProgramId});
+
+                $message.html('<span class="loading">Adding course...</span>');
+
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            $message.html('<span class="success-message">Course added successfully!</span>');
+                            setTimeout(function() {
+                                $('#add-course-modal').remove();
+                                // Reload program view to show new course
+                                ProgramView.show(ProgramView.currentProgramId);
+                            }, 800);
+                        } else {
+                            $message.html('<span class="error-message">' + (response.data || 'Failed to add course.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $message.html('<span class="error-message">Failed to add course.</span>');
+                    }
+                });
             });
             // Add Enrollment button
             $(document).on('click', '.program-view-edu-add-enrollment-btn', function(e) {
                 e.preventDefault();
-                var $card = $(this).closest('.program-view-edu-enrollment');
-                $card.find('.add-enrollment-form').show();
-                $card.find('.program-enrollment-list-placeholder').hide();
+                var modalHtml = `
+                    <div id="add-enrollment-modal" class="modal show">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h2>Add Enrollment</h2>
+                            <form id="add-enrollment-form">
+                                <div class="form-field">
+                                    <label for="enrollment-person">Person</label>
+                                    <select id="enrollment-person" name="PersonID" required>
+                                        <option value="">Select Person</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="enrollment-course">Course</label>
+                                    <select id="enrollment-course" name="CourseID" required>
+                                        <option value="">Select Course</option>
+                                    </select>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="button button-primary">Add Enrollment</button>
+                                    <button type="button" class="button" id="cancel-add-enrollment">Cancel</button>
+                                </div>
+                            </form>
+                            <div id="add-enrollment-message"></div>
+                        </div>
+                    </div>
+                `;
+                $('body').append(modalHtml);
+
+                // Load people for select
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_people_for_owner_select',
+                        nonce: administration_plugin.nonce
+                    },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data)) {
+                            var options = '<option value="">Select Person</option>';
+                            response.data.forEach(function(person) {
+                                options += `<option value="${person.PersonID}">${person.FirstName} ${person.LastName}</option>`;
+                            });
+                            $('#enrollment-person').html(options);
+                        }
+                    }
+                });
+
+                // Load courses for select
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_program_courses',
+                        nonce: administration_plugin.nonce,
+                        program_id: ProgramView.currentProgramId
+                    },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data)) {
+                            var options = '<option value="">Select Course</option>';
+                            response.data.forEach(function(course) {
+                                options += `<option value="${course.CourseID}">${course.CourseName}</option>`;
+                            });
+                            $('#enrollment-course').html(options);
+                        }
+                    }
+                });
             });
             // Add Enrollment Cancel
-            $(document).on('click', '.add-enrollment-cancel-btn', function(e) {
+            $(document).on('click', '#cancel-add-enrollment, #add-enrollment-modal .close', function(e) {
                 e.preventDefault();
-                var $form = $(this).closest('.add-enrollment-form');
-                $form.hide();
-                $form.siblings('.program-enrollment-list-placeholder').show();
+                $('#add-enrollment-modal').remove();
             });
             // Add Enrollment Save
-            $(document).on('submit', '.add-enrollment-form', function(e) {
+            $(document).on('submit', '#add-enrollment-form', function(e) {
                 e.preventDefault();
-                // TODO: AJAX to add enrollment, then reload list
-                alert('Enrollment add functionality coming soon!');
-                $(this).hide();
-                $(this).siblings('.program-enrollment-list-placeholder').show();
+                var $form = $(this);
+                var $message = $('#add-enrollment-message');
+                var data = $form.serializeArray();
+                data.push({name: 'action', value: 'add_edu_enrollment'});
+                data.push({name: 'nonce', value: administration_plugin.nonce});
+                data.push({name: 'program_id', value: ProgramView.currentProgramId});
+
+                $message.html('<span class="loading">Adding enrollment...</span>');
+
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            $message.html('<span class="success-message">Enrollment added successfully!</span>');
+                            setTimeout(function() {
+                                $('#add-enrollment-modal').remove();
+                                // Reload program view to show new enrollment
+                                ProgramView.show(ProgramView.currentProgramId);
+                            }, 800);
+                        } else {
+                            $message.html('<span class="error-message">' + (response.data || 'Failed to add enrollment.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $message.html('<span class="error-message">Failed to add enrollment.</span>');
+                    }
+                });
             });
         }
     };

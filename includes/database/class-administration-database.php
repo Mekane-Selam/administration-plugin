@@ -480,16 +480,14 @@ class Administration_Database {
         $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_enrollment_table (
             ProgramEnrollmentID VARCHAR(25) NOT NULL,
             PersonID VARCHAR(25) NULL,
-            CourseID VARCHAR(25) NULL,
             ActiveFlag TINYINT(1) DEFAULT 1,
             EnrollmentDate DATE,
             ProgramID VARCHAR(25) NULL,
             PRIMARY KEY (ProgramEnrollmentID),
             CONSTRAINT fk_edu_enroll_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE SET NULL,
-            CONSTRAINT fk_edu_enroll_course FOREIGN KEY (CourseID) REFERENCES {$wpdb->prefix}progtype_edu_courses(CourseID) ON DELETE SET NULL,
             CONSTRAINT fk_edu_enroll_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
-
+        
         $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_courses_table (
             CourseID VARCHAR(25) NOT NULL,
             ProgramID VARCHAR(25) NULL,
@@ -501,8 +499,10 @@ class Administration_Database {
             EndDate DATE,
             PRIMARY KEY (CourseID),
             CONSTRAINT fk_edu_course_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL,
-            CONSTRAINT fk_edu_course_instructor FOREIGN KEY (PrimaryInstructorID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE SET NULL
+            CONSTRAINT fk_edu_course_instructor FOREIGN KEY (PrimaryInstructorID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE SET NULL,
+            CONSTRAINT fk_edu_course_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
+
         $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_courseenrollments_table (
             CourseEnrollmentID VARCHAR(25) NOT NULL,
             PersonID VARCHAR(25) NULL,
@@ -514,17 +514,20 @@ class Administration_Database {
             CONSTRAINT fk_edu_courseenroll_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE SET NULL,
             CONSTRAINT fk_edu_courseenroll_course FOREIGN KEY (CourseID) REFERENCES {$wpdb->prefix}progtype_edu_courses(CourseID) ON DELETE SET NULL
         ) $charset_collate;";
-        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_staff_table (
-            PersonID VARCHAR(25) NOT NULL,
-            StaffRolesID TEXT,
-            PRIMARY KEY (PersonID),
-            CONSTRAINT fk_edu_staff_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE CASCADE
-        ) $charset_collate;";
+        
         $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_staffroles_table (
             StaffRoleID VARCHAR(25) NOT NULL,
             StaffRoleDescription VARCHAR(100),
             PaidFlag TINYINT(1) DEFAULT 0,
             PRIMARY KEY (StaffRoleID)
+        ) $charset_collate;";
+        
+        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_staff_table (
+            PersonID VARCHAR(25) NOT NULL,
+            StaffRolesID VARCHAR(25) NOT NULL,
+            PRIMARY KEY (PersonID),
+            CONSTRAINT fk_edu_staff_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE CASCADE,
+            CONSTRAINT fk_edu_staff_staffroles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}progtype_edu_staffroles(StaffRoleID) ON DELETE SET NULL
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

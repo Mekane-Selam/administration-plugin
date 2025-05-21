@@ -74,15 +74,21 @@
     <button class="program-view-edu-add-enrollment-btn" title="Add Enrollment"><span class="dashicons dashicons-plus"></span></button>
     <h3 class="program-view-edu-title">Enrollment</h3>
     <div class="program-view-edu-enrollment-content">
+      <div class="enrollment-toolbar">
+        <div class="enrollment-search-bar">
+          <input type="text" class="enrollment-search-input" placeholder="Search enrollments by name..." autocomplete="off" />
+        </div>
+        <button class="program-view-edu-add-enrollment-btn" title="Add Enrollment">
+          <span class="dashicons dashicons-plus"></span>
+          Add Enrollment
+        </button>
+      </div>
       <form class="add-enrollment-form" style="display:none;">
         <input type="text" name="PersonID" placeholder="Person ID" required />
         <input type="text" name="CourseID" placeholder="Course ID" required />
         <button type="submit" class="button button-primary">Add</button>
         <button type="button" class="button add-enrollment-cancel-btn">Cancel</button>
       </form>
-      <div class="enrollment-search-bar">
-        <input type="text" class="enrollment-search-input" placeholder="Search enrollments by name..." autocomplete="off" />
-      </div>
       <?php
       // Fetch enrollments for this program and join with people
       if (!function_exists('administration_plugin_get_enrollments_for_program')) {
@@ -121,18 +127,19 @@
 </div>
 
 <!-- Add Staff Container -->
-<div class="program-view-edu-staff">
-    <h3 class="program-view-edu-staff-title">Program Staff</h3>
+<div class="program-view-edu-staff card">
+    <h3 class="program-view-edu-title">Program Staff</h3>
     <div class="program-view-edu-staff-content">
         <?php
-        // Get program staff members
+        // Get program staff members with correct table joins
         global $wpdb;
         $staff_members = $wpdb->get_results($wpdb->prepare(
-            "SELECT p.*, ps.Role 
-            FROM {$wpdb->prefix}progtype_edu_program_staff ps 
-            LEFT JOIN {$wpdb->prefix}core_person p ON ps.PersonID = p.PersonID 
-            WHERE ps.ProgramID = %s 
-            ORDER BY ps.Role, p.LastName, p.FirstName",
+            "SELECT p.FirstName, p.LastName, sr.RoleTitle, sr.RoleDescription
+            FROM {$wpdb->prefix}progtype_edu_staff s
+            JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.RoleID = sr.RoleID
+            JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
+            WHERE s.ProgramID = %s
+            ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
             $program->ProgramID
         ));
         
@@ -145,7 +152,12 @@
                     </div>
                     <div class="staff-member-details">
                         <div class="staff-member-name"><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></div>
-                        <div class="staff-member-role"><?php echo esc_html($staff->Role); ?></div>
+                        <div class="staff-member-role">
+                            <span class="role-title"><?php echo esc_html($staff->RoleTitle); ?></span>
+                            <?php if (!empty($staff->RoleDescription)) : ?>
+                                <span class="role-description"><?php echo esc_html($staff->RoleDescription); ?></span>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 <?php
@@ -155,4 +167,113 @@
         }
         ?>
     </div>
-</div> 
+</div>
+
+<style>
+.program-view-edu-enrollment-content {
+    width: 100%;
+}
+
+.enrollment-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.enrollment-search-bar {
+    flex: 0 1 300px;
+}
+
+.enrollment-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e3e7ee;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #f8fafc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.enrollment-search-input:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
+    outline: none;
+}
+
+.program-view-edu-staff {
+    margin-top: 24px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
+    border: 1px solid #e3e7ee;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+    padding: 22px 20px 18px 20px;
+    position: relative;
+}
+
+.program-view-edu-staff-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.staff-member-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #e3e7ee;
+    border-radius: 10px;
+    padding: 16px 20px;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.staff-member-card:hover {
+    box-shadow: 0 4px 16px rgba(34,113,177,0.13);
+    border-color: #b6d4ef;
+    transform: translateY(-1px);
+}
+
+.staff-member-icon {
+    font-size: 1.7rem;
+    color: #2271b1;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #eaf4fb;
+    border-radius: 50%;
+}
+
+.staff-member-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.staff-member-name {
+    font-size: 1.08rem;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.staff-member-role {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.role-title {
+    font-size: 0.97rem;
+    color: #2271b1;
+    font-weight: 500;
+}
+
+.role-description {
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+</style> 

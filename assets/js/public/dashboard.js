@@ -67,7 +67,6 @@
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
-            $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
         },
 
@@ -546,37 +545,6 @@
             console.log('Modal should be visible now');
         },
 
-        handleEditPersonClick: function(e) {
-            e.preventDefault();
-            var personId = $(this).data('person-id');
-            if (!personId) return;
-            // Fetch person data
-            $.ajax({
-                url: administration_plugin.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'get_person',
-                    nonce: administration_plugin.nonce,
-                    person_id: personId
-                },
-                success: function(response) {
-                    if (response.success && response.data) {
-                        $('#add-person-modal').addClass('show').attr('data-edit', '1').attr('data-person-id', personId);
-                        $('#add-person-modal h2').text('Edit Person');
-                        $('#add-person-form .button-primary').text('Save Changes');
-                        $('#person-first-name').val(response.data.FirstName);
-                        $('#person-last-name').val(response.data.LastName);
-                        $('#person-email').val(response.data.Email);
-                    } else {
-                        alert(response.data || 'Failed to load person.');
-                    }
-                },
-                error: function() {
-                    alert('Failed to load person.');
-                }
-            });
-        },
-
         closeAddPersonModal: function(e) {
             if (e) e.preventDefault();
             var $modal = $('#add-person-modal');
@@ -659,7 +627,7 @@
         },
         loadPeopleList: function(search, sort) {
             var $container = $('.people-list-content');
-            if (!$container.length) return; // Guard against missing container
+            if (!$container.length) return;
             
             $container.html('<div class="loading">Loading people...</div>');
             
@@ -670,7 +638,7 @@
                     action: 'get_people_list',
                     nonce: administration_plugin.nonce,
                     search: search || '',
-                    sort: sort || Dashboard.currentPeopleSort || 'name_asc' // Default sort if none specified
+                    sort: sort || Dashboard.currentPeopleSort || 'name_asc'
                 },
                 success: function(response) {
                     if (response.success) {

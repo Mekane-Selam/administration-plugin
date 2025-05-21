@@ -1007,11 +1007,22 @@ body.administration-dashboard-public {
 }
 .people-widget-actions {
     display: flex;
+    flex-direction: column;
     gap: 12px;
     padding: 0;
     margin-bottom: 16px;
-    justify-content: flex-end;
     width: 100%;
+}
+.people-widget-actions-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+}
+.people-widget-actions-row:first-child {
+    justify-content: flex-end;
+}
+.people-widget-actions-row:last-child {
+    justify-content: stretch;
 }
 .people-widget-actions .button {
     display: flex;
@@ -1029,17 +1040,24 @@ body.administration-dashboard-public {
     min-width: 100px;
     justify-content: center;
 }
+#sort-people-btn {
+    flex: 1;
+    justify-content: center;
+    width: 100%;
+}
 .people-widget-actions .button.button-primary {
     background: #2271b1;
     color: #fff;
     border: 1px solid #2271b1;
 }
-.people-widget-actions .button:hover, .people-widget-actions .button:focus {
+.people-widget-actions .button:hover, 
+.people-widget-actions .button:focus {
     background: #eaf4fb;
     color: #135e96;
     border-color: #b6d4ef;
 }
-.people-widget-actions .button.button-primary:hover, .people-widget-actions .button.button-primary:focus {
+.people-widget-actions .button.button-primary:hover, 
+.people-widget-actions .button.button-primary:focus {
     background: #135e96;
     color: #fff;
     border-color: #135e96;

@@ -236,16 +236,18 @@ body.administration-dashboard-public {
     height: 100vh;
     overflow: auto;
     background: rgba(0,0,0,0.35);
-    padding: 40px 0; /* vertical gap at top and bottom */
+    padding: 40px 0;
 }
+
 .modal.show {
     display: flex !important;
     align-items: center;
     justify-content: center;
 }
+
 .modal-content {
     background: #fff;
-    margin: 0 auto; /* Changed from auto to 0 auto */
+    margin: 0 auto;
     border-radius: 10px;
     padding: 32px 28px 24px 28px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.18);
@@ -256,7 +258,11 @@ body.administration-dashboard-public {
     position: relative;
     padding-right: 44px;
     margin-right: -16px;
+    left: 0;
+    top: 0;
+    transform: none;
 }
+
 /* Customize scrollbar for modal content */
 .modal-content::-webkit-scrollbar {
     width: 8px;
@@ -1311,4 +1317,21 @@ body.administration-dashboard-public {
     display: flex !important;
     opacity: 0;
     transition: opacity 0.2s ease-out;
+}
+
+/* Program modal specific styles */
+#add-program-modal .modal-content {
+    max-width: 600px;
+    padding: 30px;
+    margin: 0 auto;
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
+}
+
+#add-program-modal.show {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
 } 

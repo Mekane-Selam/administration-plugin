@@ -368,7 +368,38 @@
 
         openAddProgramModal: function(e) {
             e.preventDefault();
-            $('#add-program-modal').addClass('show');
+            var $modal = $('#add-program-modal');
+            var $form = $('#add-program-form');
+            
+            // Reset form if it exists
+            if ($form.length) {
+                $form[0].reset();
+            }
+            
+            // Clear any previous messages
+            $('#add-program-message').html('');
+            
+            // Show modal
+            $modal.addClass('show');
+            
+            // Load people for owner select
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_people_for_owner_select',
+                    nonce: administration_plugin.nonce
+                },
+                success: function(response) {
+                    if (response.success && Array.isArray(response.data)) {
+                        var ownerOptions = '<option value="">Select Owner</option>';
+                        response.data.forEach(function(person) {
+                            ownerOptions += `<option value="${person.PersonID}">${person.FirstName} ${person.LastName}</option>`;
+                        });
+                        $('#program-owner').html(ownerOptions);
+                    }
+                }
+            });
         },
 
         closeAddProgramModal: function(e) {
@@ -381,23 +412,61 @@
         submitAddProgramForm: function(e) {
             e.preventDefault();
             var $form = $(this);
-            var data = $form.serializeArray();
-            data.push({ name: 'action', value: 'add_program' });
-            data.push({ name: 'nonce', value: administration_plugin.nonce });
+            var $message = $('#add-program-message');
             
-            $('#add-program-message').html('<span class="loading">Saving...</span>');
+            // Get form values
+            var programName = $('#program-name').val().trim();
+            var programType = $('#program-type').val().trim();
+            var programOwner = $('#program-owner').val().trim();
+            var description = $('#program-description').val().trim();
+            var startDate = $('#program-start-date').val();
+            var endDate = $('#program-end-date').val();
+            var status = $('#program-status').val();
             
-            $.post(administration_plugin.ajax_url, data, function(response) {
-                if (response.success) {
-                    $('#add-program-message').html('<span class="success-message">Program added successfully!</span>');
-                    setTimeout(function() {
-                        $('#add-program-modal').removeClass('show');
-                        $('#add-program-form')[0].reset();
-                        $('#add-program-message').html('');
-                        Dashboard.loadPage('programs');
-                    }, 800);
-                } else {
-                    $('#add-program-message').html('<span class="error-message">' + (response.data || 'Error saving program.') + '</span>');
+            // Validate required fields
+            if (!programName || !programType || !programOwner) {
+                $message.html('<span class="error-message">Program name, type, and owner are required.</span>');
+                return;
+            }
+            
+            // Show loading message
+            $message.html('<span class="loading">Saving program...</span>');
+            
+            // Prepare data
+            var data = {
+                action: 'add_program',
+                nonce: administration_plugin.nonce,
+                program_name: programName,
+                program_type: programType,
+                program_owner: programOwner,
+                description: description,
+                start_date: startDate,
+                end_date: endDate,
+                status: status
+            };
+            
+            // Send AJAX request
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    console.log('Program add response:', response);
+                    if (response.success) {
+                        $message.html('<span class="success-message">Program added successfully!</span>');
+                        setTimeout(function() {
+                            $('#add-program-modal').removeClass('show');
+                            $form[0].reset();
+                            $message.html('');
+                            Dashboard.loadPage('programs');
+                        }, 800);
+                    } else {
+                        $message.html('<span class="error-message">' + (response.data || 'Error saving program.') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Program add error:', {xhr, status, error});
+                    $message.html('<span class="error-message">Error saving program. Please try again.</span>');
                 }
             });
         },

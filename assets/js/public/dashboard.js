@@ -90,12 +90,24 @@
                             var d = response.data;
                             // General
                             var generalHtml = '';
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name:</span> <span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name:</span> <span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email:</span> <span class='person-detail-value'>${d.general.Email || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone:</span> <span class='person-detail-value'>${d.general.Phone || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address:</span> <span class='person-detail-value'>${d.general.AddressLine1 || ''} ${d.general.AddressLine2 || ''} ${d.general.City || ''} ${d.general.State || ''} ${d.general.Zip || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Occupation:</span> <span class='person-detail-value'>${d.general.Occupation || ''}</span></div>`;
+                            generalHtml += `<div class='person-details-card'>`;
+                            generalHtml += `<div class='person-details-grid'>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Person ID</span><span class='person-detail-value'>${d.general.PersonID || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>User ID</span><span class='person-detail-value'>${d.general.UserID || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><span class='person-detail-value'>${d.general.Title || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><span class='person-detail-value'>${d.general.Gender || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><span class='person-detail-value'>${d.general.Email || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone</span><span class='person-detail-value'>${d.general.Phone || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 1</span><span class='person-detail-value'>${d.general.AddressLine1 || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 2</span><span class='person-detail-value'>${d.general.AddressLine2 || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>City</span><span class='person-detail-value'>${d.general.City || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span><span class='person-detail-value'>${d.general.State || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Zip</span><span class='person-detail-value'>${d.general.Zip || ''}</span></div>`;
+                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><span class='person-detail-value'>${d.general.Birthday || ''}</span></div>`;
+                            generalHtml += `</div>`;
+                            generalHtml += `</div>`;
                             $('#person-details-general-content').html(generalHtml);
                             // Family
                             var familyHtml = '';

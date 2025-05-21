@@ -576,6 +576,58 @@
                     }
                 });
             });
+
+            // Split view for course enrollment list: show person details
+            $(document).on('click', '.course-detail-enrollment-card', function() {
+                var $card = $(this);
+                var $container = $card.closest('.course-detail-enrollments');
+                // Remove any existing details panel and selection
+                $container.find('.course-enrollment-person-details').remove();
+                $container.find('.course-detail-enrollment-card').removeClass('selected');
+                $container.addClass('split-view');
+                $card.addClass('selected');
+                // Get first and last name from the card
+                var fullName = $card.find('.course-detail-enrollment-title').text().trim();
+                var nameParts = fullName.split(' ');
+                var firstName = nameParts[0] || '';
+                var lastName = nameParts.slice(1).join(' ');
+                var detailsHtml = `
+                  <div class="course-enrollment-person-details">
+                    <button class="close-person-details" title="Close">&times;</button>
+                    <div class="person-details-content">
+                      <h3>Person Details</h3>
+                      <div><strong>First Name:</strong> ${firstName}</div>
+                      <div><strong>Last Name:</strong> ${lastName}</div>
+                    </div>
+                  </div>
+                `;
+                $container.append(detailsHtml);
+            });
+            // Close person details panel
+            $(document).on('click', '.close-person-details', function() {
+                var $container = $(this).closest('.course-detail-enrollments');
+                $container.find('.course-enrollment-person-details').remove();
+                $container.removeClass('split-view');
+                $container.find('.course-detail-enrollment-card').removeClass('selected');
+            });
+
+            // Prevent duplicate active enrollments (client-side check)
+            $(document).on('submit', '#add-course-enrollment-form', function(e) {
+                var personId = $('#course-enrollment-person').val();
+                var alreadyEnrolled = false;
+                $('.course-detail-enrollments-list .course-detail-enrollment-card').each(function() {
+                    var name = $(this).find('.course-detail-enrollment-title').text().trim();
+                    var cardPersonId = $(this).data('person-id');
+                    if (cardPersonId && cardPersonId == personId) {
+                        alreadyEnrolled = true;
+                    }
+                });
+                if (alreadyEnrolled) {
+                    e.preventDefault();
+                    $('#add-course-enrollment-message').html('<span class="error-message">This person is already actively enrolled in this course.</span>');
+                    return false;
+                }
+            });
         }
     };
     $(document).ready(function() {

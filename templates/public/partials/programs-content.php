@@ -22,7 +22,6 @@ $people = administration_plugin_get_people();
 // Define program types centrally
 $program_types = array('Education', 'Health', 'Social');
 ?>
-<h1 class="programs-main-title"><?php _e('Programs', 'administration-plugin'); ?></h1>
 <div class="programs-content-main">
     <div class="programs-content-columns">
         <div class="programs-content-left">

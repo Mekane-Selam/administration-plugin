@@ -143,7 +143,7 @@
         $staff_query = $wpdb->prepare(
             "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
             FROM {$wpdb->prefix}progtype_edu_staff s
-            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRoledID = sr.StaffRoleID
+            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRolesID = sr.StaffRoleID
             LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
             WHERE s.ProgramID = %d
             ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
@@ -223,6 +223,7 @@
 
 .program-view-edu-enrollment-search-container {
     width: 300px;
+    margin-right: 8px;
 }
 
 .program-view-edu-enrollment-search {
@@ -263,6 +264,7 @@
     cursor: pointer;
     width: 36px;
     height: 36px;
+    flex-shrink: 0;
 }
 
 .program-view-edu-add-enrollment-btn:hover {

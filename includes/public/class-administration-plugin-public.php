@@ -646,7 +646,7 @@ class Administration_Plugin_Public {
         }
         global $wpdb;
         $table = $wpdb->prefix . 'progtype_edu_courseenrollments';
-        $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
+        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
         $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
         $active_flag = isset($_POST['ActiveFlag']) ? intval($_POST['ActiveFlag']) : 1;
         $enrollment_date = isset($_POST['EnrollmentDate']) ? sanitize_text_field($_POST['EnrollmentDate']) : current_time('mysql', 1);

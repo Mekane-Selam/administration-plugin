@@ -579,4 +579,11 @@ class Administration_Database {
             return $result ? $person_id : false;
         }
     }
+
+    /**
+     * Run this on plugin activation to ensure all tables are created
+     */
+    public static function activate() {
+        self::setup_tables();
+    }
 } 

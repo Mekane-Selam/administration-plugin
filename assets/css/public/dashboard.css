@@ -1243,7 +1243,7 @@ body.administration-dashboard-public {
     padding: 40px 0;
 }
 #add-person-modal.modal.show {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: center;
 }
@@ -1257,9 +1257,10 @@ body.administration-dashboard-public {
     overflow-y: auto;
     width: 100%;
     max-width: 480px;
-    position: fixed;
-    padding-right: 44px;
-    margin-right: -16px;
+    position: relative;
+    left: 0;
+    top: 0;
+    transform: none;
 }
 #add-person-modal .close {
     position: absolute;

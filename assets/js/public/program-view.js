@@ -437,6 +437,17 @@
             $(document).on('click', '#course-detail-modal .close', function() {
                 $('#course-detail-modal').removeClass('show');
             });
+
+            // Tab switching for course detail modal
+            $(document).on('click', '#course-detail-modal .tab-button', function(e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var tab = $btn.data('tab');
+                $btn.addClass('active').siblings('.tab-button').removeClass('active');
+                var $tabContent = $btn.closest('.course-detail-modal').find('.course-detail-tab-content');
+                $tabContent.find('.tab-pane').removeClass('active');
+                $tabContent.find('#' + tab).addClass('active');
+            });
         }
     };
     $(document).ready(function() {

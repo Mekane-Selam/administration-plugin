@@ -224,11 +224,11 @@ class Administration_Plugin_Public {
         }
         global $wpdb;
         $table = $wpdb->prefix . 'core_programs';
-        $program_id = isset($_POST['program_id']) ? intval($_POST['program_id']) : 0;
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
         if (!$program_id) {
             wp_send_json_error('Invalid program ID.');
         }
-        $program = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE ProgramID = %d", $program_id));
+        $program = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE ProgramID = %s", $program_id));
         if (!$program) {
             wp_send_json_error('Program not found.');
         }
@@ -256,7 +256,7 @@ class Administration_Plugin_Public {
         }
         global $wpdb;
         $table = $wpdb->prefix . 'core_programs';
-        $program_id = isset($_POST['program_id']) ? intval($_POST['program_id']) : 0;
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
         $name = isset($_POST['program_name']) ? sanitize_text_field($_POST['program_name']) : '';
         $type = isset($_POST['program_type']) ? sanitize_text_field($_POST['program_type']) : '';
         $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';

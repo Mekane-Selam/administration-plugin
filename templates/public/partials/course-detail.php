@@ -36,13 +36,60 @@
 </div>
 
 <style>
+.course-detail-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #e3e7ee;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.tab-button {
+    padding: 12px 20px;
+    border: none;
+    background: none;
+    color: #646970;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.tab-button:hover {
+    color: #2271b1;
+}
+
+.tab-button.active {
+    color: #2271b1;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #2271b1;
+}
+
+.tab-pane {
+    padding: 20px;
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
 .course-detail-enrollments-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 0 0 16px 0;
     border-bottom: 1px solid #e3e7ee;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .course-detail-enrollments-search-container {

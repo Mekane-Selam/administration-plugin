@@ -77,12 +77,9 @@
         <div class="program-view-edu-enrollment-search-container">
           <input type="text" class="program-view-edu-enrollment-search" placeholder="Search enrollments by name..." autocomplete="off" />
         </div>
-        <div class="program-view-edu-enrollment-actions">
-          <button type="button" class="program-view-edu-add-enrollment-btn">
-            <span class="dashicons dashicons-plus-alt"></span>
-            Add Enrollment
-          </button>
-        </div>
+        <button type="button" class="program-view-edu-add-enrollment-btn" title="Add Enrollment">
+          <span class="dashicons dashicons-plus"></span>
+        </button>
       </div>
     </div>
     <div class="program-view-edu-enrollment-content">
@@ -146,7 +143,7 @@
         $staff_query = $wpdb->prepare(
             "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
             FROM {$wpdb->prefix}progtype_edu_staff s
-            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRoleID = sr.RoleID
+            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRoledID = sr.StaffRoleID
             LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
             WHERE s.ProgramID = %d
             ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
@@ -255,15 +252,17 @@
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 8px 16px;
+    padding: 8px;
     font-size: 0.95rem;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(34,113,177,0.10);
     transition: background 0.2s, transform 0.2s;
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
     cursor: pointer;
+    width: 36px;
+    height: 36px;
 }
 
 .program-view-edu-add-enrollment-btn:hover {
@@ -273,6 +272,8 @@
 
 .program-view-edu-add-enrollment-btn .dashicons {
     font-size: 1.2rem;
+    width: 20px;
+    height: 20px;
 }
 
 .program-view-edu-staff {

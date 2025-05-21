@@ -41,6 +41,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_people_enrolled_in_program', array($this, 'ajax_get_people_enrolled_in_program'));
         // Register new AJAX handler
         add_action('wp_ajax_get_person_details', array($this, 'ajax_get_person_details'));
+        add_action('wp_ajax_add_staff_role', array($this, 'ajax_add_staff_role'));
     }
 
     /**
@@ -772,6 +773,38 @@ class Administration_Plugin_Public {
             wp_send_json_success($person);
         } else {
             wp_send_json_error('Person not found.');
+        }
+    }
+
+    /**
+     * AJAX handler to add a new staff role
+     */
+    public function ajax_add_staff_role() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'progtype_edu_staffroles';
+        $staff_role_id = isset($_POST['StaffRoleID']) ? sanitize_text_field($_POST['StaffRoleID']) : '';
+        $role_title = isset($_POST['RoleTitle']) ? sanitize_text_field($_POST['RoleTitle']) : '';
+        $role_desc = isset($_POST['StaffRoleDescription']) ? sanitize_textarea_field($_POST['StaffRoleDescription']) : '';
+        if (!$staff_role_id || !$role_title) {
+            wp_send_json_error('Missing required fields.');
+        }
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE StaffRoleID = %s", $staff_role_id));
+        if ($exists) {
+            wp_send_json_error('A role with this ID already exists.');
+        }
+        $result = $wpdb->insert($table, array(
+            'StaffRoleID' => $staff_role_id,
+            'RoleTitle' => $role_title,
+            'StaffRoleDescription' => $role_desc
+        ));
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to add staff role.');
         }
     }
 } 

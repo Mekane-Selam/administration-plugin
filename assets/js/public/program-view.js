@@ -666,6 +666,57 @@
                     $placeholder.hide();
                 }
             });
+
+            // Add Role Modal logic
+            $(document).on('click', '.program-view-edu-add-role-btn', function() {
+                $('#add-staff-role-modal').addClass('show');
+                $('#add-staff-role-form')[0].reset();
+                $('#add-staff-role-message').html('');
+            });
+            $(document).on('click', '#add-staff-role-modal .close, #cancel-add-staff-role', function() {
+                $('#add-staff-role-modal').removeClass('show');
+            });
+            $(document).on('submit', '#add-staff-role-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $msg = $('#add-staff-role-message');
+                var title = $('#staff-role-title').val().trim();
+                var desc = $('#staff-role-description').val().trim();
+                if (!title) {
+                    $msg.html('<span class="error-message">Role Title is required.</span>');
+                    return;
+                }
+                // Generate StaffRoleID
+                var staffRoleId = 'EDSTAFROL' + Math.floor(10000 + Math.random() * 90000);
+                $msg.html('<span class="loading">Adding role...</span>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'add_staff_role',
+                        nonce: administration_plugin.nonce,
+                        StaffRoleID: staffRoleId,
+                        RoleTitle: title,
+                        StaffRoleDescription: desc
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $msg.html('<span class="success-message">Role added successfully!</span>');
+                            setTimeout(function() {
+                                $('#add-staff-role-modal').removeClass('show');
+                                $form[0].reset();
+                                $msg.html('');
+                                // Optionally reload staff roles list here
+                            }, 800);
+                        } else {
+                            $msg.html('<span class="error-message">' + (response.data || 'Failed to add role.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $msg.html('<span class="error-message">Failed to add role. Please try again.</span>');
+                    }
+                });
+            });
         }
     };
     $(document).ready(function() {

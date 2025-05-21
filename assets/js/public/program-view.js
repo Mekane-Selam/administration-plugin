@@ -452,6 +452,7 @@
             // Add Course Enrollment button in course detail modal
             $(document).on('click', '#course-detail-modal .add-course-enrollment-btn', function(e) {
                 e.preventDefault();
+                var programId = $('#program-view-container').data('program-id');
                 // Remove any previous form fields
                 if ($('#add-course-enrollment-modal').length === 0) {
                     $('body').append(`
@@ -475,14 +476,15 @@
                         </div>
                     `);
                 }
-                // Load people for select
+                // Load people for select (only those enrolled in the parent program)
                 function loadPeopleList(query) {
                     $.ajax({
                         url: administration_plugin.ajax_url,
                         type: 'POST',
                         data: {
-                            action: 'get_people_for_owner_select',
-                            nonce: administration_plugin.nonce
+                            action: 'get_people_enrolled_in_program',
+                            nonce: administration_plugin.nonce,
+                            program_id: programId
                         },
                         success: function(response) {
                             if (response.success && Array.isArray(response.data)) {

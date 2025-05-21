@@ -38,6 +38,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_course_detail_and_enrollments', array($this, 'ajax_get_course_detail_and_enrollments'));
         add_action('wp_ajax_get_course_detail_tabs', array($this, 'ajax_get_course_detail_tabs'));
         add_action('wp_ajax_add_course_enrollment', array($this, 'ajax_add_course_enrollment'));
+        add_action('wp_ajax_get_people_enrolled_in_program', array($this, 'ajax_get_people_enrolled_in_program'));
     }
 
     /**
@@ -668,5 +669,27 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to add enrollment.');
         }
+    }
+
+    /**
+     * AJAX handler to get people enrolled in a program (for course enrollment modal)
+     */
+    public function ajax_get_people_enrolled_in_program() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        if (!$program_id) {
+            wp_send_json_error('Missing program ID.');
+        }
+        $enroll_table = $wpdb->prefix . 'progtype_edu_enrollment';
+        $person_table = $wpdb->prefix . 'core_person';
+        $people = $wpdb->get_results($wpdb->prepare(
+            "SELECT p.PersonID, p.FirstName, p.LastName FROM {$enroll_table} AS e LEFT JOIN {$person_table} AS p ON e.PersonID = p.PersonID WHERE e.ProgramID = %s ORDER BY p.LastName, p.FirstName",
+            $program_id
+        ));
+        wp_send_json_success($people);
     }
 } 

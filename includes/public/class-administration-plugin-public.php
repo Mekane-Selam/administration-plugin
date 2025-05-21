@@ -46,6 +46,13 @@ class Administration_Plugin_Public {
             ADMINISTRATION_PLUGIN_VERSION,
             'all'
         );
+        wp_enqueue_style(
+            'administration-plugin-program-view',
+            ADMINISTRATION_PLUGIN_URL . 'assets/css/public/program-view.css',
+            array(),
+            ADMINISTRATION_PLUGIN_VERSION,
+            'all'
+        );
     }
 
     /**
@@ -53,9 +60,16 @@ class Administration_Plugin_Public {
      */
     public function enqueue_scripts() {
         wp_enqueue_script(
+            'administration-plugin-program-view',
+            ADMINISTRATION_PLUGIN_URL . 'assets/js/public/program-view.js',
+            array('jquery'),
+            ADMINISTRATION_PLUGIN_VERSION,
+            true
+        );
+        wp_enqueue_script(
             'administration-plugin-dashboard',
             ADMINISTRATION_PLUGIN_URL . 'assets/js/public/dashboard.js',
-            array('jquery'),
+            array('jquery', 'administration-plugin-program-view'),
             ADMINISTRATION_PLUGIN_VERSION,
             true
         );

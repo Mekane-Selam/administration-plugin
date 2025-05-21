@@ -521,8 +521,17 @@
                 var personId = $('#course-enrollment-person').val();
                 var today = new Date();
                 var enrollmentDate = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
-                // Generate unique CourseEnrollmentID (client-side, for now)
                 var courseEnrollmentId = 'CORENROL' + Math.floor(10000 + Math.random() * 90000);
+                var payload = {
+                    action: 'add_course_enrollment',
+                    nonce: administration_plugin.nonce,
+                    CourseID: courseId,
+                    PersonID: personId,
+                    ActiveFlag: 1,
+                    EnrollmentDate: enrollmentDate,
+                    CourseEnrollmentID: courseEnrollmentId
+                };
+                console.log('Add Course Enrollment Payload:', payload);
                 if (!personId) {
                     $message.html('<span class="error-message">Person is required.</span>');
                     return;

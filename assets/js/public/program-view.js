@@ -641,6 +641,31 @@
                     }
                 });
             });
+
+            // Add dynamic search for .program-view-edu-enrollment-search to filter .enrollment-list-enhanced .enrollment-card by name, just like the .enrollment-search-input handler.
+            $(document).on('input', '.program-view-edu-enrollment-search', function() {
+                var query = $(this).val().toLowerCase();
+                $('.enrollment-list-enhanced .enrollment-card').each(function() {
+                    var name = $(this).find('.enrollment-card-title').text().toLowerCase();
+                    if (name.includes(query)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                // Show/hide placeholder if no results
+                var visible = $('.enrollment-list-enhanced .enrollment-card:visible').length;
+                var $placeholder = $('.program-enrollment-list-placeholder');
+                if (visible === 0) {
+                    if ($placeholder.length === 0) {
+                        $('.enrollment-list-enhanced').after('<div class="program-enrollment-list-placeholder">No enrollments found for this search.</div>');
+                    } else {
+                        $placeholder.show().text('No enrollments found for this search.');
+                    }
+                } else {
+                    $placeholder.hide();
+                }
+            });
         }
     };
     $(document).ready(function() {

@@ -576,6 +576,76 @@
                     }
                 });
             });
+
+            // Handle enrollment card clicks to show person details
+            $(document).on('click', '.course-detail-enrollment-card', function() {
+                var $card = $(this);
+                var personId = $card.data('person-id');
+                var $enrollmentsContainer = $card.closest('.course-detail-enrollments');
+                
+                // Add split view class if not already present
+                if (!$enrollmentsContainer.hasClass('split-view')) {
+                    $enrollmentsContainer.addClass('split-view');
+                }
+                
+                // Remove person details if already present
+                $enrollmentsContainer.find('.course-enrollment-person-details').remove();
+                
+                // Add loading state
+                $enrollmentsContainer.append('<div class="course-enrollment-person-details"><div class="loading">Loading person details...</div></div>');
+                
+                // Fetch person details
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_person_details',
+                        nonce: administration_plugin.nonce,
+                        person_id: personId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            var person = response.data;
+                            var detailsHtml = `
+                                <button class="close-person-details" title="Close details">
+                                    <span class="dashicons dashicons-no-alt"></span>
+                                </button>
+                                <h3 class="person-details-title">${person.FirstName} ${person.LastName}</h3>
+                                <div class="person-details-content">
+                                    <div class="person-detail-row">
+                                        <span class="person-detail-label">ID:</span>
+                                        <span class="person-detail-value">${person.PersonID}</span>
+                                    </div>
+                                    <div class="person-detail-row">
+                                        <span class="person-detail-label">Email:</span>
+                                        <span class="person-detail-value">${person.Email || 'N/A'}</span>
+                                    </div>
+                                    <div class="person-detail-row">
+                                        <span class="person-detail-label">Phone:</span>
+                                        <span class="person-detail-value">${person.Phone || 'N/A'}</span>
+                                    </div>
+                                </div>
+                            `;
+                            $enrollmentsContainer.find('.course-enrollment-person-details').html(detailsHtml);
+                        } else {
+                            $enrollmentsContainer.find('.course-enrollment-person-details').html('<div class="error-message">Failed to load person details.</div>');
+                        }
+                    },
+                    error: function() {
+                        $enrollmentsContainer.find('.course-enrollment-person-details').html('<div class="error-message">Failed to load person details.</div>');
+                    }
+                });
+            });
+
+            // Handle closing person details
+            $(document).on('click', '.close-person-details', function() {
+                var $details = $(this).closest('.course-enrollment-person-details');
+                var $enrollmentsContainer = $details.closest('.course-detail-enrollments');
+                $details.remove();
+                if ($enrollmentsContainer.find('.course-enrollment-person-details').length === 0) {
+                    $enrollmentsContainer.removeClass('split-view');
+                }
+            });
         }
     };
     $(document).ready(function() {

@@ -39,6 +39,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_course_detail_tabs', array($this, 'ajax_get_course_detail_tabs'));
         add_action('wp_ajax_add_course_enrollment', array($this, 'ajax_add_course_enrollment'));
         add_action('wp_ajax_get_people_enrolled_in_program', array($this, 'ajax_get_people_enrolled_in_program'));
+        // Register new AJAX handler
+        add_action('wp_ajax_get_person_details', array($this, 'ajax_get_person_details'));
     }
 
     /**
@@ -695,5 +697,27 @@ class Administration_Plugin_Public {
             $program_id
         ));
         wp_send_json_success($people);
+    }
+
+    /**
+     * AJAX handler to get person details
+     */
+    public function ajax_get_person_details() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+        if (!$person_id) {
+            wp_send_json_error('Missing person ID.');
+        }
+        $person_table = $wpdb->prefix . 'core_person';
+        $person = $wpdb->get_row($wpdb->prepare("SELECT * FROM $person_table WHERE PersonID = %s", $person_id));
+        if ($person) {
+            wp_send_json_success($person);
+        } else {
+            wp_send_json_error('Person not found.');
+        }
     }
 } 

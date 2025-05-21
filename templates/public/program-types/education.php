@@ -74,14 +74,13 @@
     <button class="program-view-edu-add-enrollment-btn" title="Add Enrollment"><span class="dashicons dashicons-plus"></span></button>
     <h3 class="program-view-edu-title">Enrollment</h3>
     <div class="program-view-edu-enrollment-content">
-      <div class="enrollment-toolbar">
-        <div class="enrollment-search-bar">
-          <input type="text" class="enrollment-search-input" placeholder="Search enrollments by name..." autocomplete="off" />
+      <div class="program-view-edu-enrollment-toolbar">
+        <div class="program-view-edu-enrollment-search-container">
+          <input type="text" class="program-view-edu-enrollment-search" placeholder="Search enrollments by name..." autocomplete="off" />
         </div>
-        <button class="program-view-edu-add-enrollment-btn" title="Add Enrollment">
-          <span class="dashicons dashicons-plus"></span>
-          Add Enrollment
-        </button>
+        <div class="program-view-edu-enrollment-actions">
+          <button type="button" class="button button-primary">Add Enrollment</button>
+        </div>
       </div>
       <form class="add-enrollment-form" style="display:none;">
         <input type="text" name="PersonID" placeholder="Person ID" required />
@@ -127,65 +126,103 @@
 </div>
 
 <!-- Add Staff Container -->
-<div class="program-view-edu-staff card">
-    <h3 class="program-view-edu-title">Program Staff</h3>
+<div class="program-view-edu-staff">
+    <div class="program-view-edu-staff-header">
+        <h3 class="program-view-edu-title">Staff</h3>
+        <button type="button" class="program-view-edu-add-staff-btn">
+            <span class="dashicons dashicons-plus-alt"></span>
+            Add Staff
+        </button>
+    </div>
     <div class="program-view-edu-staff-content">
         <?php
-        // Get program staff members with correct table joins
         global $wpdb;
-        $staff_members = $wpdb->get_results($wpdb->prepare(
-            "SELECT p.FirstName, p.LastName, sr.RoleTitle, sr.StaffRoleDescription
+        
+        // Join the staff, staff roles, and person tables
+        $staff_query = $wpdb->prepare(
+            "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
             FROM {$wpdb->prefix}progtype_edu_staff s
-            JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRolesID = sr.StaffRoleID
-            JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
-            WHERE s.ProgramID = %s
+            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.RoleID = sr.RoleID
+            LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
+            WHERE s.ProgramID = %d
             ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
             $program->ProgramID
-        ));
+        );
+        
+        $staff_members = $wpdb->get_results($staff_query);
         
         if ($staff_members) {
+            echo '<div class="program-view-edu-staff-grid">';
             foreach ($staff_members as $staff) {
                 ?>
-                <div class="staff-member-card">
-                    <div class="staff-member-icon">
-                        <span class="dashicons dashicons-businessperson"></span>
+                <div class="program-view-edu-staff-card">
+                    <div class="program-view-edu-staff-info">
+                        <h4 class="program-view-edu-staff-name">
+                            <?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?>
+                        </h4>
+                        <span class="program-view-edu-staff-role">
+                            <?php echo esc_html($staff->RoleTitle); ?>
+                        </span>
                     </div>
-                    <div class="staff-member-details">
-                        <div class="staff-member-name"><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></div>
-                        <div class="staff-member-role">
-                            <span class="role-title"><?php echo esc_html($staff->RoleTitle); ?></span>
-                            <?php if (!empty($staff->StaffRoleDescription)) : ?>
-                                <span class="role-description"><?php echo esc_html($staff->StaffRoleDescription); ?></span>
-                            <?php endif; ?>
-                        </div>
+                    <div class="program-view-edu-staff-actions">
+                        <button type="button" class="program-view-edu-staff-edit-btn" data-staff-id="<?php echo esc_attr($staff->StaffID); ?>">
+                            <span class="dashicons dashicons-edit"></span>
+                        </button>
+                        <button type="button" class="program-view-edu-staff-remove-btn" data-staff-id="<?php echo esc_attr($staff->StaffID); ?>">
+                            <span class="dashicons dashicons-trash"></span>
+                        </button>
                     </div>
                 </div>
                 <?php
             }
+            echo '</div>';
         } else {
-            echo '<div class="program-enrollment-list-placeholder">No staff members assigned.</div>';
+            echo '<div class="program-view-edu-staff-empty">';
+            echo '<span class="dashicons dashicons-groups"></span>';
+            echo '<p>No staff members assigned to this program yet.</p>';
+            echo '</div>';
         }
         ?>
     </div>
 </div>
 
 <style>
+.program-view-edu-enrollment {
+    margin-top: 0;
+    margin-bottom: 0;
+    max-width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+}
+
+.program-view-edu-enrollment .program-view-edu-title {
+    margin-top: 0;
+}
+
 .program-view-edu-enrollment-content {
     width: 100%;
 }
 
-.enrollment-toolbar {
+.program-view-edu-enrollment-toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
     margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e3e7ee;
 }
 
-.enrollment-search-bar {
-    flex: 0 1 300px;
+.program-view-edu-enrollment-search-container {
+    flex: 1;
+    max-width: 300px;
+    margin-right: 16px;
 }
 
-.enrollment-search-input {
+.program-view-edu-enrollment-search {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #e3e7ee;
@@ -195,85 +232,174 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.enrollment-search-input:focus {
+.program-view-edu-enrollment-search:focus {
     border-color: #2271b1;
     box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
     outline: none;
 }
 
-.program-view-edu-staff {
-    margin-top: 24px;
-    background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
-    border: 1px solid #e3e7ee;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
-    padding: 22px 20px 18px 20px;
-    position: relative;
-}
-
-.program-view-edu-staff-content {
+.program-view-edu-enrollment-actions {
     display: flex;
-    flex-direction: column;
     gap: 12px;
+    align-items: center;
 }
 
-.staff-member-card {
+.program-view-edu-add-enrollment-btn {
+    background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.10);
+    transition: background 0.2s, transform 0.2s;
     display: flex;
     align-items: center;
+    gap: 6px;
+}
+
+.program-view-edu-add-enrollment-btn:hover {
+    background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
+    transform: translateY(-2px);
+}
+
+.program-view-edu-add-enrollment-btn .dashicons {
+    font-size: 1.2rem;
+}
+
+.program-view-edu-staff {
     background: #fff;
     border: 1px solid #e3e7ee;
-    border-radius: 10px;
-    padding: 16px 20px;
-    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.staff-member-card:hover {
-    box-shadow: 0 4px 16px rgba(34,113,177,0.13);
-    border-color: #b6d4ef;
-    transform: translateY(-1px);
-}
-
-.staff-member-icon {
-    font-size: 1.7rem;
-    color: #2271b1;
-    margin-right: 16px;
+.program-view-edu-staff-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background: #eaf4fb;
-    border-radius: 50%;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e3e7ee;
 }
 
-.staff-member-details {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.staff-member-name {
-    font-size: 1.08rem;
-    font-weight: 600;
+.program-view-edu-staff-header .program-view-edu-title {
+    margin: 0;
+    font-size: 1.25rem;
     color: #1d2327;
 }
 
-.staff-member-role {
+.program-view-edu-add-staff-btn {
+    background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.10);
+    transition: background 0.2s, transform 0.2s;
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
 }
 
-.role-title {
-    font-size: 0.97rem;
-    color: #2271b1;
-    font-weight: 500;
+.program-view-edu-add-staff-btn:hover {
+    background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
+    transform: translateY(-2px);
 }
 
-.role-description {
+.program-view-edu-staff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.program-view-edu-staff-card {
+    background: #f8fafc;
+    border: 1px solid #e3e7ee;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.program-view-edu-staff-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.program-view-edu-staff-info {
+    flex: 1;
+}
+
+.program-view-edu-staff-name {
+    margin: 0 0 4px 0;
+    font-size: 1.1rem;
+    color: #1d2327;
+}
+
+.program-view-edu-staff-role {
+    display: block;
     font-size: 0.9rem;
-    color: #666;
-    font-style: italic;
+    color: #646970;
+}
+
+.program-view-edu-staff-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.program-view-edu-staff-edit-btn,
+.program-view-edu-staff-remove-btn {
+    background: none;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.program-view-edu-staff-edit-btn {
+    color: #2271b1;
+}
+
+.program-view-edu-staff-remove-btn {
+    color: #d63638;
+}
+
+.program-view-edu-staff-edit-btn:hover {
+    background-color: rgba(34,113,177,0.1);
+}
+
+.program-view-edu-staff-remove-btn:hover {
+    background-color: rgba(214,54,56,0.1);
+}
+
+.program-view-edu-staff-empty {
+    text-align: center;
+    padding: 40px 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    color: #646970;
+}
+
+.program-view-edu-staff-empty .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+}
+
+.program-view-edu-staff-empty p {
+    margin: 0;
+    font-size: 1.1rem;
 }
 </style> 

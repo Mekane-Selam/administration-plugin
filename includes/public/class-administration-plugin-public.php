@@ -191,7 +191,14 @@ class Administration_Plugin_Public {
             wp_send_json_error('Program name, type, and owner are required.');
         }
         $active_flag = ($status === 'active') ? 1 : 0;
+        // Generate unique ProgramID (PROGxxxxx)
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $program_id = 'PROG' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE ProgramID = %s", $program_id));
+        } while ($exists);
         $result = $wpdb->insert($table, array(
+            'ProgramID' => $program_id,
             'ProgramName' => $name,
             'ProgramType' => $type,
             'ProgramDescription' => $description,

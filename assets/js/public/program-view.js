@@ -24,6 +24,7 @@
                         // Populate Overview fields
                         if (response.data.program) {
                             var program = response.data.program;
+                            $container.data('program-owner', program.ProgramOwner || ''); // Store owner for later use
                             $container.find('.overview-field[data-field="ProgramName"]').text(program.ProgramName);
                             $container.find('.overview-field[data-field="ProgramType"]').text(program.ProgramType);
                             $container.find('.overview-field[data-field="ProgramDescription"]').text(program.ProgramDescription);
@@ -135,18 +136,25 @@
                 e.preventDefault();
                 var $form = $(this);
                 var $card = $form.closest('.program-view-edu-overview');
-                var data = $form.serializeArray();
-                var programId = $('#program-view-container').data('program-id');
-                
+                var $container = $('#program-view-container');
+                var programId = $container.data('program-id');
+                var programOwner = $container.data('program-owner') || '';
                 if (!programId) {
                     alert('Error: Program ID not found. Please try refreshing the page.');
                     return;
                 }
-                
-                data.push({name: 'action', value: 'edit_program'});
-                data.push({name: 'nonce', value: administration_plugin.nonce});
-                data.push({name: 'program_id', value: programId});
-                
+                var data = {
+                    action: 'edit_program',
+                    nonce: administration_plugin.nonce,
+                    program_id: programId,
+                    program_name: $form.find('input[name="ProgramName"]').val(),
+                    program_type: $form.find('input[name="ProgramType"]').val(),
+                    description: $form.find('textarea[name="ProgramDescription"]').val(),
+                    start_date: $form.find('input[name="StartDate"]').val(),
+                    end_date: $form.find('input[name="EndDate"]').val(),
+                    status: $form.find('select[name="ActiveFlag"]').val() === '1' ? 'active' : 'inactive',
+                    program_owner: programOwner
+                };
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',

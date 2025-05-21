@@ -36,6 +36,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_add_edu_course', array($this, 'ajax_add_edu_course'));
         add_action('wp_ajax_add_edu_enrollment', array($this, 'ajax_add_edu_enrollment'));
         add_action('wp_ajax_get_course_detail_and_enrollments', array($this, 'ajax_get_course_detail_and_enrollments'));
+        add_action('wp_ajax_get_course_detail_tabs', array($this, 'ajax_get_course_detail_tabs'));
     }
 
     /**
@@ -601,5 +602,36 @@ class Administration_Plugin_Public {
         include dirname(__FILE__,3) . '/templates/public/partials/course-detail-enrollments.php';
         $enrollments_html = ob_get_clean();
         wp_send_json_success(['overview_html' => $overview_html, 'enrollments_html' => $enrollments_html]);
+    }
+
+    /**
+     * AJAX handler to get course details and enrollments
+     */
+    public function ajax_get_course_detail_tabs() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        if (!$course_id || !$program_id) {
+            wp_send_json_error('Missing required fields.');
+        }
+        // Fetch course
+        $course_table = $wpdb->prefix . 'progtype_edu_courses';
+        $course = $wpdb->get_row($wpdb->prepare("SELECT * FROM $course_table WHERE CourseID = %s", $course_id));
+        // Fetch enrollments for this course
+        $enrollments = array();
+        $enroll_table = $wpdb->prefix . 'progtype_edu_enrollment';
+        $person_table = $wpdb->prefix . 'core_person';
+        $enrollments = $wpdb->get_results($wpdb->prepare(
+            "SELECT e.*, p.FirstName, p.LastName FROM $enroll_table e LEFT JOIN $person_table p ON e.PersonID = p.PersonID WHERE e.CourseID = %s ORDER BY e.EnrollmentDate DESC",
+            $course_id
+        ));
+        ob_start();
+        include plugin_dir_path(__FILE__) . '../../templates/public/partials/course-detail.php';
+        $html = ob_get_clean();
+        wp_send_json_success(['html' => $html]);
     }
 } 

@@ -384,8 +384,7 @@
                         <div class="modal-content">
                             <span class="close">&times;</span>
                             <div class="course-detail-modal-sections">
-                                <div class="course-detail-overview-section"></div>
-                                <div class="course-detail-enrollments-section"></div>
+                                <div class="course-detail-main-section"></div>
                             </div>
                         </div>
                     </div>
@@ -395,39 +394,35 @@
             $(document).on('click', '.course-card', function() {
                 var courseName = $(this).find('.course-card-title').text();
                 var programId = $('#program-view-container').data('program-id');
-                // Find course ID by matching name (could be improved with data attribute)
                 var courseId = null;
                 $(this).closest('.courses-list-enhanced').find('.course-card').each(function() {
                     if ($(this).find('.course-card-title').text() === courseName) {
                         courseId = $(this).data('course-id');
                     }
                 });
-                // Fallback: try to get from data attribute
                 if (!courseId) {
                     courseId = $(this).data('course-id');
                 }
                 if (!courseId) {
-                    // Try to get from PHP if rendered
                     courseId = $(this).attr('data-course-id');
                 }
                 if (!courseId) {
                     alert('Could not determine course ID.');
                     return;
                 }
-                // Fetch course details and enrollments
+                // Fetch course details and enrollments (now as a single tabbed interface)
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',
                     data: {
-                        action: 'get_course_detail_and_enrollments',
+                        action: 'get_course_detail_tabs',
                         nonce: administration_plugin.nonce,
                         course_id: courseId,
                         program_id: programId
                     },
                     success: function(response) {
-                        if (response.success && response.data) {
-                            $('#course-detail-modal .course-detail-overview-section').html(response.data.overview_html);
-                            $('#course-detail-modal .course-detail-enrollments-section').html(response.data.enrollments_html);
+                        if (response.success && response.data && response.data.html) {
+                            $('#course-detail-modal .course-detail-main-section').html(response.data.html);
                             $('#course-detail-modal').addClass('show');
                         } else {
                             alert(response.data || 'Failed to load course details.');

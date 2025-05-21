@@ -87,45 +87,7 @@
                     },
                     success: function(response) {
                         if (response.success && response.data) {
-                            var d = response.data;
-                            // General
-                            var generalHtml = '';
-                            generalHtml += `<div class='person-details-card'>`;
-                            generalHtml += `<div class='person-details-grid'>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Person ID</span><span class='person-detail-value'>${d.general.PersonID || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>User ID</span><span class='person-detail-value'>${d.general.UserID || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><span class='person-detail-value'>${d.general.Title || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><span class='person-detail-value'>${d.general.Gender || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><span class='person-detail-value'>${d.general.Email || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone</span><span class='person-detail-value'>${d.general.Phone || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 1</span><span class='person-detail-value'>${d.general.AddressLine1 || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 2</span><span class='person-detail-value'>${d.general.AddressLine2 || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>City</span><span class='person-detail-value'>${d.general.City || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span><span class='person-detail-value'>${d.general.State || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Zip</span><span class='person-detail-value'>${d.general.Zip || ''}</span></div>`;
-                            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><span class='person-detail-value'>${d.general.Birthday || ''}</span></div>`;
-                            generalHtml += `</div>`;
-                            generalHtml += `</div>`;
-                            $('#person-details-general-content').html(generalHtml);
-                            // Family
-                            var familyHtml = '';
-                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Father:</span> <span class='person-detail-value'>${d.family.Father || ''}</span></div>`;
-                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Mother:</span> <span class='person-detail-value'>${d.family.Mother || ''}</span></div>`;
-                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Children:</span> <span class='person-detail-value'>${d.family.Children || ''}</span></div>`;
-                            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Other Relationships:</span> <span class='person-detail-value'>${d.family.Other || ''}</span></div>`;
-                            $('#person-details-family-content').html(familyHtml);
-                            // Roles
-                            var rolesHtml = '';
-                            if (d.roles && d.roles.length) {
-                                d.roles.forEach(function(role) {
-                                    rolesHtml += `<div class='person-detail-row'><span class='person-detail-label'>${role.ProgramName}:</span> <span class='person-detail-value'>${role.RoleName}</span></div>`;
-                                });
-                            } else {
-                                rolesHtml = '<div class="person-detail-row"><span class="person-detail-value">No roles found.</span></div>';
-                            }
-                            $('#person-details-roles-content').html(rolesHtml);
+                            Dashboard._renderPersonDetails(response.data);
                             $('#person-details-panel').show();
                         } else {
                             $('#person-details-general-content, #person-details-family-content, #person-details-roles-content').html('<div class="error-message">Failed to load details.</div>');
@@ -137,6 +99,66 @@
                         $('#person-details-panel').show();
                     }
                 });
+            });
+
+            // Add edit button handler for inline editing (General section only for now)
+            $(document).off('click', '.person-details-edit-btn').on('click', '.person-details-edit-btn', function() {
+                var section = $(this).data('section');
+                if (section === 'general') {
+                    var $content = $('#person-details-general-content');
+                    var d = Dashboard._lastPersonDetails;
+                    // Render inputs for editable fields
+                    var editHtml = `<div class='person-details-card'><form id='edit-person-general-form'><div class='person-details-grid'>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>User ID</span><input class='person-detail-value' type='text' name='UserID' value='${d.general.UserID || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><input class='person-detail-value' type='text' name='FirstName' value='${d.general.FirstName || ''}' required /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><input class='person-detail-value' type='text' name='LastName' value='${d.general.LastName || ''}' required /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><input class='person-detail-value' type='text' name='Title' value='${d.general.Title || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><input class='person-detail-value' type='text' name='Gender' value='${d.general.Gender || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><input class='person-detail-value' type='email' name='Email' value='${d.general.Email || ''}' required /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone</span><input class='person-detail-value' type='text' name='Phone' value='${d.general.Phone || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 1</span><input class='person-detail-value' type='text' name='AddressLine1' value='${d.general.AddressLine1 || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 2</span><input class='person-detail-value' type='text' name='AddressLine2' value='${d.general.AddressLine2 || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>City</span><input class='person-detail-value' type='text' name='City' value='${d.general.City || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span><input class='person-detail-value' type='text' name='State' value='${d.general.State || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Zip</span><input class='person-detail-value' type='text' name='Zip' value='${d.general.Zip || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><input class='person-detail-value' type='date' name='Birthday' value='${d.general.Birthday ? d.general.Birthday.split('T')[0] : ''}' /></div>`;
+                    editHtml += `</div><div class='edit-person-actions' style='margin-top:18px; text-align:right;'><button type='submit' class='button button-primary'>Save</button> <button type='button' class='button button-secondary' id='cancel-edit-person-general'>Cancel</button></div></form></div>`;
+                    $content.html(editHtml);
+                    // Cancel handler
+                    $(document).off('click', '#cancel-edit-person-general').on('click', '#cancel-edit-person-general', function() {
+                        Dashboard._renderPersonDetails(Dashboard._lastPersonDetails);
+                    });
+                    // Save handler
+                    $(document).off('submit', '#edit-person-general-form').on('submit', '#edit-person-general-form', function(e) {
+                        e.preventDefault();
+                        var formData = $(this).serializeArray();
+                        var data = { action: 'edit_person', nonce: administration_plugin.nonce, person_id: d.general.PersonID };
+                        formData.forEach(function(f) { data[f.name] = f.value; });
+                        $.ajax({
+                            url: administration_plugin.ajax_url,
+                            type: 'POST',
+                            data: data,
+                            success: function(response) {
+                                if (response.success) {
+                                    // Reload details
+                                    $.ajax({
+                                        url: administration_plugin.ajax_url,
+                                        type: 'POST',
+                                        data: { action: 'get_full_person_details', nonce: administration_plugin.nonce, person_id: d.general.PersonID },
+                                        success: function(resp) {
+                                            if (resp.success && resp.data) {
+                                                Dashboard._renderPersonDetails(resp.data);
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    alert(response.data || 'Failed to save changes.');
+                                }
+                            },
+                            error: function() { alert('Failed to save changes.'); }
+                        });
+                    });
+                }
             });
         },
 
@@ -750,6 +772,53 @@
                 var search = $('#people-content-filter-input').val();
                 Dashboard.loadPeopleList(search);
             }, 250);
+        },
+
+        // Store last details for editing
+        _renderPersonDetails: function(d) {
+            Dashboard._lastPersonDetails = d;
+            // General
+            var generalHtml = '';
+            generalHtml += `<div class='person-details-card'>`;
+            generalHtml += `<div class='person-details-grid'>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Person ID</span><span class='person-detail-value'>${d.general.PersonID || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>User ID</span><span class='person-detail-value'>${d.general.UserID || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><span class='person-detail-value'>${d.general.Title || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><span class='person-detail-value'>${d.general.Gender || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><span class='person-detail-value'>${d.general.Email || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone</span><span class='person-detail-value'>${d.general.Phone || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 1</span><span class='person-detail-value'>${d.general.AddressLine1 || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 2</span><span class='person-detail-value'>${d.general.AddressLine2 || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>City</span><span class='person-detail-value'>${d.general.City || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span><span class='person-detail-value'>${d.general.State || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Zip</span><span class='person-detail-value'>${d.general.Zip || ''}</span></div>`;
+            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><span class='person-detail-value'>${d.general.Birthday || ''}</span></div>`;
+            generalHtml += `</div>`;
+            generalHtml += `</div>`;
+            $('#person-details-general-content').html(generalHtml);
+            // Family
+            var familyHtml = '';
+            familyHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
+            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Father</span><span class='person-detail-value'>${d.family.Father || ''}</span></div>`;
+            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Mother</span><span class='person-detail-value'>${d.family.Mother || ''}</span></div>`;
+            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Children</span><span class='person-detail-value'>${d.family.Children || ''}</span></div>`;
+            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Other Relationships</span><span class='person-detail-value'>${d.family.Other || ''}</span></div>`;
+            familyHtml += `</div></div>`;
+            $('#person-details-family-content').html(familyHtml);
+            // Roles
+            var rolesHtml = '';
+            rolesHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
+            if (d.roles && d.roles.length) {
+                d.roles.forEach(function(role) {
+                    rolesHtml += `<div class='person-detail-row'><span class='person-detail-label'>${role.ProgramName}</span><span class='person-detail-value'>${role.RoleName}</span></div>`;
+                });
+            } else {
+                rolesHtml += `<div class='person-detail-row'><span class='person-detail-label'>Roles</span><span class='person-detail-value'>No roles found.</span></div>`;
+            }
+            rolesHtml += `</div></div>`;
+            $('#person-details-roles-content').html(rolesHtml);
         }
     };
 

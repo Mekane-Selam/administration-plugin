@@ -1418,6 +1418,7 @@ body.administration-dashboard-public {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 18px 32px;
+    align-items: stretch;
 }
 @media (max-width: 700px) {
     .person-details-grid {
@@ -1430,6 +1431,7 @@ body.administration-dashboard-public {
     flex-direction: column;
     background: transparent;
     padding: 0 0 2px 0;
+    min-width: 0;
 }
 .person-detail-label {
     font-size: 0.98rem;
@@ -1437,6 +1439,7 @@ body.administration-dashboard-public {
     font-weight: 600;
     margin-bottom: 2px;
     letter-spacing: 0.01em;
+    text-align: left;
 }
 .person-detail-value {
     font-size: 1.08rem;
@@ -1449,6 +1452,10 @@ body.administration-dashboard-public {
     border: 1px solid #e3e7ee;
     min-height: 28px;
     word-break: break-word;
+    text-align: right;
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 .person-details-section-header h3 {
     font-size: 1.15rem;

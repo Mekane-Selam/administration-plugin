@@ -33,6 +33,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_edit_person', array($this, 'ajax_edit_person'));
         // Register new AJAX handler
         add_action('wp_ajax_get_program_full_view', array($this, 'ajax_get_program_full_view'));
+        add_action('wp_ajax_add_edu_course', array($this, 'ajax_add_edu_course'));
+        add_action('wp_ajax_add_edu_enrollment', array($this, 'ajax_add_edu_enrollment'));
     }
 
     /**
@@ -499,5 +501,77 @@ class Administration_Plugin_Public {
             'html' => $html,
             'program' => $program
         ]);
+    }
+
+    /**
+     * AJAX handler to add a course to an education program
+     */
+    public function ajax_add_edu_course() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'progtype_edu_courses';
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        $course_name = isset($_POST['CourseName']) ? sanitize_text_field($_POST['CourseName']) : '';
+        $level = isset($_POST['Level']) ? sanitize_text_field($_POST['Level']) : '';
+        if (!$program_id || !$course_name) {
+            wp_send_json_error('Missing required fields.');
+        }
+        // Generate unique CourseID
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $course_id = 'COURSE' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE CourseID = %s", $course_id));
+        } while ($exists);
+        $result = $wpdb->insert($table, array(
+            'CourseID' => $course_id,
+            'ProgramID' => $program_id,
+            'CourseName' => $course_name,
+            'Level' => $level
+        ));
+        if ($result) {
+            wp_send_json_success(['CourseID' => $course_id]);
+        } else {
+            wp_send_json_error('Failed to add course.');
+        }
+    }
+
+    /**
+     * AJAX handler to add an enrollment to an education program
+     */
+    public function ajax_add_edu_enrollment() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'progtype_edu_enrollment';
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
+        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
+        if (!$program_id || !$person_id || !$course_id) {
+            wp_send_json_error('Missing required fields.');
+        }
+        // Generate unique ProgramEnrollmentID
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $enroll_id = 'ENROLL' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE ProgramEnrollmentID = %s", $enroll_id));
+        } while ($exists);
+        $result = $wpdb->insert($table, array(
+            'ProgramEnrollmentID' => $enroll_id,
+            'PersonID' => $person_id,
+            'CourseID' => $course_id,
+            'ProgramID' => $program_id,
+            'ActiveFlag' => 1,
+            'EnrollmentDate' => current_time('mysql', 1)
+        ));
+        if ($result) {
+            wp_send_json_success(['ProgramEnrollmentID' => $enroll_id]);
+        } else {
+            wp_send_json_error('Failed to add enrollment.');
+        }
     }
 } 

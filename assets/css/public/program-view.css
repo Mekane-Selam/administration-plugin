@@ -36,6 +36,146 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e3e7ee;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(34,113,177,0.08), 0 1.5px 6px rgba(0,0,0,0.03);
+    padding: 28px 28px 24px 28px;
+    position: relative;
+}
+.program-view-edu-overview-content {
+    width: 100%;
+}
+.overview-display-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.overview-display-mode > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e3e7ee;
+    transition: all 0.2s ease;
+}
+.overview-display-mode > div:hover {
+    background: #f0f4fa;
+    border-color: #b6d4ef;
+    transform: translateY(-1px);
+}
+.overview-display-mode strong {
+    color: #2271b1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.overview-display-mode .overview-field {
+    color: #1d2327;
+    font-size: 1.05rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+.overview-edit-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+.overview-edit-mode > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.overview-edit-mode strong {
+    color: #2271b1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.overview-edit-input {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+.overview-edit-input:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 3px rgba(34,113,177,0.1);
+    outline: none;
+}
+.overview-edit-input[type="textarea"] {
+    min-height: 100px;
+    resize: vertical;
+}
+.overview-edit-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    justify-content: flex-end;
+}
+.overview-save-btn,
+.overview-cancel-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.overview-save-btn {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+}
+.overview-save-btn:hover {
+    background: #135e96;
+    border-color: #135e96;
+    transform: translateY(-1px);
+}
+.overview-cancel-btn {
+    background: #f7fafd;
+    color: #2271b1;
+    border: 1px solid #e3e7ee;
+}
+.overview-cancel-btn:hover {
+    background: #eaf4fb;
+    border-color: #b6d4ef;
+    transform: translateY(-1px);
+}
+.program-view-edu-edit-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: all 0.2s ease;
+}
+.program-view-edu-edit-btn:hover {
+    background: #135e96;
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(34,113,177,0.15);
+}
+.program-view-edu-add-course-btn,
+.program-view-edu-add-enrollment-btn {
+    left: 18px;
 }
 .program-view-edu-courses {
     flex: 2 1 0;
@@ -74,10 +214,6 @@
     justify-self: flex-end;
 }
 .program-view-edu-edit-btn {
-    left: 18px;
-}
-.program-view-edu-add-course-btn,
-.program-view-edu-add-enrollment-btn {
     left: 18px;
 }
 .program-view-edu-edit-btn:hover,

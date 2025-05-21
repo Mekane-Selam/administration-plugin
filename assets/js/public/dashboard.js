@@ -799,11 +799,29 @@
         // Delegate Go to Program button click
         $(document).on('click', '.program-goto-btn', function(e) {
             e.preventDefault();
-            var programId = $(this).closest('.program-details-modal-content').find('.edit-button').data('program-id');
+            // Try to get programId from data attribute on the button
+            var programId = $(this).data('program-id');
+            // If not found, try to get from the modal content (h3 title or parent container)
+            if (!programId) {
+                programId = $(this).closest('.program-details-modal-content').data('program-id');
+            }
+            // If still not found, try to get from a hidden field or fallback
+            if (!programId) {
+                // Try to get from a hidden field or fallback logic if needed
+                var $editBtn = $(this).closest('.program-details-modal-content').find('.edit-button');
+                if ($editBtn.length) {
+                    programId = $editBtn.data('program-id');
+                } else {
+                    // Try to get from the modal's parent card
+                    programId = $(this).closest('.program-card').data('program-id');
+                }
+            }
             if (programId) {
                 $('#program-details-modal').removeClass('show');
                 $('.administration-public-dashboard').hide();
                 ProgramView.show(programId);
+            } else {
+                alert('Could not determine program ID.');
             }
         });
     });

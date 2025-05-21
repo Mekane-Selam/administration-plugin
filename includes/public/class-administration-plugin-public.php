@@ -262,7 +262,7 @@ class Administration_Plugin_Public {
                 <div class="program-details-row"><span class="program-details-label">Status:</span> <span class="program-details-value"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></span></div>
             </div>
             <div class="program-details-actions program-details-actions-centered">
-                <a href="#" class="button program-goto-btn modern-goto-btn">Go to Program</a>
+                <a href="#" class="button program-goto-btn modern-goto-btn" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">Go to Program</a>
             </div>
         </div>
         <?php

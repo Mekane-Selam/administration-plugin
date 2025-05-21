@@ -870,7 +870,7 @@
 }
 
 .course-enrollment-person-details {
-    flex: 0 0 70%;
+    flex: 0 1 70%;
     background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
     border: 1px solid #e3e7ee;
     border-radius: 12px;

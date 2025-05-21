@@ -562,14 +562,13 @@ body.administration-dashboard-public {
 }
 
 #program-details-content .edit-button {
-    margin-top: 20px;
     padding: 8px 16px;
     background: #0073aa;
     color: #fff;
-    border: none;
-    border-radius: 4px;
+    border: 1px solid #0073aa;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
 }
 
 #program-details-content .edit-button:hover {

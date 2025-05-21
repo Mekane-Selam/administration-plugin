@@ -629,8 +629,8 @@
                 });
             });
 
-            // Add search functionality for course detail enrollments
-            $(document).on('input', '.course-detail-enrollments-search', function() {
+            // Add search functionality for course enrollments
+            $(document).on('input', '.course-enrollment-search-input', function() {
                 var query = $(this).val().toLowerCase();
                 $('.course-detail-enrollments-list .course-detail-enrollment-card').each(function() {
                     var name = $(this).find('.course-detail-enrollment-title').text().toLowerCase();

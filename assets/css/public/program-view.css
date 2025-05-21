@@ -235,30 +235,32 @@
     font-size: 1.08rem;
     font-weight: 500;
 }
-.program-view-edu-enrollment,
-.program-view-edu-staff {
-    margin-top: 28px;
+.program-view-edu-enrollment {
+    margin-top: 0;
+    margin-bottom: 24px;
     max-width: 100%;
     min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
-    max-height: 400px;
-    overflow: hidden;
+    max-height: 50vh;
+    overflow-y: auto;
 }
-.program-view-edu-enrollment .program-view-edu-title,
-.program-view-edu-staff .program-view-edu-title {
+.program-view-edu-enrollment .program-view-edu-title {
     margin-top: 0;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+    padding: 12px 0;
+    width: 100%;
 }
-.program-view-edu-enrollment-content,
-.program-view-edu-staff-content {
+.program-view-edu-enrollment-content {
     width: 100%;
     overflow-y: auto;
-    padding-right: 10px;
 }
-.program-enrollment-list-placeholder,
-.program-staff-list-placeholder {
+.program-enrollment-list-placeholder {
     margin-top: 12px;
     padding: 18px;
     background: #f7fafd;
@@ -864,16 +866,15 @@
     flex-direction: row;
     gap: 24px;
     margin-top: 20px;
-    max-height: calc(80vh - 200px);
+    max-width: 100%;
     overflow: hidden;
 }
 
 .course-detail-enrollments .course-detail-enrollments-list {
     flex: 0 0 30%;
     min-width: 0;
-    max-height: 100%;
+    max-height: calc(80vh - 200px);
     overflow-y: auto;
-    padding-right: 10px;
 }
 
 .course-enrollment-person-details {
@@ -890,8 +891,13 @@
     gap: 12px;
     align-items: flex-start;
     min-width: 0;
-    max-height: 100%;
+    max-height: calc(80vh - 200px);
     overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.close-person-details {
+    display: none; /* Hide the close button since we want the details to be permanent */
 }
 
 .person-details-title {
@@ -903,8 +909,11 @@
 }
 
 .person-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
     width: 100%;
-    overflow-x: hidden;
+    min-width: 0;
 }
 
 .person-detail-row {
@@ -921,15 +930,20 @@
     color: #2271b1;
     font-weight: 600;
     font-size: 0.95rem;
+    flex-shrink: 0;
+    margin-right: 12px;
 }
 
 .person-detail-value {
     color: #1d2327;
     font-weight: 500;
     font-size: 0.95rem;
+    flex: 1;
+    min-width: 0;
     text-align: right;
-    word-break: break-word;
-    max-width: 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .close-person-details {
@@ -971,49 +985,36 @@
     padding: 20px;
 }
 
-/* Add search input styles */
-.course-detail-enrollments-search {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid #e3e7ee;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    font-size: 0.95rem;
-    background: #f8fafc;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.course-detail-enrollments-search:focus {
-    border-color: #2271b1;
-    box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
-    outline: none;
-}
-
-.staff-search-bar {
-    margin-bottom: 14px;
+.program-view-edu-staff {
+    margin-top: 24px;
+    max-width: 100%;
+    min-width: 0;
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
 }
 
-.staff-search-input {
-    padding: 9px 14px;
-    border: 1px solid #e3e7ee;
-    border-radius: 8px;
-    font-size: 1rem;
-    background: #f8fafc;
-    transition: border-color 0.2s, box-shadow 0.2s;
+.program-view-edu-staff .program-view-edu-title {
+    margin-top: 0;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+    padding: 12px 0;
     width: 100%;
-    max-width: 320px;
-    color: #1d2327;
 }
 
-.staff-search-input:focus {
-    border-color: #2271b1;
-    box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
-    outline: none;
+.program-view-edu-staff-content {
+    width: 100%;
+    background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
+    border: 1px solid #e3e7ee;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+    padding: 20px;
 }
 
-.staff-list-enhanced {
+.staff-list {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -1022,30 +1023,28 @@
 .staff-card {
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
+    background: #fff;
     border: 1px solid #e3e7ee;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
-    padding: 16px 20px;
-    transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
-    position: relative;
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.2s ease;
 }
 
 .staff-card:hover {
     box-shadow: 0 4px 16px rgba(34,113,177,0.13);
     border-color: #b6d4ef;
-    background: linear-gradient(135deg, #f0f4fa 0%, #dbeafe 100%);
+    transform: translateY(-1px);
 }
 
 .staff-card-icon {
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     color: #2271b1;
     margin-right: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     background: #eaf4fb;
     border-radius: 50%;
 }
@@ -1054,19 +1053,17 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .staff-card-title {
-    font-size: 1.08rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: #1d2327;
-    margin-bottom: 2px;
 }
 
-.staff-card-meta {
-    font-size: 0.97rem;
+.staff-card-role {
+    font-size: 0.95rem;
     color: #2271b1;
     font-weight: 500;
-    margin-top: 2px;
 } 

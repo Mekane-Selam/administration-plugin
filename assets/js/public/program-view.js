@@ -717,6 +717,90 @@
                     }
                 });
             });
+
+            // Add Staff Modal logic
+            $(document).on('click', '.program-view-edu-add-staff-btn', function() {
+                $('#add-staff-modal').addClass('show');
+                $('#add-staff-form')[0].reset();
+                $('#add-staff-message').html('');
+                $('#staff-person-select').html('');
+            });
+            $(document).on('click', '#add-staff-modal .close, #cancel-add-staff', function() {
+                $('#add-staff-modal').removeClass('show');
+            });
+            $(document).on('input', '#staff-person-search', function() {
+                var query = $(this).val();
+                var $select = $('#staff-person-select');
+                $select.html('<option>Loading...</option>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_people_list',
+                        nonce: administration_plugin.nonce,
+                        search: query
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            // Parse HTML and extract person rows
+                            var $html = $('<div>' + response.data + '</div>');
+                            var options = '';
+                            $html.find('.person-row').each(function() {
+                                var id = $(this).data('person-id');
+                                var name = $(this).find('.person-name').text();
+                                var email = $(this).find('.person-email').text();
+                                options += '<option value="' + id + '">' + name + (email ? ' (' + email + ')' : '') + '</option>';
+                            });
+                            $select.html(options || '<option disabled>No people found.</option>');
+                        } else {
+                            $select.html('<option disabled>No people found.</option>');
+                        }
+                    },
+                    error: function() {
+                        $select.html('<option disabled>Failed to load people.</option>');
+                    }
+                });
+            });
+            $(document).on('submit', '#add-staff-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $msg = $('#add-staff-message');
+                var personId = $('#staff-person-select').val();
+                var staffRoleId = $('#staff-role-select').val();
+                var programId = $('#program-view-container').data('program-id');
+                if (!personId || !staffRoleId) {
+                    $msg.html('<span class="error-message">Please select a person and a role.</span>');
+                    return;
+                }
+                $msg.html('<span class="loading">Adding staff member...</span>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'add_staff_member',
+                        nonce: administration_plugin.nonce,
+                        PersonID: personId,
+                        StaffRolesID: staffRoleId,
+                        ProgramID: programId
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $msg.html('<span class="success-message">Staff member added successfully!</span>');
+                            setTimeout(function() {
+                                $('#add-staff-modal').removeClass('show');
+                                $form[0].reset();
+                                $msg.html('');
+                                // Optionally reload staff list here
+                            }, 800);
+                        } else {
+                            $msg.html('<span class="error-message">' + (response.data || 'Failed to add staff member.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $msg.html('<span class="error-message">Failed to add staff member. Please try again.</span>');
+                    }
+                });
+            });
         }
     };
     $(document).ready(function() {

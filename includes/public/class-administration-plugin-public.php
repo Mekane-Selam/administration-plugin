@@ -622,8 +622,10 @@ class Administration_Plugin_Public {
         $course_table = $wpdb->prefix . 'progtype_edu_courses';
         $course = $wpdb->get_row($wpdb->prepare("SELECT * FROM $course_table WHERE CourseID = %s", $course_id));
         // Fetch enrollments for this program (not by course)
+        $enroll_table = $wpdb->prefix . 'progtype_edu_enrollment';
+        $person_table = $wpdb->prefix . 'core_person';
         $enrollments = $wpdb->get_results($wpdb->prepare(
-            "SELECT e.*, p.FirstName, p.LastName FROM $enroll_table e LEFT JOIN $person_table p ON e.PersonID = p.PersonID WHERE e.ProgramID = %s ORDER BY e.EnrollmentDate DESC",
+            "SELECT e.*, p.FirstName, p.LastName FROM {$enroll_table} AS e LEFT JOIN {$person_table} AS p ON e.PersonID = p.PersonID WHERE e.ProgramID = %s ORDER BY e.EnrollmentDate DESC",
             $program_id
         ));
         ob_start();

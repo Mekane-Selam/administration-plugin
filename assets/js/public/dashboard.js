@@ -120,6 +120,12 @@
                         $('.administration-dashboard-content').html(response.data);
                         Dashboard.initializeWidgets();
                         Dashboard.rebindProgramFilters();
+                        
+                        // If we're loading the people-content page, refresh the parish list
+                        if (page === 'people-content') {
+                            console.log('Refreshing parish list...');
+                            Dashboard.loadParishData();
+                        }
                     } else {
                         console.error('Error loading dashboard page:', response.data);
                     }
@@ -306,6 +312,7 @@
         },
 
         loadParishData: function() {
+            console.log('Loading parish data...');
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
@@ -316,7 +323,13 @@
                 success: function(response) {
                     if (response.success) {
                         $('.parish-list').html(response.data);
+                        console.log('Parish list updated successfully');
+                    } else {
+                        console.error('Failed to load parish data:', response.data);
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading parish data:', error);
                 }
             });
         },
@@ -550,11 +563,6 @@
             e.preventDefault();
             var personId = $(this).data('person-id');
             if (!personId) return;
-            
-            // Open the add person modal in edit mode
-            var $modal = $('#add-person-modal');
-            var $form = $('#add-person-form');
-            
             // Fetch person data
             $.ajax({
                 url: administration_plugin.ajax_url,
@@ -566,15 +574,9 @@
                 },
                 success: function(response) {
                     if (response.success && response.data) {
-                        $modal.removeClass('closing')
-                              .addClass('show')
-                              .attr('data-edit', '1')
-                              .attr('data-person-id', personId);
-                        
-                        $modal.find('h2').text('Edit Person');
-                        $modal.find('.button-primary').text('Save Changes');
-                        
-                        // Populate form fields
+                        $('#add-person-modal').addClass('show').attr('data-edit', '1').attr('data-person-id', personId);
+                        $('#add-person-modal h2').text('Edit Person');
+                        $('#add-person-form .button-primary').text('Save Changes');
                         $('#person-first-name').val(response.data.FirstName);
                         $('#person-last-name').val(response.data.LastName);
                         $('#person-email').val(response.data.Email);
@@ -670,7 +672,7 @@
         },
         loadPeopleList: function(search, sort) {
             var $container = $('.people-list-content');
-            if (!$container.length) return;
+            if (!$container.length) return; // Guard against missing container
             
             $container.html('<div class="loading">Loading people...</div>');
             
@@ -681,30 +683,10 @@
                     action: 'get_people_list',
                     nonce: administration_plugin.nonce,
                     search: search || '',
-                    sort: sort || Dashboard.currentPeopleSort || 'name_asc'
+                    sort: sort || Dashboard.currentPeopleSort || 'name_asc' // Default sort if none specified
                 },
                 success: function(response) {
                     if (response.success) {
-                        // Wrap buttons in rows for People-Content area
-                        if ($container.closest('.people-content').length) {
-                            var $actions = $container.find('.people-widget-actions');
-                            if ($actions.length) {
-                                var $buttons = $actions.children('.button');
-                                if ($buttons.length) {
-                                    var $topRow = $('<div class="button-row"></div>');
-                                    var $bottomRow = $('<div class="button-row"></div>');
-                                    
-                                    // Move Add and Sync buttons to top row
-                                    $buttons.filter('[id*="add-person"], [class*="add-person"], [id*="sync"], [class*="sync"]').appendTo($topRow);
-                                    
-                                    // Move Sort button to bottom row
-                                    $buttons.filter('[id*="sort"]').appendTo($bottomRow);
-                                    
-                                    // Add rows to actions container
-                                    $actions.append($topRow).append($bottomRow);
-                                }
-                            }
-                        }
                         $container.html(response.data);
                     } else {
                         $container.html('<div class="error-message">Failed to load people.</div>');

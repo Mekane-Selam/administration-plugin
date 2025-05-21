@@ -534,7 +534,7 @@
                     data: {
                         action: 'add_course_enrollment',
                         nonce: administration_plugin.nonce,
-                        course_id: courseId,
+                        CourseID: courseId,
                         PersonID: personId,
                         ActiveFlag: 1,
                         EnrollmentDate: enrollmentDate,

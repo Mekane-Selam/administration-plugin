@@ -90,15 +90,8 @@
                         <form id="add-enrollment-form">
                             <div class="form-field">
                                 <label for="enrollment-person">Person</label>
-                                <select id="enrollment-person" name="PersonID" required>
-                                    <option value="">Select Person</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-                                <label for="enrollment-course">Course</label>
-                                <select id="enrollment-course" name="CourseID" required>
-                                    <option value="">Select Course</option>
-                                </select>
+                                <input type="text" id="enrollment-person-search" placeholder="Search people..." autocomplete="off" />
+                                <select id="enrollment-person" name="PersonID" required size="6" style="margin-top:8px;"></select>
                             </div>
                             <div class="form-actions">
                                 <button type="submit" class="button button-primary">Add Enrollment</button>
@@ -185,46 +178,42 @@
             $(document).on('click', '.program-view-edu-add-enrollment-btn', function(e) {
                 e.preventDefault();
                 var programId = $('#program-view-container').data('program-id');
-                
+                // Remove course dropdown and add search/filter for person
+                $('#add-enrollment-form .form-field').remove();
+                $('#add-enrollment-form').prepend(`
+                    <div class="form-field">
+                        <label for="enrollment-person">Person</label>
+                        <input type="text" id="enrollment-person-search" placeholder="Search people..." autocomplete="off" />
+                        <select id="enrollment-person" name="PersonID" required size="6" style="margin-top:8px;"></select>
+                    </div>
+                `);
                 // Load people for select
-                $.ajax({
-                    url: administration_plugin.ajax_url,
-                    type: 'POST',
-                    data: {
-                        action: 'get_people_for_owner_select',
-                        nonce: administration_plugin.nonce
-                    },
-                    success: function(response) {
-                        if (response.success && Array.isArray(response.data)) {
-                            var options = '<option value="">Select Person</option>';
-                            response.data.forEach(function(person) {
-                                options += `<option value="${person.PersonID}">${person.FirstName} ${person.LastName}</option>`;
-                            });
-                            $('#enrollment-person').html(options);
+                function loadPeopleList(query) {
+                    $.ajax({
+                        url: administration_plugin.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'get_people_for_owner_select',
+                            nonce: administration_plugin.nonce
+                        },
+                        success: function(response) {
+                            if (response.success && Array.isArray(response.data)) {
+                                var options = '';
+                                response.data.forEach(function(person) {
+                                    var fullName = person.FirstName + ' ' + person.LastName;
+                                    if (!query || fullName.toLowerCase().includes(query.toLowerCase())) {
+                                        options += `<option value="${person.PersonID}">${fullName}</option>`;
+                                    }
+                                });
+                                $('#enrollment-person').html(options);
+                            }
                         }
-                    }
+                    });
+                }
+                loadPeopleList('');
+                $('#enrollment-person-search').off('input').on('input', function() {
+                    loadPeopleList($(this).val());
                 });
-
-                // Load courses for select
-                $.ajax({
-                    url: administration_plugin.ajax_url,
-                    type: 'POST',
-                    data: {
-                        action: 'get_program_courses',
-                        nonce: administration_plugin.nonce,
-                        program_id: programId
-                    },
-                    success: function(response) {
-                        if (response.success && Array.isArray(response.data)) {
-                            var options = '<option value="">Select Course</option>';
-                            response.data.forEach(function(course) {
-                                options += `<option value="${course.CourseID}">${course.CourseName}</option>`;
-                            });
-                            $('#enrollment-course').html(options);
-                        }
-                    }
-                });
-
                 $('#add-enrollment-modal').addClass('show');
                 $('#add-enrollment-form')[0].reset();
                 $('#add-enrollment-message').html('');
@@ -268,8 +257,8 @@
                                 $('#add-course-modal').removeClass('show');
                                 $form[0].reset();
                                 $message.html('');
-                                // Reload the program view to show new course
-                                ProgramView.show(programId);
+                                // Reload only the courses list
+                                ProgramView.reloadCoursesList(programId);
                             }, 800);
                         } else {
                             $message.html('<span class="error-message">' + (response.data || 'Failed to add course.') + '</span>');
@@ -287,22 +276,18 @@
                 var $form = $(this);
                 var $message = $('#add-enrollment-message');
                 var programId = $('#program-view-container').data('program-id');
-                
+                var personId = $('#enrollment-person').val();
                 var data = {
                     action: 'add_edu_enrollment',
                     nonce: administration_plugin.nonce,
                     program_id: programId,
-                    PersonID: $('#enrollment-person').val(),
-                    CourseID: $('#enrollment-course').val()
+                    PersonID: personId
                 };
-
-                if (!data.PersonID || !data.CourseID) {
-                    $message.html('<span class="error-message">Person and Course are required.</span>');
+                if (!data.PersonID) {
+                    $message.html('<span class="error-message">Person is required.</span>');
                     return;
                 }
-
                 $message.html('<span class="loading">Adding enrollment...</span>');
-
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',
@@ -314,8 +299,8 @@
                                 $('#add-enrollment-modal').removeClass('show');
                                 $form[0].reset();
                                 $message.html('');
-                                // Reload the program view to show new enrollment
-                                ProgramView.show(programId);
+                                // Reload only the enrollment list
+                                ProgramView.reloadEnrollmentList(programId);
                             }, 800);
                         } else {
                             $message.html('<span class="error-message">' + (response.data || 'Failed to add enrollment.') + '</span>');
@@ -326,6 +311,46 @@
                     }
                 });
             });
+
+            // Helper to reload only the courses list
+            ProgramView.reloadCoursesList = function(programId) {
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_program_full_view',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.html) {
+                            var $html = $('<div>' + response.data.html + '</div>');
+                            var $newCourses = $html.find('.program-view-edu-courses-list').html();
+                            $('#program-view-container .program-view-edu-courses-list').html($newCourses);
+                        }
+                    }
+                });
+            };
+
+            // Helper to reload only the enrollment list
+            ProgramView.reloadEnrollmentList = function(programId) {
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_program_full_view',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.html) {
+                            var $html = $('<div>' + response.data.html + '</div>');
+                            var $newEnrollment = $html.find('.program-view-edu-enrollment-content').html();
+                            $('#program-view-container .program-view-edu-enrollment-content').html($newEnrollment);
+                        }
+                    }
+                });
+            };
         }
     };
     $(document).ready(function() {

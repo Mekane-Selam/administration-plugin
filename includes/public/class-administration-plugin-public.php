@@ -261,9 +261,8 @@ class Administration_Plugin_Public {
                 <div class="program-details-row"><span class="program-details-label">End Date:</span> <span class="program-details-value"><?php echo esc_html($program->EndDate); ?></span></div>
                 <div class="program-details-row"><span class="program-details-label">Status:</span> <span class="program-details-value"><?php echo $program->ActiveFlag ? 'Active' : 'Inactive'; ?></span></div>
             </div>
-            <div class="program-details-actions">
-                <a href="#" class="button program-goto-btn" style="margin-right: 12px;">Go to Program</a>
-                <button class="edit-button button button-primary" data-program-id="<?php echo esc_attr($program->ProgramID); ?>">Edit Program</button>
+            <div class="program-details-actions program-details-actions-centered">
+                <a href="#" class="button program-goto-btn modern-goto-btn">Go to Program</a>
             </div>
         </div>
         <?php
@@ -550,8 +549,8 @@ class Administration_Plugin_Public {
         $table = $wpdb->prefix . 'progtype_edu_enrollment';
         $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
         $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
-        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
-        if (!$program_id || !$person_id || !$course_id) {
+        // $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
+        if (!$program_id || !$person_id) {
             wp_send_json_error('Missing required fields.');
         }
         // Generate unique ProgramEnrollmentID
@@ -563,7 +562,7 @@ class Administration_Plugin_Public {
         $result = $wpdb->insert($table, array(
             'ProgramEnrollmentID' => $enroll_id,
             'PersonID' => $person_id,
-            'CourseID' => $course_id,
+            'CourseID' => null,
             'ProgramID' => $program_id,
             'ActiveFlag' => 1,
             'EnrollmentDate' => current_time('mysql', 1)

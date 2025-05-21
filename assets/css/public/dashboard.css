@@ -868,6 +868,8 @@ body.administration-dashboard-public {
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(34,113,177,0.08);
     transition: background 0.2s, box-shadow 0.2s;
+    justify-self: flex-end;
+
 }
 .add-button:hover {
     background: #135e96;

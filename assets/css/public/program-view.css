@@ -71,6 +71,7 @@
     z-index: 2;
     box-shadow: 0 2px 8px rgba(34,113,177,0.08);
     transition: background 0.2s;
+    justify-self: flex-end;
 }
 .program-view-edu-edit-btn {
     left: 18px;
@@ -101,7 +102,7 @@
 .program-view-edu-enrollment {
     margin-top: 0;
     margin-bottom: 0;
-    width: 100%;
+    max-width: 100%;
     min-width: 0;
     display: flex;
     flex-direction: column;

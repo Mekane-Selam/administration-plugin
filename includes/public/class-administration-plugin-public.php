@@ -43,6 +43,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_person_details', array($this, 'ajax_get_person_details'));
         add_action('wp_ajax_add_staff_role', array($this, 'ajax_add_staff_role'));
         add_action('wp_ajax_add_staff_member', array($this, 'ajax_add_staff_member'));
+        add_action('wp_ajax_get_program_staff_list', array($this, 'ajax_get_program_staff_list'));
     }
 
     /**
@@ -840,5 +841,27 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to add staff member.');
         }
+    }
+
+    /**
+     * AJAX handler to get program staff list
+     */
+    public function ajax_get_program_staff_list() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
+        if (!$program_id) {
+            wp_send_json_error('Missing program ID.');
+        }
+        $staff_table = $wpdb->prefix . 'progtype_edu_staff';
+        $person_table = $wpdb->prefix . 'core_person';
+        $staff = $wpdb->get_results($wpdb->prepare(
+            "SELECT p.PersonID, p.FirstName, p.LastName FROM $staff_table s LEFT JOIN $person_table p ON s.PersonID = p.PersonID WHERE s.ProgramID = %s ORDER BY p.LastName, p.FirstName",
+            $program_id
+        ));
+        wp_send_json_success($staff);
     }
 } 

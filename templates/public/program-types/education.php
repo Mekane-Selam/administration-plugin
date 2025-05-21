@@ -71,17 +71,21 @@
     </div>
   </div>
   <div class="program-view-edu-enrollment card">
-    <button class="program-view-edu-add-enrollment-btn" title="Add Enrollment"><span class="dashicons dashicons-plus"></span></button>
-    <h3 class="program-view-edu-title">Enrollment</h3>
-    <div class="program-view-edu-enrollment-content">
+    <div class="program-view-edu-enrollment-header">
+      <h3 class="program-view-edu-title">Enrollment</h3>
       <div class="program-view-edu-enrollment-toolbar">
         <div class="program-view-edu-enrollment-search-container">
           <input type="text" class="program-view-edu-enrollment-search" placeholder="Search enrollments by name..." autocomplete="off" />
         </div>
         <div class="program-view-edu-enrollment-actions">
-          <button type="button" class="button button-primary">Add Enrollment</button>
+          <button type="button" class="program-view-edu-add-enrollment-btn">
+            <span class="dashicons dashicons-plus-alt"></span>
+            Add Enrollment
+          </button>
         </div>
       </div>
+    </div>
+    <div class="program-view-edu-enrollment-content">
       <form class="add-enrollment-form" style="display:none;">
         <input type="text" name="PersonID" placeholder="Person ID" required />
         <input type="text" name="CourseID" placeholder="Course ID" required />
@@ -142,7 +146,7 @@
         $staff_query = $wpdb->prepare(
             "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
             FROM {$wpdb->prefix}progtype_edu_staff s
-            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.RoleID = sr.RoleID
+            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRoleID = sr.RoleID
             LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
             WHERE s.ProgramID = %d
             ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
@@ -198,15 +202,7 @@
     position: relative;
 }
 
-.program-view-edu-enrollment .program-view-edu-title {
-    margin-top: 0;
-}
-
-.program-view-edu-enrollment-content {
-    width: 100%;
-}
-
-.program-view-edu-enrollment-toolbar {
+.program-view-edu-enrollment-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -216,10 +212,20 @@
     border-bottom: 1px solid #e3e7ee;
 }
 
+.program-view-edu-enrollment-header .program-view-edu-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1d2327;
+}
+
+.program-view-edu-enrollment-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .program-view-edu-enrollment-search-container {
-    flex: 1;
-    max-width: 300px;
-    margin-right: 16px;
+    width: 300px;
 }
 
 .program-view-edu-enrollment-search {
@@ -250,13 +256,14 @@
     border: none;
     border-radius: 8px;
     padding: 8px 16px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(34,113,177,0.10);
     transition: background 0.2s, transform 0.2s;
     display: flex;
     align-items: center;
     gap: 6px;
+    cursor: pointer;
 }
 
 .program-view-edu-add-enrollment-btn:hover {

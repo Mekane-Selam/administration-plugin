@@ -794,7 +794,7 @@
         Dashboard.init();
         // Ensure program view container exists
         if ($('.program-view-container').length === 0) {
-            $('body').append('<div class="program-view-container" id="program-view-container" style="display:none;"></div>');
+            $('.administration-public-dashboard').after('<div class="program-view-container" id="program-view-container" style="display:none;"></div>');
         }
         // Delegate Go to Program button click
         $(document).on('click', '.program-goto-btn', function(e) {

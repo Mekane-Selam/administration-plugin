@@ -603,6 +603,7 @@
                 `;
                 $container.append(detailsHtml);
             });
+            
             // Close person details panel
             $(document).on('click', '.close-person-details', function() {
                 var $container = $(this).closest('.course-detail-enrollments');
@@ -616,7 +617,6 @@
                 var personId = $('#course-enrollment-person').val();
                 var alreadyEnrolled = false;
                 $('.course-detail-enrollments-list .course-detail-enrollment-card').each(function() {
-                    var name = $(this).find('.course-detail-enrollment-title').text().trim();
                     var cardPersonId = $(this).data('person-id');
                     if (cardPersonId && cardPersonId == personId) {
                         alreadyEnrolled = true;
@@ -625,6 +625,23 @@
                 if (alreadyEnrolled) {
                     e.preventDefault();
                     $('#add-course-enrollment-message').html('<span class="error-message">This person is already actively enrolled in this course.</span>');
+                    return false;
+                }
+            });
+
+            // Prevent duplicate active enrollments for program-level (education) enrollments
+            $(document).on('submit', '#add-enrollment-form', function(e) {
+                var personId = $('#enrollment-person').val();
+                var alreadyEnrolled = false;
+                $('.enrollment-list-enhanced .enrollment-card').each(function() {
+                    var cardPersonId = $(this).data('person-id');
+                    if (cardPersonId && cardPersonId == personId) {
+                        alreadyEnrolled = true;
+                    }
+                });
+                if (alreadyEnrolled) {
+                    e.preventDefault();
+                    $('#add-enrollment-message').html('<span class="error-message">This person is already actively enrolled in this program.</span>');
                     return false;
                 }
             });

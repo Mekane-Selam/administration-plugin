@@ -5,7 +5,7 @@
   <?php if (!empty($enrollments)) : ?>
     <div class="course-detail-enrollments-list">
       <?php foreach ($enrollments as $enrollment) : ?>
-        <div class="course-detail-enrollment-card">
+        <div class="course-detail-enrollment-card" data-person-id="<?php echo esc_attr($enrollment->PersonID); ?>">
           <div class="course-detail-enrollment-icon"><span class="dashicons dashicons-id"></span></div>
           <div class="course-detail-enrollment-details">
             <div class="course-detail-enrollment-title"><?php echo esc_html(trim($enrollment->FirstName . ' ' . $enrollment->LastName)); ?></div>

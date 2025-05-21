@@ -219,11 +219,13 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    flex: 1;
+    justify-content: flex-end;
 }
 
 .program-view-edu-enrollment-search-container {
     width: 300px;
-    margin-right: 8px;
+    margin-right: 16px;
 }
 
 .program-view-edu-enrollment-search {
@@ -265,6 +267,7 @@
     width: 36px;
     height: 36px;
     flex-shrink: 0;
+    margin-left: auto;
 }
 
 .program-view-edu-add-enrollment-btn:hover {

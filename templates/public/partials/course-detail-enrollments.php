@@ -5,7 +5,7 @@
     global $wpdb;
     $enrollments = $wpdb->get_results($wpdb->prepare(
         "SELECT ce.*, p.FirstName, p.LastName 
-        FROM {$wpdb->prefix}progtype_edu_course_enrollment ce
+        FROM {$wpdb->prefix}progtype_edu_courseenrollments ce
         LEFT JOIN {$wpdb->prefix}core_person p ON ce.PersonID = p.PersonID
         WHERE ce.CourseID = %s
         ORDER BY ce.EnrollmentDate DESC",

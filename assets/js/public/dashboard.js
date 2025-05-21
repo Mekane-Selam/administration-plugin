@@ -545,6 +545,37 @@
             console.log('Modal should be visible now');
         },
 
+        handleEditPersonClick: function(e) {
+            e.preventDefault();
+            var personId = $(this).data('person-id');
+            if (!personId) return;
+            // Fetch person data
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_person',
+                    nonce: administration_plugin.nonce,
+                    person_id: personId
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        $('#add-person-modal').addClass('show').attr('data-edit', '1').attr('data-person-id', personId);
+                        $('#add-person-modal h2').text('Edit Person');
+                        $('#add-person-form .button-primary').text('Save Changes');
+                        $('#person-first-name').val(response.data.FirstName);
+                        $('#person-last-name').val(response.data.LastName);
+                        $('#person-email').val(response.data.Email);
+                    } else {
+                        alert(response.data || 'Failed to load person.');
+                    }
+                },
+                error: function() {
+                    alert('Failed to load person.');
+                }
+            });
+        },
+
         closeAddPersonModal: function(e) {
             if (e) e.preventDefault();
             var $modal = $('#add-person-modal');
@@ -627,7 +658,7 @@
         },
         loadPeopleList: function(search, sort) {
             var $container = $('.people-list-content');
-            if (!$container.length) return;
+            if (!$container.length) return; // Guard against missing container
             
             $container.html('<div class="loading">Loading people...</div>');
             
@@ -638,7 +669,7 @@
                     action: 'get_people_list',
                     nonce: administration_plugin.nonce,
                     search: search || '',
-                    sort: sort || Dashboard.currentPeopleSort || 'name_asc'
+                    sort: sort || Dashboard.currentPeopleSort || 'name_asc' // Default sort if none specified
                 },
                 success: function(response) {
                     if (response.success) {
@@ -665,6 +696,28 @@
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
+
+            // Wrap buttons in rows for People-Content section
+            var $peopleContent = $('.people-content');
+            if ($peopleContent.length) {
+                var $actions = $peopleContent.find('.people-widget-actions');
+                if ($actions.length) {
+                    var $buttons = $actions.find('.button');
+                    if ($buttons.length >= 3) {
+                        // Create two rows
+                        var $topRow = $('<div class="button-row"></div>');
+                        var $bottomRow = $('<div class="button-row"></div>');
+                        
+                        // Move Add and Sync buttons to top row
+                        $buttons.slice(0, 2).appendTo($topRow);
+                        // Move Sort button to bottom row
+                        $buttons.slice(2).appendTo($bottomRow);
+                        
+                        // Clear and append rows
+                        $actions.empty().append($topRow, $bottomRow);
+                    }
+                }
+            }
         },
         debouncedPeopleFilter: function() {
             clearTimeout(Dashboard.peopleFilterTimeout);

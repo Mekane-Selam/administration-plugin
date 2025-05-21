@@ -10,6 +10,131 @@
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     font-family: 'Segoe UI', Arial, sans-serif;
 }
+
+.program-view-edu-layout {
+    width: 100%;
+}
+.program-view-edu-top-row {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 28px;
+}
+.card {
+    background: linear-gradient(135deg, #f7fafd 0%, #f0f4fa 100%);
+    border: 1px solid #e3e7ee;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(34,113,177,0.08), 0 1.5px 6px rgba(0,0,0,0.03);
+    padding: 28px 28px 24px 28px;
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+}
+.program-view-edu-overview {
+    flex: 1.2 1 0;
+    min-width: 260px;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.program-view-edu-courses {
+    flex: 2 1 0;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.program-view-edu-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1d2327;
+    margin: 0 0 18px 0;
+}
+.program-view-edu-edit-btn,
+.program-view-edu-add-course-btn,
+.program-view-edu-add-enrollment-btn {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s;
+}
+.program-view-edu-edit-btn {
+    left: 18px;
+}
+.program-view-edu-add-course-btn,
+.program-view-edu-add-enrollment-btn {
+    left: 18px;
+}
+.program-view-edu-edit-btn:hover,
+.program-view-edu-add-course-btn:hover,
+.program-view-edu-add-enrollment-btn:hover {
+    background: #135e96;
+}
+.program-view-edu-courses-list {
+    width: 100%;
+}
+.program-courses-list-placeholder {
+    margin-top: 12px;
+    padding: 18px;
+    background: #f7fafd;
+    border: 1px dashed #b6d4ef;
+    border-radius: 10px;
+    text-align: center;
+    color: #2271b1;
+    font-size: 1.08rem;
+    font-weight: 500;
+}
+.program-view-edu-enrollment {
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+}
+.program-view-edu-enrollment .program-view-edu-title {
+    margin-top: 0;
+}
+.program-view-edu-enrollment-content {
+    width: 100%;
+}
+.program-enrollment-list-placeholder {
+    margin-top: 12px;
+    padding: 18px;
+    background: #f7fafd;
+    border: 1px dashed #b6d4ef;
+    border-radius: 10px;
+    text-align: center;
+    color: #2271b1;
+    font-size: 1.08rem;
+    font-weight: 500;
+}
+@media (max-width: 900px) {
+    .program-view-edu-top-row {
+        flex-direction: column;
+        gap: 18px;
+    }
+    .program-view-edu-overview, .program-view-edu-courses {
+        max-width: 100%;
+        min-width: 0;
+    }
+}
+
 .program-view-header {
     display: flex;
     align-items: center;
@@ -37,15 +162,4 @@
 }
 .program-type-education, .program-type-health, .program-type-social {
     padding: 24px 0;
-}
-.program-courses-list-placeholder {
-    margin-top: 32px;
-    padding: 24px;
-    background: #f7fafd;
-    border: 1px dashed #b6d4ef;
-    border-radius: 10px;
-    text-align: center;
-    color: #2271b1;
-    font-size: 1.15rem;
-    font-weight: 500;
 } 

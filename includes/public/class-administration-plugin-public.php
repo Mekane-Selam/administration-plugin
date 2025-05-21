@@ -186,7 +186,7 @@ class Administration_Plugin_Public {
         $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
         $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
-        $owner = isset($_POST['program_owner']) ? intval($_POST['program_owner']) : null;
+        $owner = isset($_POST['program_owner']) ? sanitize_text_field($_POST['program_owner']) : '';
         if (!$name || !$type || !$owner) {
             wp_send_json_error('Program name, type, and owner are required.');
         }
@@ -256,7 +256,7 @@ class Administration_Plugin_Public {
         $start_date = isset($_POST['start_date']) ? sanitize_text_field($_POST['start_date']) : null;
         $end_date = isset($_POST['end_date']) ? sanitize_text_field($_POST['end_date']) : null;
         $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'active';
-        $owner = isset($_POST['program_owner']) ? intval($_POST['program_owner']) : null;
+        $owner = isset($_POST['program_owner']) ? sanitize_text_field($_POST['program_owner']) : '';
         if (!$program_id || !$name || !$owner) {
             wp_send_json_error('Missing required fields.');
         }

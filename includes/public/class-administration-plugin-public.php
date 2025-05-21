@@ -549,7 +549,7 @@ class Administration_Plugin_Public {
         $table = $wpdb->prefix . 'progtype_edu_enrollment';
         $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
         $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
-        // $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
+        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : null;
         if (!$program_id || !$person_id) {
             wp_send_json_error('Missing required fields.');
         }
@@ -559,14 +559,17 @@ class Administration_Plugin_Public {
             $enroll_id = 'ENROLL' . $unique_code;
             $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE ProgramEnrollmentID = %s", $enroll_id));
         } while ($exists);
-        $result = $wpdb->insert($table, array(
+        $insert_data = array(
             'ProgramEnrollmentID' => $enroll_id,
             'PersonID' => $person_id,
-            'CourseID' => null,
             'ProgramID' => $program_id,
             'ActiveFlag' => 1,
             'EnrollmentDate' => current_time('mysql', 1)
-        ));
+        );
+        if ($course_id) {
+            $insert_data['CourseID'] = $course_id;
+        }
+        $result = $wpdb->insert($table, $insert_data);
         if ($result) {
             wp_send_json_success(['ProgramEnrollmentID' => $enroll_id]);
         } else {

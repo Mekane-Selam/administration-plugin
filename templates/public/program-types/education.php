@@ -36,7 +36,34 @@
           <button type="submit" class="button button-primary">Add</button>
           <button type="button" class="button add-course-cancel-btn">Cancel</button>
         </form>
-        <div class="program-courses-list-placeholder">[Courses list will appear here]</div>
+        <?php
+        // Fetch courses for this program
+        if (!function_exists('administration_plugin_get_courses_for_program')) {
+            function administration_plugin_get_courses_for_program($program_id) {
+                global $wpdb;
+                $table = $wpdb->prefix . 'progtype_edu_courses';
+                return $wpdb->get_results($wpdb->prepare("SELECT * FROM $table WHERE ProgramID = %s ORDER BY CourseName", $program_id));
+            }
+        }
+        $courses = array();
+        if (isset($program) && $program && isset($program->ProgramID)) {
+            $courses = administration_plugin_get_courses_for_program($program->ProgramID);
+        }
+        ?>
+        <?php if (!empty($courses)) : ?>
+          <ul class="courses-list">
+            <?php foreach ($courses as $course) : ?>
+              <li class="course-item">
+                <span class="course-name"><?php echo esc_html($course->CourseName); ?></span>
+                <?php if (!empty($course->Level)) : ?>
+                  <span class="course-level">(<?php echo esc_html($course->Level); ?>)</span>
+                <?php endif; ?>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php else : ?>
+          <div class="program-courses-list-placeholder">No courses found for this program.</div>
+        <?php endif; ?>
       </div>
     </div>
   </div>

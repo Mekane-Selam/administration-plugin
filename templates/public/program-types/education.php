@@ -203,7 +203,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 90%;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid #e3e7ee;
@@ -222,7 +222,7 @@
 }
 
 .program-view-edu-enrollment-search-container {
-    max-width: 320px;
+    max-width: 400px;
     flex: 1 1 0;
     height: 36px;
 }

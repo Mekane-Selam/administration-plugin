@@ -651,40 +651,6 @@
             });
         },
 
-        openAddPersonModal: function(e) {
-            console.log('Opening Add Person modal...');
-            e.preventDefault();
-            e.stopPropagation();
-            
-            var $modal = $('#add-person-modal');
-            var $form = $('#add-person-form');
-            
-            console.log('Modal element exists:', $modal.length);
-            console.log('Form element exists:', $form.length);
-            
-            if (!$modal.length) {
-                console.error('Modal element not found!');
-                return;
-            }
-            
-            // Reset form if it exists
-            if ($form.length) {
-                $form[0].reset();
-            }
-            
-            // Always open the modal, reset to add mode
-            $modal.removeClass('closing')
-                  .addClass('show')
-                  .removeAttr('data-edit')
-                  .removeAttr('data-person-id');
-            
-            $modal.find('h2').text('Add Person');
-            $modal.find('.button-primary').text('Save Person');
-            $modal.find('#add-person-message').html('');
-            
-            console.log('Modal should be visible now');
-        },
-
         handleEditPersonClick: function(e) {
             e.preventDefault();
             var personId = $(this).data('person-id');
@@ -712,77 +678,6 @@
                 },
                 error: function() {
                     alert('Failed to load person.');
-                }
-            });
-        },
-
-        closeAddPersonModal: function(e) {
-            if (e) e.preventDefault();
-            var $modal = $('#add-person-modal');
-            var $form = $('#add-person-form');
-            
-            // Add closing class for transition
-            $modal.addClass('closing');
-            
-            // Wait for transition to complete before hiding
-            setTimeout(function() {
-                // Reset form if it exists
-                if ($form.length) {
-                    $form[0].reset();
-                }
-                
-                $modal.removeClass('show closing')
-                      .removeAttr('data-edit')
-                      .removeAttr('data-person-id');
-                
-                $modal.find('h2').text('Add Person');
-                $modal.find('.button-primary').text('Save Person');
-                $modal.find('#add-person-message').html('');
-            }, 200);
-        },
-
-        submitAddPersonForm: function(e) {
-            e.preventDefault();
-            var $form = $(this);
-            var firstName = $('#person-first-name').val().trim();
-            var lastName = $('#person-last-name').val().trim();
-            var email = $('#person-email').val().trim();
-            var isEdit = $('#add-person-modal').attr('data-edit') === '1';
-            var personId = $('#add-person-modal').attr('data-person-id');
-            if (!firstName || !lastName || !email) {
-                $('#add-person-message').html('<span class="error-message">All fields are required.</span>');
-                return;
-            }
-            $('#add-person-message').html('<span class="loading">Saving...</span>');
-            var ajaxData = {
-                nonce: administration_plugin.nonce,
-                first_name: firstName,
-                last_name: lastName,
-                email: email
-            };
-            if (isEdit) {
-                ajaxData.action = 'edit_person';
-                ajaxData.person_id = personId;
-            } else {
-                ajaxData.action = 'add_person';
-            }
-            $.ajax({
-                url: administration_plugin.ajax_url,
-                type: 'POST',
-                data: ajaxData,
-                success: function(response) {
-                    if (response.success) {
-                        $('#add-person-message').html('<span class="success-message">' + (isEdit ? 'Person updated!' : 'Person added successfully!') + '</span>');
-                        setTimeout(function() {
-                            Dashboard.closeAddPersonModal();
-                            Dashboard.loadPeopleList();
-                        }, 800);
-                    } else {
-                        $('#add-person-message').html('<span class="error-message">' + (response.data || 'Error saving person.') + '</span>');
-                    }
-                },
-                error: function() {
-                    $('#add-person-message').html('<span class="error-message">Error saving person.</span>');
                 }
             });
         },

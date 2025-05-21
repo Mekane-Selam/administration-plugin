@@ -527,9 +527,11 @@ class Administration_Database {
         $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_staff_table (
             PersonID VARCHAR(25) NOT NULL,
             StaffRolesID VARCHAR(25) NOT NULL,
+            ProgramID VARCHAR(25) NULL,
             PRIMARY KEY (PersonID),
             CONSTRAINT fk_edu_staff_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE CASCADE,
             CONSTRAINT fk_edu_staff_staffroles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}progtype_edu_staffroles(StaffRoleID) ON DELETE SET NULL
+            CONSTRAINT fk_edu_staff_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

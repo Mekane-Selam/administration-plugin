@@ -130,10 +130,16 @@
 <div class="program-view-edu-staff">
     <div class="program-view-edu-staff-header">
         <h3 class="program-view-edu-title">Staff</h3>
-        <button type="button" class="program-view-edu-add-staff-btn">
-            <span class="dashicons dashicons-plus-alt"></span>
-            Add Staff
-        </button>
+        <div class="program-view-edu-staff-actions">
+            <button type="button" class="program-view-edu-add-staff-btn">
+                <span class="dashicons dashicons-plus-alt"></span>
+                Add Staff
+            </button>
+            <button type="button" class="program-view-edu-add-role-btn">
+                <span class="dashicons dashicons-plus"></span>
+                Add Role
+            </button>
+        </div>
     </div>
     <div class="program-view-edu-staff-content">
         <?php
@@ -187,6 +193,29 @@
     </div>
 </div>
 
+<!-- Add Role Modal -->
+<div id="add-staff-role-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Staff Role</h2>
+        <form id="add-staff-role-form">
+            <div class="form-field">
+                <label for="staff-role-title">Role Title</label>
+                <input type="text" id="staff-role-title" name="RoleTitle" required />
+            </div>
+            <div class="form-field">
+                <label for="staff-role-description">Role Description</label>
+                <textarea id="staff-role-description" name="StaffRoleDescription" rows="3"></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button button-primary">Add Role</button>
+                <button type="button" class="button" id="cancel-add-staff-role">Cancel</button>
+            </div>
+        </form>
+        <div id="add-staff-role-message"></div>
+    </div>
+</div>
+
 <style>
 .program-view-edu-enrollment {
     margin-top: 0;
@@ -222,7 +251,7 @@
 }
 
 .program-view-edu-enrollment-search-container {
-    max-width: 400px;
+    min-width: 500px;
     flex: 1 1 0;
     height: 36px;
 }
@@ -362,7 +391,8 @@
 
 .program-view-edu-staff-actions {
     display: flex;
-    gap: 8px;
+    gap: 12px;
+    align-items: center;
 }
 
 .program-view-edu-staff-edit-btn,
@@ -409,5 +439,26 @@
 .program-view-edu-staff-empty p {
     margin: 0;
     font-size: 1.1rem;
+}
+
+.program-view-edu-add-role-btn {
+    background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.10);
+    transition: background 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.program-view-edu-add-role-btn:hover {
+    background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
+    transform: translateY(-2px);
 }
 </style> 

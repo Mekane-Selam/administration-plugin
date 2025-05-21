@@ -218,16 +218,19 @@
 .program-view-edu-enrollment-toolbar {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
+    height: 36px;
 }
 
 .program-view-edu-enrollment-search-container {
     width: 300px;
+    height: 100%;
 }
 
 .program-view-edu-enrollment-search {
     width: 100%;
-    padding: 8px 12px;
+    height: 100%;
+    padding: 0 12px;
     border: 1px solid #e3e7ee;
     border-radius: 8px;
     font-size: 0.95rem;
@@ -246,7 +249,7 @@
     color: #fff;
     border: none;
     border-radius: 8px;
-    padding: 8px;
+    padding: 0;
     font-size: 0.95rem;
     font-weight: 600;
     box-shadow: 0 2px 8px rgba(34,113,177,0.10);

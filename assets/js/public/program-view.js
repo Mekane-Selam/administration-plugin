@@ -16,7 +16,7 @@
                 success: function(response) {
                     if (response.success && response.data && response.data.html) {
                         var html = '<div class="program-view-header">' +
-                            '<button class="program-view-back-btn">&larr; Go back to Dashboard</button>' +
+                            '<button class="program-view-back-btn" title="Back to Dashboard"><span class="dashicons dashicons-admin-home"></span></button>' +
                             '</div>' + response.data.html;
                         $container.html(html);
                         // Optionally, populate .program-data with program info
@@ -30,6 +30,12 @@
                                 '<div><strong>End Date:</strong> ' + program.EndDate + '</div>' +
                                 '<div><strong>Status:</strong> ' + (program.ActiveFlag ? 'Active' : 'Inactive') + '</div>'
                             );
+                            // Add placeholder for courses list if education type
+                            if (program.ProgramType && program.ProgramType.toLowerCase() === 'education') {
+                                if ($container.find('.program-courses-list-placeholder').length === 0) {
+                                    $container.find('.program-type-education').append('<div class="program-courses-list-placeholder">[Courses list will appear here]</div>');
+                                }
+                            }
                         }
                     } else {
                         $container.html('<div class="error-message">Failed to load program view.</div>');

@@ -1,9 +1,14 @@
-/* Program View Styles */
+/* Modernized Program View Styles */
 .program-view-container {
     display: none;
     background: #fff;
     min-height: 100vh;
     padding: 32px 24px;
+    max-width: 1100px;
+    margin: 40px auto;
+    border-radius: 0;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    font-family: 'Segoe UI', Arial, sans-serif;
 }
 .program-view-header {
     display: flex;
@@ -16,7 +21,31 @@
     border: none;
     border-radius: 6px;
     padding: 8px 18px;
-    font-size: 1rem;
+    font-size: 1.3rem;
     cursor: pointer;
     margin-right: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+}
+.program-view-back-btn .dashicons {
+    font-size: 1.6rem;
+    width: 24px;
+    height: 24px;
+}
+.program-type-education, .program-type-health, .program-type-social {
+    padding: 24px 0;
+}
+.program-courses-list-placeholder {
+    margin-top: 32px;
+    padding: 24px;
+    background: #f7fafd;
+    border: 1px dashed #b6d4ef;
+    border-radius: 10px;
+    text-align: center;
+    color: #2271b1;
+    font-size: 1.15rem;
+    font-weight: 500;
 } 

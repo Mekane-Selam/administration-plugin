@@ -134,9 +134,9 @@
         // Get program staff members with correct table joins
         global $wpdb;
         $staff_members = $wpdb->get_results($wpdb->prepare(
-            "SELECT p.FirstName, p.LastName, sr.RoleTitle, sr.RoleDescription
+            "SELECT p.FirstName, p.LastName, sr.RoleTitle, sr.StaffRoleDescription
             FROM {$wpdb->prefix}progtype_edu_staff s
-            JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.RoleID = sr.RoleID
+            JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRolesID = sr.StaffRoleID
             JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
             WHERE s.ProgramID = %s
             ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
@@ -154,8 +154,8 @@
                         <div class="staff-member-name"><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></div>
                         <div class="staff-member-role">
                             <span class="role-title"><?php echo esc_html($staff->RoleTitle); ?></span>
-                            <?php if (!empty($staff->RoleDescription)) : ?>
-                                <span class="role-description"><?php echo esc_html($staff->RoleDescription); ?></span>
+                            <?php if (!empty($staff->StaffRoleDescription)) : ?>
+                                <span class="role-description"><?php echo esc_html($staff->StaffRoleDescription); ?></span>
                             <?php endif; ?>
                         </div>
                     </div>

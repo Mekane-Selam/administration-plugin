@@ -80,7 +80,39 @@
         <button type="submit" class="button button-primary">Add</button>
         <button type="button" class="button add-enrollment-cancel-btn">Cancel</button>
       </form>
-      <div class="program-enrollment-list-placeholder">[Enrollment info will appear here]</div>
+      <?php
+      // Fetch enrollments for this program and join with people
+      if (!function_exists('administration_plugin_get_enrollments_for_program')) {
+          function administration_plugin_get_enrollments_for_program($program_id) {
+              global $wpdb;
+              $enroll_table = $wpdb->prefix . 'progtype_edu_enrollment';
+              $person_table = $wpdb->prefix . 'core_person';
+              return $wpdb->get_results($wpdb->prepare(
+                  "SELECT e.*, p.FirstName, p.LastName FROM $enroll_table e LEFT JOIN $person_table p ON e.PersonID = p.PersonID WHERE e.ProgramID = %s ORDER BY e.EnrollmentDate DESC",
+                  $program_id
+              ));
+          }
+      }
+      $enrollments = array();
+      if (isset($program) && $program && isset($program->ProgramID)) {
+          $enrollments = administration_plugin_get_enrollments_for_program($program->ProgramID);
+      }
+      ?>
+      <?php if (!empty($enrollments)) : ?>
+        <div class="enrollment-list-enhanced">
+          <?php foreach ($enrollments as $enrollment) : ?>
+            <div class="enrollment-card">
+              <div class="enrollment-card-icon"><span class="dashicons dashicons-id"></span></div>
+              <div class="enrollment-card-details">
+                <div class="enrollment-card-title"><?php echo esc_html(trim($enrollment->FirstName . ' ' . $enrollment->LastName)); ?></div>
+                <div class="enrollment-card-meta">Enrolled: <span><?php echo esc_html(date('M d, Y', strtotime($enrollment->EnrollmentDate))); ?></span></div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      <?php else : ?>
+        <div class="program-enrollment-list-placeholder">No enrollments found for this program.</div>
+      <?php endif; ?>
     </div>
   </div>
 </div> 

@@ -579,4 +579,58 @@
   color: #2271b1;
   font-weight: 500;
   margin-top: 2px;
+}
+
+/* Enhanced Enrollment List Styles */
+.enrollment-list-enhanced {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+.enrollment-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
+  border: 1px solid #e3e7ee;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+  padding: 16px 20px;
+  transition: box-shadow 0.2s, border-color 0.2s, background 0.2s;
+  position: relative;
+}
+.enrollment-card:hover {
+  box-shadow: 0 4px 16px rgba(34,113,177,0.13);
+  border-color: #b6d4ef;
+  background: linear-gradient(135deg, #f0f4fa 0%, #dbeafe 100%);
+}
+.enrollment-card-icon {
+  font-size: 1.7rem;
+  color: #2271b1;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: #eaf4fb;
+  border-radius: 50%;
+}
+.enrollment-card-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.enrollment-card-title {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #1d2327;
+  margin-bottom: 2px;
+}
+.enrollment-card-meta {
+  font-size: 0.97rem;
+  color: #2271b1;
+  font-weight: 500;
+  margin-top: 2px;
 } 

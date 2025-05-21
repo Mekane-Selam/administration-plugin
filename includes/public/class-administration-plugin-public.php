@@ -42,6 +42,7 @@ class Administration_Plugin_Public {
         // Register new AJAX handler
         add_action('wp_ajax_get_person_details', array($this, 'ajax_get_person_details'));
         add_action('wp_ajax_add_staff_role', array($this, 'ajax_add_staff_role'));
+        add_action('wp_ajax_add_staff_member', array($this, 'ajax_add_staff_member'));
     }
 
     /**
@@ -805,6 +806,39 @@ class Administration_Plugin_Public {
             wp_send_json_success();
         } else {
             wp_send_json_error('Failed to add staff role.');
+        }
+    }
+
+    /**
+     * AJAX handler to add a new staff member
+     */
+    public function ajax_add_staff_member() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'progtype_edu_staff';
+        $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
+        $staff_roles_id = isset($_POST['StaffRolesID']) ? sanitize_text_field($_POST['StaffRolesID']) : '';
+        $program_id = isset($_POST['ProgramID']) ? sanitize_text_field($_POST['ProgramID']) : '';
+        if (!$person_id || !$staff_roles_id || !$program_id) {
+            wp_send_json_error('Missing required fields.');
+        }
+        // Prevent duplicate staff for the same program
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE PersonID = %s AND ProgramID = %s", $person_id, $program_id));
+        if ($exists) {
+            wp_send_json_error('This person is already a staff member for this program.');
+        }
+        $result = $wpdb->insert($table, array(
+            'PersonID' => $person_id,
+            'StaffRolesID' => $staff_roles_id,
+            'ProgramID' => $program_id
+        ));
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to add staff member.');
         }
     }
 } 

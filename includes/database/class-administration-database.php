@@ -90,7 +90,7 @@ class Administration_Database {
             $progtype_edu_courses_table,
             $progtype_edu_staff_table,
             $progtype_edu_staffroles_table,
-            progtype_edu_courseenrollments_table
+            $progtype_edu_courseenrollments_table
         ];
 
         // Check if tables already exist

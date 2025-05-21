@@ -11,7 +11,7 @@
     <div class="course-general-fields">
       <div class="course-general-row">
         <span class="course-general-label">Primary Instructor:</span>
-        <span class="course-general-value" id="primary-instructor-display">
+        <span class="course-general-value" id="primary-instructor-display" data-person-id="<?php echo esc_attr($course->PrimaryInstructorID); ?>">
           <?php
           global $wpdb;
           $primary = '';
@@ -26,7 +26,7 @@
       </div>
       <div class="course-general-row">
         <span class="course-general-label">Back Up Teacher 1:</span>
-        <span class="course-general-value" id="backup1-display">
+        <span class="course-general-value" id="backup1-display" data-person-id="<?php echo esc_attr($course->BackUpTeacher1ID); ?>">
           <?php
           $backup1 = '';
           if (!empty($course->BackUpTeacher1ID)) {
@@ -40,7 +40,7 @@
       </div>
       <div class="course-general-row">
         <span class="course-general-label">Back Up Teacher 2:</span>
-        <span class="course-general-value" id="backup2-display">
+        <span class="course-general-value" id="backup2-display" data-person-id="<?php echo esc_attr($course->BackUpTeacher2ID); ?>">
           <?php
           $backup2 = '';
           if (!empty($course->BackUpTeacher2ID)) {

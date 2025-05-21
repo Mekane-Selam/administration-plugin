@@ -849,6 +849,86 @@
             $(document).on('click', '.program-view-edu-staff-details-close', function() {
                 $('.program-view-edu-staff-details-panel').hide().empty();
             });
+
+            // Course General Tab: Instructors Edit/Save Logic
+            $(document).on('click', '#edit-instructors-btn', function() {
+                // Hide display, show selects and save/cancel
+                $('#primary-instructor-display, #backup1-display, #backup2-display').hide();
+                $('.course-general-edit').show();
+                $('#edit-instructors-btn').hide();
+                $('#save-instructors-btn, #cancel-instructors-btn').show();
+                // Populate dropdowns with staff
+                var $modal = $('#course-detail-modal');
+                var programId = $('#program-view-container').data('program-id');
+                var courseId = $('.course-detail-tab-content').data('course-id');
+                function populateStaffSelect($select, selectedId) {
+                    $.ajax({
+                        url: administration_plugin.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'get_program_staff_list',
+                            nonce: administration_plugin.nonce,
+                            program_id: programId
+                        },
+                        success: function(response) {
+                            if (response.success && Array.isArray(response.data)) {
+                                var options = '<option value="">Select...</option>';
+                                response.data.forEach(function(staff) {
+                                    var fullName = staff.FirstName + ' ' + staff.LastName;
+                                    options += `<option value="${staff.PersonID}"${staff.PersonID == selectedId ? ' selected' : ''}>${fullName}</option>`;
+                                });
+                                $select.html(options);
+                            }
+                        }
+                    });
+                }
+                populateStaffSelect($('#primary-instructor-select'), $('#primary-instructor-display').data('person-id'));
+                populateStaffSelect($('#backup1-select'), $('#backup1-display').data('person-id'));
+                populateStaffSelect($('#backup2-select'), $('#backup2-display').data('person-id'));
+            });
+            $(document).on('click', '#cancel-instructors-btn', function() {
+                // Hide selects, show display, reset buttons
+                $('.course-general-edit').hide();
+                $('#primary-instructor-display, #backup1-display, #backup2-display').show();
+                $('#edit-instructors-btn').show();
+                $('#save-instructors-btn, #cancel-instructors-btn').hide();
+                $('#instructors-message').html('');
+            });
+            $(document).on('click', '#save-instructors-btn', function() {
+                var $msg = $('#instructors-message');
+                var courseId = $('.course-detail-tab-content').data('course-id');
+                var primary = $('#primary-instructor-select').val();
+                var backup1 = $('#backup1-select').val();
+                var backup2 = $('#backup2-select').val();
+                if (!primary) {
+                    $msg.html('<span class="error-message">Primary Instructor is required.</span>');
+                    return;
+                }
+                $msg.html('<span class="loading">Saving...</span>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'update_course_instructors',
+                        nonce: administration_plugin.nonce,
+                        CourseID: courseId,
+                        PrimaryInstructorID: primary,
+                        BackUpTeacher1ID: backup1,
+                        BackUpTeacher2ID: backup2
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $msg.html('<span class="success-message">Saved!</span>');
+                            setTimeout(function() { location.reload(); }, 800);
+                        } else {
+                            $msg.html('<span class="error-message">' + (response.data || 'Failed to save.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $msg.html('<span class="error-message">Failed to save. Please try again.</span>');
+                    }
+                });
+            });
         }
     };
     $(document).ready(function() {

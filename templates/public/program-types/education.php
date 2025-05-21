@@ -141,55 +141,55 @@
             </button>
         </div>
     </div>
-    <div class="program-view-edu-staff-content">
-        <?php
-        global $wpdb;
-        
-        // Join the staff, staff roles, and person tables
-        $staff_query = $wpdb->prepare(
-            "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
-            FROM {$wpdb->prefix}progtype_edu_staff s
-            LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRolesID = sr.StaffRoleID
-            LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
-            WHERE s.ProgramID = %d
-            ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
-            $program->ProgramID
-        );
-        
-        $staff_members = $wpdb->get_results($staff_query);
-        
-        if ($staff_members) {
-            echo '<div class="program-view-edu-staff-grid">';
-            foreach ($staff_members as $staff) {
-                ?>
-                <div class="program-view-edu-staff-card">
-                    <div class="program-view-edu-staff-info">
-                        <h4 class="program-view-edu-staff-name">
-                            <?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?>
-                        </h4>
-                        <span class="program-view-edu-staff-role">
-                            <?php echo esc_html($staff->RoleTitle); ?>
-                        </span>
+    <div class="program-view-edu-staff-content-split">
+        <div class="program-view-edu-staff-content-list">
+            <?php
+            global $wpdb;
+            // Join the staff, staff roles, and person tables
+            $staff_query = $wpdb->prepare(
+                "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
+                FROM {$wpdb->prefix}progtype_edu_staff s
+                LEFT JOIN {$wpdb->prefix}progtype_edu_staffroles sr ON s.StaffRolesID = sr.StaffRoleID
+                LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
+                WHERE s.ProgramID = %d
+                ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
+                $program->ProgramID
+            );
+            $staff_members = $wpdb->get_results($staff_query);
+            if ($staff_members) {
+                echo '<div class="program-view-edu-staff-grid">';
+                foreach ($staff_members as $staff) {
+                    ?>
+                    <div class="program-view-edu-staff-card" data-person-id="<?php echo esc_attr($staff->PersonID); ?>">
+                        <div class="program-view-edu-staff-info">
+                            <h4 class="program-view-edu-staff-name">
+                                <?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?>
+                            </h4>
+                            <span class="program-view-edu-staff-role">
+                                <?php echo esc_html($staff->RoleTitle); ?>
+                            </span>
+                        </div>
+                        <div class="program-view-edu-staff-actions">
+                            <button type="button" class="program-view-edu-staff-edit-btn" data-staff-id="<?php echo esc_attr($staff->StaffID); ?>">
+                                <span class="dashicons dashicons-edit"></span>
+                            </button>
+                            <button type="button" class="program-view-edu-staff-remove-btn" data-staff-id="<?php echo esc_attr($staff->StaffID); ?>">
+                                <span class="dashicons dashicons-trash"></span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="program-view-edu-staff-actions">
-                        <button type="button" class="program-view-edu-staff-edit-btn" data-staff-id="<?php echo esc_attr($staff->StaffID); ?>">
-                            <span class="dashicons dashicons-edit"></span>
-                        </button>
-                        <button type="button" class="program-view-edu-staff-remove-btn" data-staff-id="<?php echo esc_attr($staff->StaffID); ?>">
-                            <span class="dashicons dashicons-trash"></span>
-                        </button>
-                    </div>
-                </div>
-                <?php
+                    <?php
+                }
+                echo '</div>';
+            } else {
+                echo '<div class="program-view-edu-staff-empty">';
+                echo '<span class="dashicons dashicons-groups"></span>';
+                echo '<p>No staff members assigned to this program yet.</p>';
+                echo '</div>';
             }
-            echo '</div>';
-        } else {
-            echo '<div class="program-view-edu-staff-empty">';
-            echo '<span class="dashicons dashicons-groups"></span>';
-            echo '<p>No staff members assigned to this program yet.</p>';
-            echo '</div>';
-        }
-        ?>
+            ?>
+        </div>
+        <div class="program-view-edu-staff-details-panel" style="display:none;"></div>
     </div>
 </div>
 
@@ -493,5 +493,49 @@
 .program-view-edu-add-role-btn:hover {
     background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
     transform: translateY(-2px);
+}
+
+.program-view-edu-staff-content-split {
+    display: flex;
+    gap: 32px;
+    width: 100%;
+}
+.program-view-edu-staff-content-list {
+    flex: 1 1 0;
+    min-width: 0;
+}
+.program-view-edu-staff-details-panel {
+    flex: 0 1 400px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e3e7ee 100%);
+    border: 1px solid #e3e7ee;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+    padding: 22px 20px 18px 20px;
+    position: relative;
+    min-width: 320px;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    word-break: break-word;
+}
+.program-view-edu-staff-details-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #2271b1;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+    font-size: 1.2rem;
+}
+.program-view-edu-staff-details-close:hover {
+    color: #135e96;
 }
 </style> 

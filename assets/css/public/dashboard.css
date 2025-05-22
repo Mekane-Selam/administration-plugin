@@ -1494,4 +1494,138 @@ body.administration-dashboard-public {
     font-size: 1.1rem;
     margin-right: 4px;
     vertical-align: middle;
+}
+
+.relationships-edit-table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.relationship-edit-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 0;
+}
+.relationship-edit-row .relationship-person-col {
+    flex: 2 1 0;
+    position: relative;
+}
+.relationship-edit-row .relationship-type-col {
+    flex: 1 1 0;
+}
+.relationship-edit-row .relationship-actions-col {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.relationship-person-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e3e7ee;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    box-sizing: border-box;
+}
+.relationship-type-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e3e7ee;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: #fff;
+    box-sizing: border-box;
+}
+.relationships-typeahead-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background: #fff;
+    border: 1px solid #b6d4ef;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.10);
+    max-height: 180px;
+    overflow-y: auto;
+    margin-top: 2px;
+    padding: 0;
+    list-style: none;
+}
+.relationships-typeahead-list li {
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #1d2327;
+    transition: background 0.15s;
+}
+.relationships-typeahead-list li:hover, .relationships-typeahead-list li.active {
+    background: #eaf4fb;
+    color: #2271b1;
+}
+.add-relationship-btn {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background 0.2s, color 0.2s;
+}
+.add-relationship-btn:hover, .add-relationship-btn:focus {
+    background: #135e96;
+    color: #fff;
+}
+.delete-relationship-btn {
+    background: none;
+    border: none;
+    color: #d63638;
+    font-size: 1.3rem;
+    padding: 4px 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.delete-relationship-btn:hover, .delete-relationship-btn:focus {
+    background: #ffeaea;
+    color: #a00;
+}
+.edit-person-actions .button-primary {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-right: 10px;
+    transition: background 0.2s, color 0.2s;
+}
+.edit-person-actions .button-primary:hover, .edit-person-actions .button-primary:focus {
+    background: #135e96;
+    color: #fff;
+}
+.edit-person-actions .button-secondary {
+    background: #f7fafd;
+    color: #2271b1;
+    border: 1px solid #b6d4ef;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+}
+.edit-person-actions .button-secondary:hover, .edit-person-actions .button-secondary:focus {
+    background: #eaf4fb;
+    color: #135e96;
+    border-color: #2271b1;
 } 

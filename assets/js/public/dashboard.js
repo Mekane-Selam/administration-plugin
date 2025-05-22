@@ -818,13 +818,13 @@
             } else {
                 // Edit mode
                 var rels = d.relationships || [];
-                var relHtml = `<form id='edit-relationships-form'><div class='person-details-card'><div class='person-details-grid' id='edit-relationships-rows'>`;
+                var relHtml = `<form id='edit-relationships-form'><div class='person-details-card relationships-edit-table' id='edit-relationships-rows'>`;
                 rels.forEach(function(rel, idx) {
                     relHtml += Dashboard._relationshipEditRow(rel, idx);
                 });
-                relHtml += `</div></div>`;
+                relHtml += `</div>`;
                 relHtml += `<div class='edit-person-actions' style='margin-top:18px; text-align:right;'>`;
-                relHtml += `<button type='button' class='button' id='add-relationship-btn'>+ Add Relationship</button> `;
+                relHtml += `<button type='button' class='add-relationship-btn' id='add-relationship-btn'>+ Add Relationship</button> `;
                 relHtml += `<button type='submit' class='button button-primary'>Save</button> `;
                 relHtml += `<button type='button' class='button button-secondary' id='cancel-edit-relationships'>Cancel</button>`;
                 relHtml += `</div></form>`;
@@ -840,12 +840,18 @@
             var typeOptions = types.map(function(type) {
                 return `<option value='${type}'${rel.RelationshipType === type ? ' selected' : ''}>${type}</option>`;
             }).join('');
-            return `<div class='person-detail-row relationship-edit-row' data-idx='${idx}'>
-                <input type='hidden' name='existing' value='1'>
-                <input type='hidden' name='RelatedPersonID' value='${rel.RelatedPersonID}'>
-                <input class='relationship-person-input' type='text' name='RelatedPersonName' value='${rel.RelatedPersonName || ''}' autocomplete='off' placeholder='Search person...'>
-                <select name='RelationshipType'>${typeOptions}</select>
-                <button type='button' class='button delete-relationship-btn' title='Delete'>&#128465;</button>
+            return `<div class='relationship-edit-row' data-idx='${idx}'>
+                <div class='relationship-person-col'>
+                    <input type='hidden' name='RelatedPersonID' value='${rel.RelatedPersonID}'>
+                    <input class='relationship-person-input' type='text' name='RelatedPersonName' value='${rel.RelatedPersonName || ''}' autocomplete='off' placeholder='Search person...'>
+                    <ul class='relationships-typeahead-list' style='display:none;'></ul>
+                </div>
+                <div class='relationship-type-col'>
+                    <select class='relationship-type-select' name='RelationshipType'>${typeOptions}</select>
+                </div>
+                <div class='relationship-actions-col'>
+                    <button type='button' class='delete-relationship-btn' title='Delete'>&#128465;</button>
+                </div>
             </div>`;
         },
 
@@ -865,7 +871,7 @@
             // Add relationship
             $(document).off('click', '#add-relationship-btn').on('click', '#add-relationship-btn', function() {
                 var $rows = $('#edit-relationships-rows');
-                var idx = $rows.children().length;
+                var idx = $rows.children('.relationship-edit-row').length;
                 var rel = {RelatedPersonID:'', RelatedPersonName:'', RelationshipType:'Mother'};
                 $rows.append(Dashboard._relationshipEditRow(rel, idx));
             });
@@ -879,6 +885,8 @@
                 var query = $input.val();
                 var $row = $input.closest('.relationship-edit-row');
                 var excludeId = Dashboard._lastPersonDetails.general.PersonID;
+                var $list = $row.find('.relationships-typeahead-list');
+                $list.hide().empty();
                 if (query.length < 2) return;
                 $.ajax({
                     url: administration_plugin.ajax_url,
@@ -891,34 +899,28 @@
                     },
                     success: function(response) {
                         if (response.success && response.data.length) {
-                            var datalistId = 'relationship-person-list-' + $row.data('idx');
-                            var $datalist = $('#' + datalistId);
-                            if (!$datalist.length) {
-                                $datalist = $('<datalist id="' + datalistId + '"></datalist>');
-                                $input.after($datalist);
-                                $input.attr('list', datalistId);
-                            }
-                            $datalist.empty();
                             response.data.forEach(function(person) {
-                                $datalist.append('<option value="' + person.Name + '" data-id="' + person.PersonID + '">' + person.Name + ' (' + person.Email + ')</option>');
+                                $list.append('<li data-id="' + person.PersonID + '">' + person.Name + ' <span style="color:#888;font-size:0.95em;">(' + person.Email + ')</span></li>');
                             });
+                            $list.show();
                         }
                     }
                 });
             });
-            // When a person is selected from the datalist, set the hidden RelatedPersonID
-            $(document).off('change', '.relationship-person-input').on('change', '.relationship-person-input', function() {
+            // Select from typeahead
+            $(document).off('click', '.relationships-typeahead-list li').on('click', '.relationships-typeahead-list li', function() {
+                var $li = $(this);
+                var $row = $li.closest('.relationship-edit-row');
+                $row.find('.relationship-person-input').val($li.text().replace(/\s*\(.+\)$/, ''));
+                $row.find('input[name="RelatedPersonID"]').val($li.data('id'));
+                $row.find('.relationships-typeahead-list').hide();
+            });
+            // Hide typeahead on blur
+            $(document).off('blur', '.relationship-person-input').on('blur', '.relationship-person-input', function() {
                 var $input = $(this);
-                var val = $input.val();
-                var $row = $input.closest('.relationship-edit-row');
-                var datalistId = $input.attr('list');
-                var $datalist = $('#' + datalistId);
-                if ($datalist.length) {
-                    var $option = $datalist.find('option').filter(function() { return $(this).val() === val; });
-                    if ($option.length) {
-                        $row.find('input[name="RelatedPersonID"]').val($option.data('id'));
-                    }
-                }
+                setTimeout(function() {
+                    $input.closest('.relationship-edit-row').find('.relationships-typeahead-list').hide();
+                }, 200);
             });
         },
 

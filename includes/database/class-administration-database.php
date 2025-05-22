@@ -577,7 +577,6 @@ class Administration_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'core_person';
         $fields = [
-            'UserID' => isset($person_data['UserID']) ? $person_data['UserID'] : null,
             'FirstName' => isset($person_data['FirstName']) ? $person_data['FirstName'] : '',
             'LastName' => isset($person_data['LastName']) ? $person_data['LastName'] : '',
             'Email' => isset($person_data['Email']) ? $person_data['Email'] : '',
@@ -592,7 +591,7 @@ class Administration_Database {
             'Birthday' => isset($person_data['Birthday']) ? $person_data['Birthday'] : null,
         ];
         if (!empty($person_data['PersonID'])) {
-            // Update existing
+            // Update existing (do not update UserID or PersonID)
             $result = $wpdb->update(
                 $table,
                 $fields,
@@ -604,6 +603,10 @@ class Administration_Database {
             }
             return $result !== false ? $person_data['PersonID'] : false;
         } else {
+            // Insert new, include UserID if present
+            if (isset($person_data['UserID'])) {
+                $fields['UserID'] = $person_data['UserID'];
+            }
             // Insert new, generate unique PersonID (PERSxxxxx)
             do {
                 $unique_code = mt_rand(10000, 99999);

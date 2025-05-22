@@ -581,6 +581,15 @@ class Administration_Database {
             'FirstName' => isset($person_data['FirstName']) ? $person_data['FirstName'] : '',
             'LastName' => isset($person_data['LastName']) ? $person_data['LastName'] : '',
             'Email' => isset($person_data['Email']) ? $person_data['Email'] : '',
+            'Title' => isset($person_data['Title']) ? $person_data['Title'] : '',
+            'Gender' => isset($person_data['Gender']) ? $person_data['Gender'] : '',
+            'Phone' => isset($person_data['Phone']) ? $person_data['Phone'] : '',
+            'AddressLine1' => isset($person_data['AddressLine1']) ? $person_data['AddressLine1'] : '',
+            'AddressLine2' => isset($person_data['AddressLine2']) ? $person_data['AddressLine2'] : '',
+            'City' => isset($person_data['City']) ? $person_data['City'] : '',
+            'State' => isset($person_data['State']) ? $person_data['State'] : '',
+            'Zip' => isset($person_data['Zip']) ? $person_data['Zip'] : '',
+            'Birthday' => isset($person_data['Birthday']) ? $person_data['Birthday'] : null,
         ];
         if (!empty($person_data['PersonID'])) {
             // Update existing

@@ -152,6 +152,9 @@ class Administration_Plugin_Public {
             case 'hr':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/hr-content.php';
                 break;
+            case 'finances':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/finances-content.php';
+                break;
             default:
                 echo '<div class="error-message">Invalid page.</div>';
         }

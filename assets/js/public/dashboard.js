@@ -56,7 +56,6 @@
                 e.preventDefault();
                 $(this).siblings('.sort-dropdown').toggle();
             });
-            $(document).on('click', '.person-row', this.handleEditPersonClick);
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
 
             // Load person details in right column when a person is clicked

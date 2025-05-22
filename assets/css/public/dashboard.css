@@ -93,22 +93,20 @@ body.administration-dashboard-public {
 .menu-item-external {
     display: flex;
     align-items: center;
-    padding: 10px 18px;
-    color: #1d2327;
+    gap: 8px;
+    color: #222;
     text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
+    padding: 8px 16px;
     border-radius: 6px;
+    font-weight: 500;
     transition: background 0.2s, color 0.2s;
 }
 .menu-item-external:hover, .menu-item-external:focus {
-    background: #eaf4fb;
-    color: #135e96;
+    background: #2271b1;
+    color: #fff;
 }
 .menu-item-external .dashicons {
-    font-size: 1.1rem;
-    margin-right: 8px;
-    vertical-align: middle;
+    font-size: 20px;
 }
 
 .administration-dashboard-content {

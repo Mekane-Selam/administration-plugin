@@ -778,19 +778,7 @@
             generalHtml += `</div>`;
             $('#person-details-general-content').html(generalHtml);
             // Relationships
-            var relHtml = '';
-            if (d.relationships && d.relationships.length > 0) {
-                relHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
-                d.relationships.forEach(function(rel) {
-                    relHtml += `<div class='person-detail-row'><span class='person-detail-label'>${rel.RelationshipType}</span><span class='person-detail-value'>${rel.RelatedPersonName}</span></div>`;
-                });
-                relHtml += `</div></div>`;
-            } else {
-                relHtml = '';
-            }
-            $('#person-details-family-content').html(relHtml);
-            // Change section title to 'Relationships'
-            $('.person-details-family .person-details-section-header h3').text('Relationships');
+            Dashboard._renderRelationshipsSection(d);
             // Roles
             var rolesHtml = '';
             rolesHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
@@ -803,6 +791,133 @@
             }
             rolesHtml += `</div></div>`;
             $('#person-details-roles-content').html(rolesHtml);
+        },
+
+        _renderRelationshipsSection: function(d) {
+            var $section = $('.person-details-family');
+            var $header = $section.find('.person-details-section-header h3');
+            $header.text('Relationships');
+            var $content = $('#person-details-family-content');
+            var isEdit = $section.hasClass('edit-mode');
+            if (!isEdit) {
+                // View mode
+                if (d.relationships && d.relationships.length > 0) {
+                    var relHtml = `<div class='person-details-card'><div class='person-details-grid'>`;
+                    d.relationships.forEach(function(rel) {
+                        relHtml += `<div class='person-detail-row'><span class='person-detail-label'>${rel.RelationshipType}</span><span class='person-detail-value'>${rel.RelatedPersonName}</span></div>`;
+                    });
+                    relHtml += `</div></div>`;
+                    $content.html(relHtml);
+                } else {
+                    $content.html('');
+                }
+                // Show edit button
+                $section.find('.person-details-edit-btn').show();
+            } else {
+                // Edit mode
+                var rels = d.relationships || [];
+                var relHtml = `<form id='edit-relationships-form'><div class='person-details-card'><div class='person-details-grid' id='edit-relationships-rows'>`;
+                rels.forEach(function(rel, idx) {
+                    relHtml += Dashboard._relationshipEditRow(rel, idx);
+                });
+                relHtml += `</div></div>`;
+                relHtml += `<div class='edit-person-actions' style='margin-top:18px; text-align:right;'>`;
+                relHtml += `<button type='button' class='button' id='add-relationship-btn'>+ Add Relationship</button> `;
+                relHtml += `<button type='submit' class='button button-primary'>Save</button> `;
+                relHtml += `<button type='button' class='button button-secondary' id='cancel-edit-relationships'>Cancel</button>`;
+                relHtml += `</div></form>`;
+                $content.html(relHtml);
+                // Hide edit button
+                $section.find('.person-details-edit-btn').hide();
+            }
+        },
+
+        _relationshipEditRow: function(rel, idx) {
+            // rel: {RelatedPersonID, RelatedPersonName, RelationshipType}
+            var types = ['Mother','Father','Child','Sibling','Other'];
+            var typeOptions = types.map(function(type) {
+                return `<option value='${type}'${rel.RelationshipType === type ? ' selected' : ''}>${type}</option>`;
+            }).join('');
+            return `<div class='person-detail-row relationship-edit-row' data-idx='${idx}'>
+                <input type='hidden' name='existing' value='1'>
+                <input type='hidden' name='RelatedPersonID' value='${rel.RelatedPersonID}'>
+                <input class='relationship-person-input' type='text' name='RelatedPersonName' value='${rel.RelatedPersonName || ''}' autocomplete='off' placeholder='Search person...'>
+                <select name='RelationshipType'>${typeOptions}</select>
+                <button type='button' class='button delete-relationship-btn' title='Delete'>&#128465;</button>
+            </div>`;
+        },
+
+        // Event handlers for Relationships edit mode
+        initRelationshipsEditHandlers: function() {
+            // Edit button
+            $(document).off('click', '.person-details-family .person-details-edit-btn').on('click', '.person-details-family .person-details-edit-btn', function() {
+                var d = Dashboard._lastPersonDetails;
+                $('.person-details-family').addClass('edit-mode');
+                Dashboard._renderRelationshipsSection(d);
+            });
+            // Cancel button
+            $(document).off('click', '#cancel-edit-relationships').on('click', '#cancel-edit-relationships', function() {
+                $('.person-details-family').removeClass('edit-mode');
+                Dashboard._renderRelationshipsSection(Dashboard._lastPersonDetails);
+            });
+            // Add relationship
+            $(document).off('click', '#add-relationship-btn').on('click', '#add-relationship-btn', function() {
+                var $rows = $('#edit-relationships-rows');
+                var idx = $rows.children().length;
+                var rel = {RelatedPersonID:'', RelatedPersonName:'', RelationshipType:'Mother'};
+                $rows.append(Dashboard._relationshipEditRow(rel, idx));
+            });
+            // Delete relationship
+            $(document).off('click', '.delete-relationship-btn').on('click', '.delete-relationship-btn', function() {
+                $(this).closest('.relationship-edit-row').remove();
+            });
+            // Typeahead for person search
+            $(document).off('input', '.relationship-person-input').on('input', '.relationship-person-input', function() {
+                var $input = $(this);
+                var query = $input.val();
+                var $row = $input.closest('.relationship-edit-row');
+                var excludeId = Dashboard._lastPersonDetails.general.PersonID;
+                if (query.length < 2) return;
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'search_people',
+                        nonce: administration_plugin.nonce,
+                        q: query,
+                        exclude_id: excludeId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var datalistId = 'relationship-person-list-' + $row.data('idx');
+                            var $datalist = $('#' + datalistId);
+                            if (!$datalist.length) {
+                                $datalist = $('<datalist id="' + datalistId + '"></datalist>');
+                                $input.after($datalist);
+                                $input.attr('list', datalistId);
+                            }
+                            $datalist.empty();
+                            response.data.forEach(function(person) {
+                                $datalist.append('<option value="' + person.Name + '" data-id="' + person.PersonID + '">' + person.Name + ' (' + person.Email + ')</option>');
+                            });
+                        }
+                    }
+                });
+            });
+            // When a person is selected from the datalist, set the hidden RelatedPersonID
+            $(document).off('change', '.relationship-person-input').on('change', '.relationship-person-input', function() {
+                var $input = $(this);
+                var val = $input.val();
+                var $row = $input.closest('.relationship-edit-row');
+                var datalistId = $input.attr('list');
+                var $datalist = $('#' + datalistId);
+                if ($datalist.length) {
+                    var $option = $datalist.find('option').filter(function() { return $(this).val() === val; });
+                    if ($option.length) {
+                        $row.find('input[name="RelatedPersonID"]').val($option.data('id'));
+                    }
+                }
+            });
         },
 
         openAddPersonModal: function(e) {

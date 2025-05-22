@@ -47,6 +47,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_update_course_instructors', array($this, 'ajax_update_course_instructors'));
         add_action('wp_ajax_get_full_person_details', array(
             $this, 'ajax_get_full_person_details'));
+        // Register new AJAX handler
+        add_action('wp_ajax_search_people', array($this, 'ajax_search_people'));
     }
 
     /**
@@ -976,5 +978,41 @@ class Administration_Plugin_Public {
             'relationships' => $relationships,
             'roles' => $roles_arr
         ]);
+    }
+
+    /**
+     * AJAX handler to search people for relationship typeahead
+     */
+    public function ajax_search_people() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $q = isset($_POST['q']) ? sanitize_text_field($_POST['q']) : '';
+        $exclude_id = isset($_POST['exclude_id']) ? sanitize_text_field($_POST['exclude_id']) : '';
+        $table = $wpdb->prefix . 'core_person';
+        $where = '';
+        $params = [];
+        if ($q) {
+            $where = "WHERE (FirstName LIKE %s OR LastName LIKE %s OR Email LIKE %s)";
+            $like = '%' . $wpdb->esc_like($q) . '%';
+            $params = [$like, $like, $like];
+        }
+        if ($exclude_id) {
+            $where .= ($where ? ' AND ' : 'WHERE ') . 'PersonID != %s';
+            $params[] = $exclude_id;
+        }
+        $sql = "SELECT PersonID, FirstName, LastName, Email FROM $table $where ORDER BY LastName, FirstName LIMIT 20";
+        $people = $params ? $wpdb->get_results($wpdb->prepare($sql, ...$params)) : $wpdb->get_results($sql);
+        $results = [];
+        foreach ($people as $p) {
+            $results[] = [
+                'PersonID' => $p->PersonID,
+                'Name' => $p->FirstName . ' ' . $p->LastName,
+                'Email' => $p->Email
+            ];
+        }
+        wp_send_json_success($results);
     }
 } 

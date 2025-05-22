@@ -44,7 +44,7 @@
                 </a>
             </li>
             <li>
-                <a href="https://drive.google.com/drive/folders/0ACU1Uvk5QtUNUk9PVA?ths=true" class="external-link" target="_blank" rel="noopener noreferrer">
+                <a href="https://drive.google.com/drive/folders/0ACU1Uvk5QtUNUk9PVA?ths=true" class="menu-item" target="_blank" rel="noopener noreferrer">
                     <span class="dashicons dashicons-google drive-icon" style="color:#4285F4;"></span>
                     <?php _e('Documents', 'administration-plugin'); ?>
                 </a>

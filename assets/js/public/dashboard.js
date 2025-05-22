@@ -233,10 +233,9 @@
                         Dashboard.initializeWidgets();
                         Dashboard.rebindProgramFilters();
                         
-                        // If we're loading the people-content page, refresh the parish list
-                        if (page === 'people-content') {
-                            console.log('Refreshing parish list...');
-                            Dashboard.loadParishData();
+                        // Ensure people list loads every time people-content is shown
+                        if (page === 'people-content' && $('.parish-content.two-column-layout').length) {
+                            Dashboard.initializePeopleContent();
                         }
                     } else {
                         console.error('Error loading dashboard page:', response.data);

@@ -589,9 +589,12 @@ class Administration_Database {
             'State' => isset($person_data['State']) ? $person_data['State'] : '',
             'Zip' => isset($person_data['Zip']) ? $person_data['Zip'] : '',
             'Birthday' => isset($person_data['Birthday']) ? $person_data['Birthday'] : null,
+            'MissingInfoFlag' => isset($person_data['MissingInfoFlag']) ? $person_data['MissingInfoFlag'] : 0,
+            'RegisterDate' => isset($person_data['RegisterDate']) ? $person_data['RegisterDate'] : null,
         ];
+
         if (!empty($person_data['PersonID'])) {
-            // Update existing (do not update UserID or PersonID)
+            // Update existing record
             $result = $wpdb->update(
                 $table,
                 $fields,
@@ -603,11 +606,11 @@ class Administration_Database {
             }
             return $result !== false ? $person_data['PersonID'] : false;
         } else {
-            // Insert new, include UserID if present
+            // Insert new record
             if (isset($person_data['UserID'])) {
                 $fields['UserID'] = $person_data['UserID'];
             }
-            // Insert new, generate unique PersonID (PERSxxxxx)
+            // Generate unique PersonID (PERSxxxxx)
             do {
                 $unique_code = mt_rand(10000, 99999);
                 $person_id = 'PERS' . $unique_code;

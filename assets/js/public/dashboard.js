@@ -838,6 +838,75 @@
             }
             rolesHtml += `</div></div>`;
             $('#person-details-roles-content').html(rolesHtml);
+        },
+
+        openAddPersonModal: function(e) {
+            e.preventDefault();
+            var $modal = $('#add-person-modal');
+            var $form = $('#add-person-form');
+            
+            // Reset form if it exists
+            if ($form.length) {
+                $form[0].reset();
+            }
+            
+            // Clear any previous messages
+            $('#add-person-message').html('');
+            
+            // Show modal
+            $modal.addClass('show');
+        },
+
+        closeAddPersonModal: function(e) {
+            e.preventDefault();
+            $('#add-person-modal').removeClass('show');
+            $('#add-person-form')[0].reset();
+            $('#add-person-message').html('');
+        },
+
+        submitAddPersonForm: function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $message = $('#add-person-message');
+            
+            // Get form values
+            var formData = $form.serializeArray();
+            var data = {
+                action: 'add_person',
+                nonce: administration_plugin.nonce
+            };
+            
+            // Convert form data to object
+            formData.forEach(function(field) {
+                data[field.name] = field.value;
+            });
+            
+            // Show loading message
+            $message.html('<span class="loading">Saving person...</span>');
+            
+            // Send AJAX request
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    if (response.success) {
+                        $message.html('<span class="success-message">Person added successfully!</span>');
+                        setTimeout(function() {
+                            $('#add-person-modal').removeClass('show');
+                            $form[0].reset();
+                            $message.html('');
+                            Dashboard.loadPeopleList();
+                        }, 800);
+                    } else {
+                        $message.html('<span class="error-message">' + (response.data || 'Error saving person.') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Person add error:', {xhr, status, error});
+                    $message.html('<span class="error-message">Error saving person. Please try again.</span>');
+                }
+            });
         }
     };
 

@@ -55,25 +55,43 @@ class Administration_Sync_Members {
             $first_name = $user->user_login;
             error_log("Using username as first name: {$user->user_login}");
         }
+
+        // Get existing person data if it exists
+        $existing_person = null;
+        if (class_exists('Administration_Database_Members')) {
+            $existing_person = Administration_Database_Members::get_person_by_user_id($user_id);
+        } else {
+            $existing_person = Administration_Database::get_person_by_user_id($user_id);
+        }
+
+        // Prepare person data, preserving existing fields
         $person_data = [
             'UserID' => $user_id,
             'FirstName' => $first_name,
             'LastName' => $last_name ?: '',
             'Email' => $user->user_email,
         ];
-        error_log("Saving person data: " . print_r($person_data, true));
-        // Use new database helper if available
-        if (class_exists('Administration_Database_Members')) {
-            $person = Administration_Database_Members::get_person_by_user_id($user_id);
-        } else {
-            $person = Administration_Database::get_person_by_user_id($user_id);
-        }
-        if ($person) {
-            $person_data['PersonID'] = $person->PersonID;
-            error_log("Updating existing person record ID: {$person->PersonID}");
+
+        // If we have an existing person record, preserve their other fields
+        if ($existing_person) {
+            $person_data['PersonID'] = $existing_person->PersonID;
+            // Preserve all other fields from the existing record
+            $fields_to_preserve = [
+                'Title', 'Gender', 'Phone', 'AddressLine1', 'AddressLine2',
+                'City', 'State', 'Zip', 'Birthday', 'MissingInfoFlag', 'RegisterDate'
+            ];
+            foreach ($fields_to_preserve as $field) {
+                if (isset($existing_person->$field)) {
+                    $person_data[$field] = $existing_person->$field;
+                }
+            }
+            error_log("Updating existing person record ID: {$person_data['PersonID']}");
         } else {
             error_log("Creating new person record");
         }
+
+        error_log("Saving person data: " . print_r($person_data, true));
+        
         if (class_exists('Administration_Database_Members')) {
             $result = Administration_Database_Members::save_person($person_data);
         } else {

@@ -46,4 +46,55 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- Add Person Modal -->
+<div id="add-person-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Add Person</h2>
+        <form id="add-person-form">
+            <div class="form-field">
+                <label for="person-first-name">First Name</label>
+                <input type="text" id="person-first-name" name="first_name" required>
+            </div>
+            <div class="form-field">
+                <label for="person-last-name">Last Name</label>
+                <input type="text" id="person-last-name" name="last_name" required>
+            </div>
+            <div class="form-field">
+                <label for="person-email">Email</label>
+                <input type="email" id="person-email" name="email" required>
+            </div>
+            <div class="form-field">
+                <label for="person-phone">Phone</label>
+                <input type="tel" id="person-phone" name="phone">
+            </div>
+            <div class="form-field">
+                <label for="person-address-line1">Address Line 1</label>
+                <input type="text" id="person-address-line1" name="address_line1">
+            </div>
+            <div class="form-field">
+                <label for="person-address-line2">Address Line 2</label>
+                <input type="text" id="person-address-line2" name="address_line2">
+            </div>
+            <div class="form-field">
+                <label for="person-city">City</label>
+                <input type="text" id="person-city" name="city">
+            </div>
+            <div class="form-field">
+                <label for="person-state">State</label>
+                <input type="text" id="person-state" name="state">
+            </div>
+            <div class="form-field">
+                <label for="person-zip">ZIP</label>
+                <input type="text" id="person-zip" name="zip">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="button button-primary">Add Person</button>
+                <button type="button" class="button" id="cancel-add-person">Cancel</button>
+            </div>
+        </form>
+        <div id="add-person-message"></div>
+    </div>
 </div> 

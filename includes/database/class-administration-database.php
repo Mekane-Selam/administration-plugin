@@ -536,7 +536,7 @@ class Administration_Database {
             ProgramID VARCHAR(25) NULL,
             PRIMARY KEY (PersonID),
             CONSTRAINT fk_staff_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE CASCADE,
-            CONSTRAINT fk_staff_staffroles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}staffmgmt_roles(StaffRoleID) ON DELETE SET NULL
+            CONSTRAINT fk_staff_staffroles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}staffmgmt_roles(StaffRoleID) ON DELETE SET NULL,
             CONSTRAINT fk_staff_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
 

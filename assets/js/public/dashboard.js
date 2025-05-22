@@ -206,10 +206,7 @@
         },
 
         loadPage: function(page) {
-            $('.menu-item').removeClass('active');
-            $(`.menu-item[data-page="${page}"]`).addClass('active');
             $('.administration-dashboard-content').addClass('loading');
-
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',
@@ -225,8 +222,8 @@
                         Dashboard.rebindProgramFilters();
                         
                         // Ensure people list loads every time people-content is shown
-                        if (page === 'people-content' && $('.parish-content.two-column-layout').length) {
-                            Dashboard.initializePeopleContent();
+                        if (page === 'parish') {
+                            Dashboard.loadPeopleList();
                         }
                     } else {
                         console.error('Error loading dashboard page:', response.data);

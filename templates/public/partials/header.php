@@ -44,11 +44,34 @@
                 </a>
             </li>
             <li>
-                <a href="https://drive.google.com/drive/folders/0ACU1Uvk5QtUNUk9PVA?ths=true" class="menu-item" target="_blank" rel="noopener noreferrer">
+                <a href="https://drive.google.com/drive/folders/0ACU1Uvk5QtUNUk9PVA?ths=true" class="menu-item-external" target="_blank" rel="noopener noreferrer">
                     <span class="dashicons dashicons-google drive-icon" style="color:#4285F4;"></span>
                     <?php _e('Documents', 'administration-plugin'); ?>
                 </a>
             </li>
+            <!--
+                Add this CSS to your stylesheet to match the style:
+                .menu-item-external {
+                    display: flex;
+                    align-items: center;
+                    padding: 10px 18px;
+                    color: #1d2327;
+                    text-decoration: none;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    border-radius: 6px;
+                    transition: background 0.2s, color 0.2s;
+                }
+                .menu-item-external:hover, .menu-item-external:focus {
+                    background: #eaf4fb;
+                    color: #135e96;
+                }
+                .menu-item-external .dashicons {
+                    font-size: 1.1rem;
+                    margin-right: 8px;
+                    vertical-align: middle;
+                }
+            -->
         </ul>
     </nav>
 </header> 

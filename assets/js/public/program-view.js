@@ -45,6 +45,8 @@
                             if ($container.find('.program-courses-list-placeholder').length === 0) {
                                 $container.find('.program-type-education').append('<div class="program-courses-list-placeholder">[Courses list will appear here]</div>');
                             }
+                            // Reload staff list for education programs
+                            ProgramView.reloadStaffList(programId);
                         }
                     } else {
                         $container.html('<div class="error-message">Failed to load program view.</div>');

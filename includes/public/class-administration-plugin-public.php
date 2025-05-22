@@ -880,8 +880,14 @@ class Administration_Plugin_Public {
         }
         $staff_table = $wpdb->prefix . 'progtype_edu_staff';
         $person_table = $wpdb->prefix . 'core_person';
+        $staff_roles_table = $wpdb->prefix . 'progtype_edu_staffroles';
         $staff = $wpdb->get_results($wpdb->prepare(
-            "SELECT p.PersonID, p.FirstName, p.LastName FROM $staff_table s LEFT JOIN $person_table p ON s.PersonID = p.PersonID WHERE s.ProgramID = %s ORDER BY p.LastName, p.FirstName",
+            "SELECT s.*, p.FirstName, p.LastName, sr.RoleTitle 
+            FROM $staff_table s 
+            LEFT JOIN $person_table p ON s.PersonID = p.PersonID 
+            LEFT JOIN $staff_roles_table sr ON s.StaffRolesID = sr.StaffRoleID 
+            WHERE s.ProgramID = %s 
+            ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
             $program_id
         ));
         wp_send_json_success($staff);

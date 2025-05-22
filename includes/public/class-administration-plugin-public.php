@@ -927,6 +927,21 @@ class Administration_Plugin_Public {
     }
 
     /**
+     * Helper: Get reverse relationship type
+     */
+    private function get_reverse_relationship_type($type) {
+        $map = [
+            'Mother' => 'Child',
+            'Father' => 'Child',
+            'Child' => 'Parent',
+            'Sibling' => 'Sibling',
+            'Other' => 'Other',
+            // Add more as needed
+        ];
+        return isset($map[$type]) ? $map[$type] : $type;
+    }
+
+    /**
      * AJAX handler to get full person details (general, family, roles)
      */
     public function ajax_get_full_person_details() {
@@ -951,8 +966,9 @@ class Administration_Plugin_Public {
             wp_send_json_error('Person not found.');
         }
 
-        // Relationships (new format)
+        // Relationships (show both sides)
         $relationships = [];
+        // Direct relationships
         $rels = $wpdb->get_results($wpdb->prepare("SELECT * FROM $rel_table WHERE PersonID = %s", $person_id));
         foreach ($rels as $rel) {
             $related = $wpdb->get_row($wpdb->prepare("SELECT PersonID, FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
@@ -961,6 +977,18 @@ class Administration_Plugin_Public {
                     'RelatedPersonID' => $related->PersonID,
                     'RelatedPersonName' => $related->FirstName . ' ' . $related->LastName,
                     'RelationshipType' => $rel->RelationshipType
+                ];
+            }
+        }
+        // Reverse relationships
+        $reverse_rels = $wpdb->get_results($wpdb->prepare("SELECT * FROM $rel_table WHERE RelatedPersonID = %s", $person_id));
+        foreach ($reverse_rels as $rel) {
+            $related = $wpdb->get_row($wpdb->prepare("SELECT PersonID, FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->PersonID));
+            if ($related) {
+                $relationships[] = [
+                    'RelatedPersonID' => $related->PersonID,
+                    'RelatedPersonName' => $related->FirstName . ' ' . $related->LastName,
+                    'RelationshipType' => $this->get_reverse_relationship_type($rel->RelationshipType)
                 ];
             }
         }
@@ -1052,6 +1080,7 @@ class Administration_Plugin_Public {
             $related_person_id = isset($rel['RelatedPersonID']) ? sanitize_text_field($rel['RelatedPersonID']) : '';
             $relationship_type = isset($rel['RelationshipType']) ? sanitize_text_field($rel['RelationshipType']) : '';
             if (!$related_person_id || !$relationship_type) continue;
+            $reverse_type = $this->get_reverse_relationship_type($relationship_type);
             if ($relationship_id && isset($existing_map[$relationship_id])) {
                 // Update existing (do not update RelationshipID)
                 $wpdb->update(
@@ -1063,6 +1092,23 @@ class Administration_Plugin_Public {
                     ['RelationshipID' => $relationship_id]
                 );
                 $submitted_ids[] = $relationship_id;
+                // Update or insert reverse
+                $reverse = $wpdb->get_row($wpdb->prepare("SELECT * FROM $rel_table WHERE PersonID = %s AND RelatedPersonID = %s", $related_person_id, $person_id));
+                if ($reverse) {
+                    $wpdb->update($rel_table, [ 'RelationshipType' => $reverse_type ], [ 'RelationshipID' => $reverse->RelationshipID ]);
+                } else {
+                    do {
+                        $unique_code = mt_rand(10000, 99999);
+                        $new_id = 'REL' . $unique_code;
+                        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $rel_table WHERE RelationshipID = %s", $new_id));
+                    } while ($exists);
+                    $wpdb->insert($rel_table, [
+                        'RelationshipID' => $new_id,
+                        'PersonID' => $related_person_id,
+                        'RelatedPersonID' => $person_id,
+                        'RelationshipType' => $reverse_type
+                    ]);
+                }
             } else {
                 // Insert new
                 do {
@@ -1077,12 +1123,27 @@ class Administration_Plugin_Public {
                     'RelationshipType' => $relationship_type
                 ]);
                 $submitted_ids[] = $new_id;
+                // Insert reverse
+                do {
+                    $unique_code = mt_rand(10000, 99999);
+                    $reverse_id = 'REL' . $unique_code;
+                    $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $rel_table WHERE RelationshipID = %s", $reverse_id));
+                } while ($exists);
+                $wpdb->insert($rel_table, [
+                    'RelationshipID' => $reverse_id,
+                    'PersonID' => $related_person_id,
+                    'RelatedPersonID' => $person_id,
+                    'RelationshipType' => $reverse_type
+                ]);
             }
         }
-        // Delete relationships that were removed
+        // Delete relationships that were removed (and their reverse)
         foreach ($existing as $rel) {
             if (!in_array($rel->RelationshipID, $submitted_ids)) {
-                $wpdb->delete($rel_table, ['RelationshipID' => $rel->RelationshipID]);
+                // Delete reverse
+                $wpdb->delete($rel_table, [ 'PersonID' => $rel->RelatedPersonID, 'RelatedPersonID' => $person_id ]);
+                // Delete original
+                $wpdb->delete($rel_table, [ 'RelationshipID' => $rel->RelationshipID ]);
             }
         }
         wp_send_json_success();

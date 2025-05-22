@@ -46,21 +46,10 @@
                 Dashboard.handleSyncUsersClick.call(this, e);
             });
             
-            // Add Person modal handlers - bind to all possible selectors
-            $(document).on('click', '[id*="add-person"], [class*="add-person"]', function(e) {
-                console.log('Add Person button clicked:', this);
-                Dashboard.openAddPersonModal.call(this, e);
-            });
-            
-            $(document).on('click', '[id*="close-add-person"], [id*="cancel-add-person"]', function(e) {
-                console.log('Close modal button clicked:', this);
-                Dashboard.closeAddPersonModal.call(this, e);
-            });
-            
-            $(document).on('submit', '[id*="add-person-form"]', function(e) {
-                console.log('Add Person form submitted:', this);
-                Dashboard.submitAddPersonForm.call(this, e);
-            });
+            // Add Person modal handlers
+            $(document).on('click', '#add-person-content-btn', this.openAddPersonModal);
+            $(document).on('click', '#add-person-modal .close, #cancel-add-person', this.closeAddPersonModal);
+            $(document).on('submit', '#add-person-form', this.submitAddPersonForm);
 
             // Sort/Filter for Persons-Content section
             $(document).on('click', '#sort-people-btn', function(e) {
@@ -71,7 +60,9 @@
             $(document).on('click', '.sort-dropdown li a', this.handleSortPeopleClick);
 
             // Load person details in right column when a person is clicked
-            $(document).on('click', '.person-row', function() {
+            $(document).on('click', '.person-row', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 var personId = $(this).data('person-id');
                 $('.person-row').removeClass('selected');
                 $(this).addClass('selected');
@@ -705,37 +696,6 @@
             });
         },
 
-        handleEditPersonClick: function(e) {
-            e.preventDefault();
-            var personId = $(this).data('person-id');
-            if (!personId) return;
-            // Fetch person data
-            $.ajax({
-                url: administration_plugin.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'get_person',
-                    nonce: administration_plugin.nonce,
-                    person_id: personId
-                },
-                success: function(response) {
-                    if (response.success && response.data) {
-                        $('#add-person-modal').addClass('show').attr('data-edit', '1').attr('data-person-id', personId);
-                        $('#add-person-modal h2').text('Edit Person');
-                        $('#add-person-form .button-primary').text('Save Changes');
-                        $('#person-first-name').val(response.data.FirstName);
-                        $('#person-last-name').val(response.data.LastName);
-                        $('#person-email').val(response.data.Email);
-                    } else {
-                        alert(response.data || 'Failed to load person.');
-                    }
-                },
-                error: function() {
-                    alert('Failed to load person.');
-                }
-            });
-        },
-
         // Sort logic
         handleSortPeopleClick: function(e) {
             e.preventDefault();
@@ -842,6 +802,7 @@
 
         openAddPersonModal: function(e) {
             e.preventDefault();
+            e.stopPropagation();
             var $modal = $('#add-person-modal');
             var $form = $('#add-person-form');
             
@@ -858,14 +819,23 @@
         },
 
         closeAddPersonModal: function(e) {
-            e.preventDefault();
-            $('#add-person-modal').removeClass('show');
-            $('#add-person-form')[0].reset();
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            var $modal = $('#add-person-modal');
+            var $form = $('#add-person-form');
+            
+            $modal.removeClass('show');
+            if ($form.length) {
+                $form[0].reset();
+            }
             $('#add-person-message').html('');
         },
 
         submitAddPersonForm: function(e) {
             e.preventDefault();
+            e.stopPropagation();
             var $form = $(this);
             var $message = $('#add-person-message');
             
@@ -893,9 +863,7 @@
                     if (response.success) {
                         $message.html('<span class="success-message">Person added successfully!</span>');
                         setTimeout(function() {
-                            $('#add-person-modal').removeClass('show');
-                            $form[0].reset();
-                            $message.html('');
+                            Dashboard.closeAddPersonModal();
                             Dashboard.loadPeopleList();
                         }, 800);
                     } else {

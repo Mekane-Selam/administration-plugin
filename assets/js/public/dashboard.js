@@ -922,6 +922,61 @@
                     $input.closest('.relationship-edit-row').find('.relationships-typeahead-list').hide();
                 }, 200);
             });
+            // Save relationships
+            $(document).off('submit', '#edit-relationships-form').on('submit', '#edit-relationships-form', function(e) {
+                e.preventDefault();
+                var $rows = $('#edit-relationships-rows .relationship-edit-row');
+                var relationships = [];
+                $rows.each(function() {
+                    var $row = $(this);
+                    var rel = {
+                        RelationshipID: $row.find('input[name="RelationshipID"]').val() || '',
+                        RelatedPersonID: $row.find('input[name="RelatedPersonID"]').val() || '',
+                        RelationshipType: $row.find('select[name="RelationshipType"]').val() || ''
+                    };
+                    // Only include if RelatedPersonID and RelationshipType are present
+                    if (rel.RelatedPersonID && rel.RelationshipType) {
+                        relationships.push(rel);
+                    }
+                });
+                var personId = Dashboard._lastPersonDetails.general.PersonID;
+                var $form = $(this);
+                var $actions = $form.find('.edit-person-actions');
+                $actions.append('<span class="loading" id="relationships-saving-msg">Saving...</span>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'save_person_relationships',
+                        nonce: administration_plugin.nonce,
+                        person_id: personId,
+                        relationships: relationships
+                    },
+                    success: function(response) {
+                        $('#relationships-saving-msg').remove();
+                        if (response.success) {
+                            $('.person-details-family').removeClass('edit-mode');
+                            // Reload details
+                            $.ajax({
+                                url: administration_plugin.ajax_url,
+                                type: 'POST',
+                                data: { action: 'get_full_person_details', nonce: administration_plugin.nonce, person_id: personId },
+                                success: function(resp) {
+                                    if (resp.success && resp.data) {
+                                        Dashboard._renderPersonDetails(resp.data);
+                                    }
+                                }
+                            });
+                        } else {
+                            $actions.append('<span class="error-message">Failed to save relationships.</span>');
+                        }
+                    },
+                    error: function() {
+                        $('#relationships-saving-msg').remove();
+                        $actions.append('<span class="error-message">Failed to save relationships.</span>');
+                    }
+                });
+            });
         },
 
         openAddPersonModal: function(e) {

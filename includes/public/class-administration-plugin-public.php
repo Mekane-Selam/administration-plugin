@@ -49,6 +49,8 @@ class Administration_Plugin_Public {
             $this, 'ajax_get_full_person_details'));
         // Register new AJAX handler
         add_action('wp_ajax_search_people', array($this, 'ajax_search_people'));
+        // Register new AJAX handler
+        add_action('wp_ajax_save_person_relationships', array($this, 'ajax_save_person_relationships'));
     }
 
     /**
@@ -1014,5 +1016,69 @@ class Administration_Plugin_Public {
             ];
         }
         wp_send_json_success($results);
+    }
+
+    /**
+     * AJAX handler to save relationships for a person
+     */
+    public function ajax_save_person_relationships() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+        $relationships = isset($_POST['relationships']) ? $_POST['relationships'] : [];
+        $rel_table = $wpdb->prefix . 'core_person_relationships';
+        if (!$person_id) {
+            wp_send_json_error('Missing person ID.');
+        }
+        // Fetch all existing relationships for this person
+        $existing = $wpdb->get_results($wpdb->prepare("SELECT * FROM $rel_table WHERE PersonID = %s", $person_id));
+        $existing_map = [];
+        foreach ($existing as $rel) {
+            $existing_map[$rel->RelationshipID] = $rel;
+        }
+        $submitted_ids = [];
+        // Process submitted relationships
+        foreach ($relationships as $rel) {
+            $relationship_id = isset($rel['RelationshipID']) ? sanitize_text_field($rel['RelationshipID']) : '';
+            $related_person_id = isset($rel['RelatedPersonID']) ? sanitize_text_field($rel['RelatedPersonID']) : '';
+            $relationship_type = isset($rel['RelationshipType']) ? sanitize_text_field($rel['RelationshipType']) : '';
+            if (!$related_person_id || !$relationship_type) continue;
+            if ($relationship_id && isset($existing_map[$relationship_id])) {
+                // Update existing (do not update RelationshipID)
+                $wpdb->update(
+                    $rel_table,
+                    [
+                        'RelatedPersonID' => $related_person_id,
+                        'RelationshipType' => $relationship_type
+                    ],
+                    ['RelationshipID' => $relationship_id]
+                );
+                $submitted_ids[] = $relationship_id;
+            } else {
+                // Insert new
+                do {
+                    $unique_code = mt_rand(10000, 99999);
+                    $new_id = 'REL' . $unique_code;
+                    $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $rel_table WHERE RelationshipID = %s", $new_id));
+                } while ($exists);
+                $wpdb->insert($rel_table, [
+                    'RelationshipID' => $new_id,
+                    'PersonID' => $person_id,
+                    'RelatedPersonID' => $related_person_id,
+                    'RelationshipType' => $relationship_type
+                ]);
+                $submitted_ids[] = $new_id;
+            }
+        }
+        // Delete relationships that were removed
+        foreach ($existing as $rel) {
+            if (!in_array($rel->RelationshipID, $submitted_ids)) {
+                $wpdb->delete($rel_table, ['RelationshipID' => $rel->RelationshipID]);
+            }
+        }
+        wp_send_json_success();
     }
 } 

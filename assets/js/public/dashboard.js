@@ -791,6 +791,8 @@
             }
             rolesHtml += `</div></div>`;
             $('#person-details-roles-content').html(rolesHtml);
+            // Ensure relationship edit handlers are initialized
+            Dashboard.initRelationshipsEditHandlers();
         },
 
         _renderRelationshipsSection: function(d) {

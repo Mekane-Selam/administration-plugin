@@ -1468,4 +1468,30 @@ body.administration-dashboard-public {
 }
 .person-details-section {
     margin-bottom: 32px;
+}
+
+.person-details-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 1px 4px rgba(34,113,177,0.08);
+    margin-left: 8px;
+}
+.person-details-edit-btn:hover, .person-details-edit-btn:focus {
+    background: #135e96;
+    color: #fff;
+}
+.person-details-edit-btn .dashicons {
+    font-size: 1.1rem;
+    margin-right: 4px;
+    vertical-align: middle;
 } 

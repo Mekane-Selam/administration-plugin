@@ -64,6 +64,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 var personId = $(this).data('person-id');
+                if (!personId) return;
                 $('.person-row').removeClass('selected');
                 $(this).addClass('selected');
                 $('#person-details-panel').hide();

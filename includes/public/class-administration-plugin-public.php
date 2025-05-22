@@ -155,6 +155,9 @@ class Administration_Plugin_Public {
             case 'finances':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/finances-content.php';
                 break;
+            case 'resources':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/resources-content.php';
+                break;
             default:
                 echo '<div class="error-message">Invalid page.</div>';
         }

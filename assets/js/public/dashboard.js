@@ -132,7 +132,12 @@
                         e.preventDefault();
                         var formData = $(this).serializeArray();
                         var data = { action: 'edit_person', nonce: administration_plugin.nonce, person_id: d.general.PersonID };
-                        formData.forEach(function(f) { data[f.name] = f.value; });
+                        formData.forEach(function(f) {
+                            if (f.name === 'FirstName') data['first_name'] = f.value;
+                            else if (f.name === 'LastName') data['last_name'] = f.value;
+                            else if (f.name === 'Email') data['email'] = f.value;
+                            else data[f.name] = f.value;
+                        });
                         $.ajax({
                             url: administration_plugin.ajax_url,
                             type: 'POST',

@@ -777,15 +777,20 @@
             generalHtml += `</div>`;
             generalHtml += `</div>`;
             $('#person-details-general-content').html(generalHtml);
-            // Family
-            var familyHtml = '';
-            familyHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
-            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Father</span><span class='person-detail-value'>${d.family.Father || ''}</span></div>`;
-            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Mother</span><span class='person-detail-value'>${d.family.Mother || ''}</span></div>`;
-            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Children</span><span class='person-detail-value'>${d.family.Children || ''}</span></div>`;
-            familyHtml += `<div class='person-detail-row'><span class='person-detail-label'>Other Relationships</span><span class='person-detail-value'>${d.family.Other || ''}</span></div>`;
-            familyHtml += `</div></div>`;
-            $('#person-details-family-content').html(familyHtml);
+            // Relationships
+            var relHtml = '';
+            if (d.relationships && d.relationships.length > 0) {
+                relHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
+                d.relationships.forEach(function(rel) {
+                    relHtml += `<div class='person-detail-row'><span class='person-detail-label'>${rel.RelationshipType}</span><span class='person-detail-value'>${rel.RelatedPersonName}</span></div>`;
+                });
+                relHtml += `</div></div>`;
+            } else {
+                relHtml = '';
+            }
+            $('#person-details-family-content').html(relHtml);
+            // Change section title to 'Relationships'
+            $('.person-details-family .person-details-section-header h3').text('Relationships');
             // Roles
             var rolesHtml = '';
             rolesHtml += `<div class='person-details-card'><div class='person-details-grid'>`;

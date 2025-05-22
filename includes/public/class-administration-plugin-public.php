@@ -941,45 +941,19 @@ class Administration_Plugin_Public {
             wp_send_json_error('Person not found.');
         }
 
-        // Family relationships
-        $family = [
-            'Father' => '',
-            'Mother' => '',
-            'Children' => '',
-            'Other' => ''
-        ];
-        $rels = $wpdb->get_results($wpdb->prepare("SELECT * FROM $rel_table WHERE PersonID = %s OR RelatedPersonID = %s", $person_id, $person_id));
-        $children = [];
-        $other = [];
+        // Relationships (new format)
+        $relationships = [];
+        $rels = $wpdb->get_results($wpdb->prepare("SELECT * FROM $rel_table WHERE PersonID = %s", $person_id));
         foreach ($rels as $rel) {
-            if ($rel->PersonID === $person_id) {
-                // This person is the subject
-                if (strtolower($rel->RelationshipType) === 'father') {
-                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
-                    if ($p) $family['Father'] = $p->FirstName . ' ' . $p->LastName;
-                } elseif (strtolower($rel->RelationshipType) === 'mother') {
-                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
-                    if ($p) $family['Mother'] = $p->FirstName . ' ' . $p->LastName;
-                } elseif (strtolower($rel->RelationshipType) === 'child') {
-                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
-                    if ($p) $children[] = $p->FirstName . ' ' . $p->LastName;
-                } else {
-                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
-                    if ($p) $other[] = $rel->RelationshipType . ': ' . $p->FirstName . ' ' . $p->LastName;
-                }
-            } elseif ($rel->RelatedPersonID === $person_id) {
-                // This person is the related person (e.g. child of X)
-                if (strtolower($rel->RelationshipType) === 'child') {
-                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->PersonID));
-                    if ($p) $family['Children'] .= ($family['Children'] ? ', ' : '') . $p->FirstName . ' ' . $p->LastName;
-                } else {
-                    $p = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->PersonID));
-                    if ($p) $other[] = $rel->RelationshipType . ' of ' . $p->FirstName . ' ' . $p->LastName;
-                }
+            $related = $wpdb->get_row($wpdb->prepare("SELECT PersonID, FirstName, LastName FROM $person_table WHERE PersonID = %s", $rel->RelatedPersonID));
+            if ($related) {
+                $relationships[] = [
+                    'RelatedPersonID' => $related->PersonID,
+                    'RelatedPersonName' => $related->FirstName . ' ' . $related->LastName,
+                    'RelationshipType' => $rel->RelationshipType
+                ];
             }
         }
-        if (!empty($children)) $family['Children'] = implode(', ', $children);
-        if (!empty($other)) $family['Other'] = implode('; ', $other);
 
         // Roles (with program)
         $roles = $wpdb->get_results($wpdb->prepare(
@@ -999,7 +973,7 @@ class Administration_Plugin_Public {
 
         wp_send_json_success([
             'general' => $general,
-            'family' => $family,
+            'relationships' => $relationships,
             'roles' => $roles_arr
         ]);
     }

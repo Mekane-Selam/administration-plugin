@@ -1059,7 +1059,7 @@ body.administration-dashboard-public {
 /* --- Persons-Content Two-Column Layout --- */
 .two-column-layout {
     display: flex;
-    gap: 32px;
+    gap: 10px;
     margin-top: 18px;
 }
 .left-column {
@@ -1069,7 +1069,7 @@ body.administration-dashboard-public {
     background: #f7fafd;
     border-radius: 14px;
     border: 1px solid #e3e7ee;
-    padding: 24px 16px 18px 16px;
+    padding: 24px 7px 18px 7px;
     display: flex;
     flex-direction: column;
     gap: 18px;

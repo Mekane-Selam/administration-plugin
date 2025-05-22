@@ -455,7 +455,8 @@ class Administration_Plugin_Public {
             wp_send_json_error('Permission denied.');
         }
         error_log('ajax_edit_person POST: ' . print_r($_POST, true));
-        $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
+        $person_id = isset($_POST['person_id']) ? trim(sanitize_text_field($_POST['person_id'])) : '';
+        error_log('Trimmed person_id: ' . $person_id);
         $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
         $last_name = isset($_POST['last_name']) ? sanitize_text_field($_POST['last_name']) : '';
         $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
@@ -486,6 +487,9 @@ class Administration_Plugin_Public {
         ];
         $result = Administration_Database::save_person($person_data);
         error_log('save_person result: ' . print_r($result, true));
+        // Check if update matched any rows
+        $row_check = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE PersonID = %s", $person_id));
+        error_log('Row check for person_id ' . $person_id . ': ' . $row_check);
         if ($result) {
             wp_send_json_success();
         } else {

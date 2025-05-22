@@ -107,18 +107,35 @@
                 if (section === 'general') {
                     var $content = $('#person-details-general-content');
                     var d = Dashboard._lastPersonDetails;
-                    // Render inputs for editable fields
+                    // Gender dropdown
+                    var genderOptions = [
+                        { value: '', label: '' },
+                        { value: 'Male', label: 'Male' },
+                        { value: 'Female', label: 'Female' }
+                    ];
+                    var genderSelect = `<select class='person-detail-value' name='Gender'>`;
+                    genderOptions.forEach(function(opt) {
+                        genderSelect += `<option value='${opt.value}'${d.general.Gender === opt.value ? ' selected' : ''}>${opt.label}</option>`;
+                    });
+                    genderSelect += `</select>`;
+                    // State dropdown
+                    var states = ['', 'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+                    var stateSelect = `<select class='person-detail-value' name='State'>`;
+                    states.forEach(function(st) {
+                        stateSelect += `<option value='${st}'${d.general.State === st ? ' selected' : ''}>${st}</option>`;
+                    });
+                    stateSelect += `</select>`;
                     var editHtml = `<div class='person-details-card'><form id='edit-person-general-form'><div class='person-details-grid'>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><input class='person-detail-value' type='text' name='FirstName' value='${d.general.FirstName || ''}' required /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><input class='person-detail-value' type='text' name='LastName' value='${d.general.LastName || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><input class='person-detail-value' type='text' name='Title' value='${d.general.Title || ''}' /></div>`;
-                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><input class='person-detail-value' type='text' name='Gender' value='${d.general.Gender || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span>${genderSelect}</div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><input class='person-detail-value' type='email' name='Email' value='${d.general.Email || ''}' required /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone</span><input class='person-detail-value' type='text' name='Phone' value='${d.general.Phone || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 1</span><input class='person-detail-value' type='text' name='AddressLine1' value='${d.general.AddressLine1 || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 2</span><input class='person-detail-value' type='text' name='AddressLine2' value='${d.general.AddressLine2 || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>City</span><input class='person-detail-value' type='text' name='City' value='${d.general.City || ''}' /></div>`;
-                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span><input class='person-detail-value' type='text' name='State' value='${d.general.State || ''}' /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span>${stateSelect}</div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Zip</span><input class='person-detail-value' type='text' name='Zip' value='${d.general.Zip || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><input class='person-detail-value' type='date' name='Birthday' value='${d.general.Birthday ? d.general.Birthday.split('T')[0] : ''}' /></div>`;
                     editHtml += `</div><div class='edit-person-actions' style='margin-top:18px; text-align:right;'><button type='submit' class='button button-primary'>Save</button> <button type='button' class='button button-secondary' id='cancel-edit-person-general'>Cancel</button></div></form></div>`;

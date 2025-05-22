@@ -1660,4 +1660,78 @@ body.administration-dashboard-public {
     background: #eaf4fb;
     color: #135e96;
     border-color: #2271b1;
+}
+
+/* HR Dashboard Styles */
+.hr-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.hr-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.hr-column {
+    min-width: 0;
+}
+
+.hr-column .card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.hr-column .card-header {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.hr-column .card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.hr-column .card-body {
+    padding: 1rem;
+}
+
+.hr-column .table-responsive {
+    overflow-x: auto;
+}
+
+.hr-column .table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.hr-column .table th,
+.hr-column .table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.hr-column .table th {
+    font-weight: 600;
+    color: #666;
+    background: #f8f9fa;
+}
+
+.hr-column .no-data {
+    color: #666;
+    text-align: center;
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .hr-row {
+        grid-template-columns: 1fr;
+    }
 } 

@@ -55,8 +55,8 @@ class Administration_Database {
         $progtype_edu_courseenrollments_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
 
         // Program Types Tables
-        $staffmgmt_staff = $wpdb->prefix . 'staffmgmt_staff';
-        $staffmgmt_roles = $wpdb->prefix . 'staffmgmt_roles';
+        $staffmgmt_staff_table = $wpdb->prefix . 'staffmgmt_staff';
+        $staffmgmt_roles_table = $wpdb->prefix . 'staffmgmt_roles';
         
 
         // List of all tables

@@ -790,7 +790,8 @@
                                 $('#add-staff-modal').removeClass('show');
                                 $form[0].reset();
                                 $msg.html('');
-                                // Optionally reload staff list here
+                                // Reload staff list for the current program
+                                ProgramView.reloadStaffList(programId);
                             }, 800);
                         } else {
                             $msg.html('<span class="error-message">' + (response.data || 'Failed to add staff member.') + '</span>');
@@ -929,6 +930,51 @@
                     }
                 });
             });
+
+            // Helper to reload only the staff list for the current program
+            ProgramView.reloadStaffList = function(programId) {
+                var $container = $('.program-view-edu-staff-content-list');
+                if (!$container.length) return;
+                $container.html('<div class="loading">Loading staff...</div>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_program_staff_list',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data)) {
+                            var html = '';
+                            if (response.data.length) {
+                                html += '<div class="program-view-edu-staff-grid">';
+                                response.data.forEach(function(staff) {
+                                    html += `<div class="program-view-edu-staff-card" data-person-id="${staff.PersonID}">
+                                        <div class="program-view-edu-staff-info">
+                                            <h4 class="program-view-edu-staff-name">${staff.FirstName} ${staff.LastName}</h4>
+                                            <span class="program-view-edu-staff-role">${staff.RoleTitle || ''}</span>
+                                        </div>
+                                        <div class="program-view-edu-staff-actions">
+                                            <button type="button" class="program-view-edu-staff-edit-btn" data-staff-id="${staff.StaffID || ''}"><span class="dashicons dashicons-edit"></span></button>
+                                            <button type="button" class="program-view-edu-staff-remove-btn" data-staff-id="${staff.StaffID || ''}"><span class="dashicons dashicons-trash"></span></button>
+                                        </div>
+                                    </div>`;
+                                });
+                                html += '</div>';
+                            } else {
+                                html = '<div class="program-view-edu-staff-empty"><span class="dashicons dashicons-groups"></span><p>No staff members assigned to this program yet.</p></div>';
+                            }
+                            $container.html(html);
+                        } else {
+                            $container.html('<div class="error-message">Failed to load staff.</div>');
+                        }
+                    },
+                    error: function() {
+                        $container.html('<div class="error-message">Failed to load staff.</div>');
+                    }
+                });
+            };
         }
     };
     $(document).ready(function() {

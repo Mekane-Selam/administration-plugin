@@ -454,6 +454,7 @@ class Administration_Plugin_Public {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permission denied.');
         }
+        error_log('ajax_edit_person POST: ' . print_r($_POST, true));
         $person_id = isset($_POST['person_id']) ? sanitize_text_field($_POST['person_id']) : '';
         $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
         $last_name = isset($_POST['last_name']) ? sanitize_text_field($_POST['last_name']) : '';
@@ -472,9 +473,19 @@ class Administration_Plugin_Public {
             'PersonID' => $person_id,
             'FirstName' => $first_name,
             'LastName' => $last_name,
-            'Email' => $email
+            'Email' => $email,
+            'Title' => isset($_POST['Title']) ? sanitize_text_field($_POST['Title']) : '',
+            'Gender' => isset($_POST['Gender']) ? sanitize_text_field($_POST['Gender']) : '',
+            'Phone' => isset($_POST['Phone']) ? sanitize_text_field($_POST['Phone']) : '',
+            'AddressLine1' => isset($_POST['AddressLine1']) ? sanitize_text_field($_POST['AddressLine1']) : '',
+            'AddressLine2' => isset($_POST['AddressLine2']) ? sanitize_text_field($_POST['AddressLine2']) : '',
+            'City' => isset($_POST['City']) ? sanitize_text_field($_POST['City']) : '',
+            'State' => isset($_POST['State']) ? sanitize_text_field($_POST['State']) : '',
+            'Zip' => isset($_POST['Zip']) ? sanitize_text_field($_POST['Zip']) : '',
+            'Birthday' => isset($_POST['Birthday']) ? sanitize_text_field($_POST['Birthday']) : null,
         ];
         $result = Administration_Database::save_person($person_data);
+        error_log('save_person result: ' . print_r($result, true));
         if ($result) {
             wp_send_json_success();
         } else {

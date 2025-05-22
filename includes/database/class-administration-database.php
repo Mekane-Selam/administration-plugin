@@ -598,6 +598,10 @@ class Administration_Database {
                 $fields,
                 ['PersonID' => $person_data['PersonID']]
             );
+            if ($result === false) {
+                error_log('Failed to update person: ' . print_r($person_data, true));
+                error_log('wpdb last error: ' . $wpdb->last_error);
+            }
             return $result !== false ? $person_data['PersonID'] : false;
         } else {
             // Insert new, generate unique PersonID (PERSxxxxx)

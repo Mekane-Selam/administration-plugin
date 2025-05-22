@@ -148,8 +148,8 @@
             // Join the staff, staff roles, and person tables
             $staff_query = $wpdb->prepare(
                 "SELECT s.*, sr.RoleTitle, p.FirstName, p.LastName 
-                FROM {$wpdb->prefix}staffmgmt_staff s
-                LEFT JOIN {$wpdb->prefix}staffmgmt_roles sr ON s.StaffRolesID = sr.StaffRoleID
+                FROM {$wpdb->prefix}hr_staff s
+                LEFT JOIN {$wpdb->prefix}hr_roles sr ON s.StaffRolesID = sr.StaffRoleID
                 LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID
                 WHERE s.ProgramID = %d
                 ORDER BY sr.RoleTitle, p.LastName, p.FirstName",
@@ -233,7 +233,7 @@
                     <option value="">Select Role</option>
                     <?php
                     global $wpdb;
-                    $roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}staffmgmt_roles ORDER BY RoleTitle");
+                    $roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}hr_roles ORDER BY RoleTitle");
                     foreach ($roles as $role) {
                         echo '<option value="' . esc_attr($role->StaffRoleID) . '">' . esc_html($role->RoleTitle) . '</option>';
                     }

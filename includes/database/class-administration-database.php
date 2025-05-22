@@ -55,8 +55,8 @@ class Administration_Database {
         $progtype_edu_courseenrollments_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
 
         // Program Types Tables
-        $staffmgmt_staff_table = $wpdb->prefix . 'staffmgmt_staff';
-        $staffmgmt_roles_table = $wpdb->prefix . 'staffmgmt_roles';
+        $hr_staff_table = $wpdb->prefix . 'hr_staff';
+        $hr_roles_table = $wpdb->prefix . 'hr_roles';
         
 
         // List of all tables
@@ -90,8 +90,8 @@ class Administration_Database {
             $offers_table,
             $progtype_edu_enrollment_table,
             $progtype_edu_courses_table,
-            $staffmgmt_staff_table,
-            $staffmgmt_roles_table,
+            $hr_staff_table,
+            $hr_roles_table,
             $progtype_edu_courseenrollments_table
         ];
 
@@ -522,7 +522,7 @@ class Administration_Database {
             CONSTRAINT fk_edu_courseenroll_course FOREIGN KEY (CourseID) REFERENCES {$wpdb->prefix}progtype_edu_courses(CourseID) ON DELETE SET NULL
         ) $charset_collate;";
         
-        $sql[] = "CREATE TABLE IF NOT EXISTS $staffmgmt_roles_table (
+        $sql[] = "CREATE TABLE IF NOT EXISTS $hr_roles_table (
             StaffRoleID VARCHAR(25) NOT NULL,
             StaffRoleDescription VARCHAR(100),
             RoleTitle VARCHAR(50) NULL,
@@ -530,13 +530,13 @@ class Administration_Database {
             PRIMARY KEY (StaffRoleID)
         ) $charset_collate;";
         
-        $sql[] = "CREATE TABLE IF NOT EXISTS $staffmgmt_staff_table (
+        $sql[] = "CREATE TABLE IF NOT EXISTS $hr_staff_table (
             PersonID VARCHAR(25) NOT NULL,
             StaffRolesID VARCHAR(25) NULL,
             ProgramID VARCHAR(25) NULL,
             PRIMARY KEY (PersonID),
             CONSTRAINT fk_staff_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE CASCADE,
-            CONSTRAINT fk_staff_roles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}staffmgmt_roles(StaffRoleID) ON DELETE SET NULL,
+            CONSTRAINT fk_staff_roles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}hr_roles(StaffRoleID) ON DELETE SET NULL,
             CONSTRAINT fk_staff_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
 

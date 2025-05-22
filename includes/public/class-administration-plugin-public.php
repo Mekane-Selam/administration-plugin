@@ -458,8 +458,8 @@ class Administration_Plugin_Public {
         $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
         $last_name = isset($_POST['last_name']) ? sanitize_text_field($_POST['last_name']) : '';
         $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
-        if (!$person_id || !$first_name || !$last_name || !$email) {
-            wp_send_json_error('All fields are required.');
+        if (!$person_id || !$first_name || !$email) {
+            wp_send_json_error('First name and email are required.');
         }
         global $wpdb;
         $table = $wpdb->prefix . 'core_person';

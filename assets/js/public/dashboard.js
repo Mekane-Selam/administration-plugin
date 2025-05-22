@@ -109,9 +109,8 @@
                     var d = Dashboard._lastPersonDetails;
                     // Render inputs for editable fields
                     var editHtml = `<div class='person-details-card'><form id='edit-person-general-form'><div class='person-details-grid'>`;
-                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>User ID</span><input class='person-detail-value' type='text' name='UserID' value='${d.general.UserID || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><input class='person-detail-value' type='text' name='FirstName' value='${d.general.FirstName || ''}' required /></div>`;
-                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><input class='person-detail-value' type='text' name='LastName' value='${d.general.LastName || ''}' required /></div>`;
+                    editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><input class='person-detail-value' type='text' name='LastName' value='${d.general.LastName || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><input class='person-detail-value' type='text' name='Title' value='${d.general.Title || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><input class='person-detail-value' type='text' name='Gender' value='${d.general.Gender || ''}' /></div>`;
                     editHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><input class='person-detail-value' type='email' name='Email' value='${d.general.Email || ''}' required /></div>`;
@@ -782,7 +781,6 @@
             generalHtml += `<div class='person-details-card'>`;
             generalHtml += `<div class='person-details-grid'>`;
             generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Person ID</span><span class='person-detail-value'>${d.general.PersonID || ''}</span></div>`;
-            generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>User ID</span><span class='person-detail-value'>${d.general.UserID || ''}</span></div>`;
             generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
             generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
             generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><span class='person-detail-value'>${d.general.Title || ''}</span></div>`;

@@ -1523,6 +1523,7 @@ body.administration-dashboard-public {
 }
 .relationship-person-input {
     width: 100%;
+    margin: 5px 5px 5px 5px;
     padding: 8px 12px;
     border: 1px solid #e3e7ee;
     border-radius: 6px;

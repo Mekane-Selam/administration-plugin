@@ -689,7 +689,7 @@
                     return;
                 }
                 // Generate StaffRoleID
-                var staffRoleId = 'EDSTAFROL' + Math.floor(10000 + Math.random() * 90000);
+                var staffRoleId = 'ROLE' + Math.floor(10000 + Math.random() * 90000);
                 $msg.html('<span class="loading">Adding role...</span>');
                 $.ajax({
                     url: administration_plugin.ajax_url,

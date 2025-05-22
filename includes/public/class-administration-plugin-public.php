@@ -815,7 +815,7 @@ class Administration_Plugin_Public {
             wp_send_json_error('Permission denied.');
         }
         global $wpdb;
-        $table = $wpdb->prefix . 'progtype_edu_staffroles';
+        $table = $wpdb->prefix . 'staffmgmt_roles';
         $staff_role_id = isset($_POST['StaffRoleID']) ? sanitize_text_field($_POST['StaffRoleID']) : '';
         $role_title = isset($_POST['RoleTitle']) ? sanitize_text_field($_POST['RoleTitle']) : '';
         $role_desc = isset($_POST['StaffRoleDescription']) ? sanitize_textarea_field($_POST['StaffRoleDescription']) : '';
@@ -847,7 +847,7 @@ class Administration_Plugin_Public {
             wp_send_json_error('Permission denied.');
         }
         global $wpdb;
-        $table = $wpdb->prefix . 'progtype_edu_staff';
+        $table = $wpdb->prefix . 'staffmgmt_staff';
         $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
         $staff_roles_id = isset($_POST['StaffRolesID']) ? sanitize_text_field($_POST['StaffRolesID']) : '';
         $program_id = isset($_POST['ProgramID']) ? sanitize_text_field($_POST['ProgramID']) : '';
@@ -884,9 +884,9 @@ class Administration_Plugin_Public {
         if (!$program_id) {
             wp_send_json_error('Missing program ID.');
         }
-        $staff_table = $wpdb->prefix . 'progtype_edu_staff';
+        $staff_table = $wpdb->prefix . 'staffmgmt_staff';
         $person_table = $wpdb->prefix . 'core_person';
-        $staff_roles_table = $wpdb->prefix . 'progtype_edu_staffroles';
+        $staff_roles_table = $wpdb->prefix . 'staffmgmt_roles';
         $staff = $wpdb->get_results($wpdb->prepare(
             "SELECT s.*, p.FirstName, p.LastName, sr.RoleTitle 
             FROM $staff_table s 

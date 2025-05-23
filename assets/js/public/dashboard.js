@@ -1092,6 +1092,43 @@
                 alert('Could not determine program ID.');
             }
         });
+
+        // Staff Directory Modal Logic
+        const staffRows = document.querySelectorAll('.staff-row');
+        const staffModal = document.getElementById('staff-details-modal');
+        const staffModalClose = document.getElementById('close-staff-details-modal');
+        const staffDetailsContent = document.getElementById('staff-details-general-content');
+
+        staffRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                const personId = this.getAttribute('data-person-id');
+                // TODO: Replace with AJAX call to fetch real data
+                staffDetailsContent.innerHTML = '<div>Loading...</div>';
+                staffModal.style.display = 'flex';
+                // Example: Fetch details via AJAX (mock for now)
+                setTimeout(function() {
+                    staffDetailsContent.innerHTML = `
+                        <div><strong>Name:</strong> John Doe</div>
+                        <div><strong>Email:</strong> johndoe@example.com</div>
+                        <div><strong>Phone:</strong> (555) 123-4567</div>
+                        <div><strong>Role:</strong> Example Role</div>
+                        <div><strong>Program:</strong> Example Program</div>
+                    `;
+                }, 500);
+            });
+        });
+
+        if (staffModalClose) {
+            staffModalClose.addEventListener('click', function() {
+                staffModal.style.display = 'none';
+            });
+        }
+        // Optional: Close modal on outside click
+        window.addEventListener('click', function(event) {
+            if (event.target === staffModal) {
+                staffModal.style.display = 'none';
+            }
+        });
     });
 
 })(jQuery); 

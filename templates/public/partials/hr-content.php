@@ -20,10 +20,10 @@ $staff_members = $wpdb->get_results(
     <div class="hr-admin-grid">
         <!-- Staff Directory Card -->
         <div class="card">
-            <div class="card-header">
-                <h2>Staff Members</h2>
+            <div class="card-header" style="padding-left: 24px;">
+                <h2>Staff Directory</h2>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="padding-left: 24px; padding-right: 24px;">
                 <?php if (!empty($staff_members)) : ?>
                     <div class="table-responsive">
                         <table class="hr-admin-staff-table">
@@ -36,7 +36,7 @@ $staff_members = $wpdb->get_results(
                             </thead>
                             <tbody>
                                 <?php foreach ($staff_members as $staff) : ?>
-                                    <tr>
+                                    <tr class="staff-row" data-person-id="<?php echo esc_attr($staff->PersonID); ?>">
                                         <td><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></td>
                                         <td><?php echo esc_html($staff->RoleTitle ?: '—'); ?></td>
                                         <td><?php echo esc_html($staff->ProgramName ?: '—'); ?></td>
@@ -52,7 +52,7 @@ $staff_members = $wpdb->get_results(
         </div>
         <!-- Placeholder Card 1 -->
         <div class="card">
-            <div class="card-header">
+            <div class="card-header" style="padding-left: 24px;">
                 <h2>HR Analytics</h2>
             </div>
             <div class="card-body">
@@ -61,7 +61,7 @@ $staff_members = $wpdb->get_results(
         </div>
         <!-- Placeholder Card 2 -->
         <div class="card">
-            <div class="card-header">
+            <div class="card-header" style="padding-left: 24px;">
                 <h2>Open Positions</h2>
             </div>
             <div class="card-body">
@@ -70,12 +70,26 @@ $staff_members = $wpdb->get_results(
         </div>
         <!-- Placeholder Card 3 -->
         <div class="card">
-            <div class="card-header">
+            <div class="card-header" style="padding-left: 24px;">
                 <h2>Recent Applications</h2>
             </div>
             <div class="card-body">
                 <p>Recent applications and activity coming soon...</p>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Staff Details Modal -->
+<div id="staff-details-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" id="close-staff-details-modal" tabindex="0" role="button" aria-label="Close">&times;</span>
+        <h2>Staff Details</h2>
+        <div class="person-details-section person-details-general">
+            <div class="person-details-section-header">
+                <h3>General</h3>
+            </div>
+            <div class="person-details-section-content" id="staff-details-general-content"></div>
         </div>
     </div>
 </div> 

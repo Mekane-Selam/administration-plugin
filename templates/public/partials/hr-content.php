@@ -26,7 +26,7 @@ $staff_members = $wpdb->get_results(
             <div class="card-body">
                 <?php if (!empty($staff_members)) : ?>
                     <div class="table-responsive">
-                        <table class="wp-list-table widefat fixed striped">
+                        <table class="hr-admin-staff-table">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -46,7 +46,7 @@ $staff_members = $wpdb->get_results(
                         </table>
                     </div>
                 <?php else : ?>
-                    <p class="no-data">No staff members found.</p>
+                    <div class="hr-admin-staff-table no-data">No staff members found.</div>
                 <?php endif; ?>
             </div>
         </div>

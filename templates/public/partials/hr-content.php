@@ -71,32 +71,22 @@ foreach ($staff_rows as $row) {
                 <?php endif; ?>
             </div>
         </div>
-        <!-- Placeholder Card 1 -->
+        <!-- Job Postings Card (Top Right) -->
         <div class="card">
             <div class="card-header" style="padding-left: 24px;">
-                <h2>HR Analytics</h2>
-            </div>
-            <div class="card-body">
-                <p>Analytics and metrics coming soon...</p>
-            </div>
-        </div>
-        <!-- Placeholder Card 2 -->
-        <div class="card">
-            <div class="card-header" style="padding-left: 24px;">
-                <h2>Open Positions</h2>
+                <h2>Job Postings</h2>
             </div>
             <div class="card-body">
                 <p>Job postings and open positions coming soon...</p>
             </div>
         </div>
-        <!-- Placeholder Card 3 -->
+        <!-- Blank Card 1 (Bottom Left) -->
         <div class="card">
-            <div class="card-header" style="padding-left: 24px;">
-                <h2>Recent Applications</h2>
-            </div>
-            <div class="card-body">
-                <p>Recent applications and activity coming soon...</p>
-            </div>
+            <div class="card-body"></div>
+        </div>
+        <!-- Blank Card 2 (Bottom Right) -->
+        <div class="card">
+            <div class="card-body"></div>
         </div>
     </div>
 </div>

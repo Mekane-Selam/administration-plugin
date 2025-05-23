@@ -17,36 +17,65 @@ $staff_members = $wpdb->get_results(
 ?>
 
 <div class="wrap administration-hr-admin">
-    <h1>HR Staff Directory</h1>
-    <div class="card">
-        <div class="card-header">
-            <h2>Staff Members</h2>
-        </div>
-        <div class="card-body">
-            <?php if (!empty($staff_members)) : ?>
-                <div class="table-responsive">
-                    <table class="wp-list-table widefat fixed striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Role</th>
-                                <th>Program</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($staff_members as $staff) : ?>
+    <div class="hr-admin-grid" style="display: flex; flex-wrap: wrap; gap: 24px;">
+        <!-- Staff Directory Card -->
+        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+            <div class="card-header">
+                <h2>Staff Members</h2>
+            </div>
+            <div class="card-body">
+                <?php if (!empty($staff_members)) : ?>
+                    <div class="table-responsive">
+                        <table class="wp-list-table widefat fixed striped">
+                            <thead>
                                 <tr>
-                                    <td><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></td>
-                                    <td><?php echo esc_html($staff->RoleTitle ?: '—'); ?></td>
-                                    <td><?php echo esc_html($staff->ProgramName ?: '—'); ?></td>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Program</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php else : ?>
-                <p class="no-data">No staff members found.</p>
-            <?php endif; ?>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($staff_members as $staff) : ?>
+                                    <tr>
+                                        <td><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></td>
+                                        <td><?php echo esc_html($staff->RoleTitle ?: '—'); ?></td>
+                                        <td><?php echo esc_html($staff->ProgramName ?: '—'); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php else : ?>
+                    <p class="no-data">No staff members found.</p>
+                <?php endif; ?>
+            </div>
+        </div>
+        <!-- Placeholder Card 1 -->
+        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+            <div class="card-header">
+                <h2>HR Analytics</h2>
+            </div>
+            <div class="card-body">
+                <p>Analytics and metrics coming soon...</p>
+            </div>
+        </div>
+        <!-- Placeholder Card 2 -->
+        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+            <div class="card-header">
+                <h2>Open Positions</h2>
+            </div>
+            <div class="card-body">
+                <p>Job postings and open positions coming soon...</p>
+            </div>
+        </div>
+        <!-- Placeholder Card 3 -->
+        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+            <div class="card-header">
+                <h2>Recent Applications</h2>
+            </div>
+            <div class="card-body">
+                <p>Recent applications and activity coming soon...</p>
+            </div>
         </div>
     </div>
 </div> 

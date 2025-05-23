@@ -77,10 +77,14 @@ foreach ($staff_rows as $row) {
                 <h2>Job Postings</h2>
             </div>
             <div class="card-body">
-                <div class="job-postings-list-header">
+                <div class="job-postings-list-header" style="display: flex; align-items: center; gap: 12px;">
                     <button id="add-job-posting-btn" class="add-button" title="Add Job Posting">
                         <span class="dashicons dashicons-plus-alt"></span>
                     </button>
+                    <label for="toggle-all-job-postings" style="display: flex; align-items: center; gap: 4px; margin-left: 8px; cursor: pointer; font-size: 0.98em;">
+                        <input type="checkbox" id="toggle-all-job-postings" style="margin-right: 4px; accent-color: #2271b1;">
+                        Show All
+                    </label>
                 </div>
                 <div id="job-postings-list"></div>
             </div>

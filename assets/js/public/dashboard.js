@@ -398,8 +398,13 @@
             }
             // Also initialize job postings logic if the job postings card is present
             if ($('.job-postings-list-header').length) {
-                Dashboard.loadJobPostingsList();
+                // Default: only active
+                Dashboard.loadJobPostingsList(false);
                 Dashboard.setupJobPostingsHandlers();
+                // Toggle handler
+                $(document).off('change', '#toggle-all-job-postings').on('change', '#toggle-all-job-postings', function() {
+                    Dashboard.loadJobPostingsList(this.checked);
+                });
             }
         },
 
@@ -474,7 +479,7 @@
             });
         },
 
-        loadJobPostingsList: function() {
+        loadJobPostingsList: function(showAll) {
             const $list = $('#job-postings-list');
             $list.html('<div class="loading">Loading job postings...</div>');
             $.ajax({
@@ -482,7 +487,8 @@
                 type: 'POST',
                 data: {
                     action: 'get_job_postings_list',
-                    nonce: administration_plugin.nonce
+                    nonce: administration_plugin.nonce,
+                    show_all: showAll ? 1 : 0
                 },
                 success: function(response) {
                     if (response.success && Array.isArray(response.data)) {

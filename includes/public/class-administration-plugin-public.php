@@ -1190,10 +1190,15 @@ class Administration_Plugin_Public {
         }
         global $wpdb;
         $table = $wpdb->prefix . 'hr_jobpostings';
-        $results = $wpdb->get_results($wpdb->prepare(
-            "SELECT JobPostingID, Title, DepartmentName, JobType, Location, SalaryRange, PostedDate, ClosingDate, Status FROM $table WHERE Status = %s ORDER BY PostedDate DESC",
-            'Active'
-        ));
+        $show_all = isset($_POST['show_all']) && $_POST['show_all'] == '1';
+        if ($show_all) {
+            $results = $wpdb->get_results("SELECT JobPostingID, Title, DepartmentName, JobType, Location, SalaryRange, PostedDate, ClosingDate, Status FROM $table ORDER BY PostedDate DESC");
+        } else {
+            $results = $wpdb->get_results($wpdb->prepare(
+                "SELECT JobPostingID, Title, DepartmentName, JobType, Location, SalaryRange, PostedDate, ClosingDate, Status FROM $table WHERE Status = %s ORDER BY PostedDate DESC",
+                'Active'
+            ));
+        }
         wp_send_json_success($results);
     }
 

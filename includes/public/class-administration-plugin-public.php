@@ -1264,32 +1264,24 @@ class Administration_Plugin_Public {
         if (!$job) {
             wp_send_json_error('Job posting not found.');
         }
+        // Render details in a grid similar to staff modal
         ob_start();
-        ?>
-        <div class="job-details-modal-content">
-            <h3 class="job-details-title"><?php echo esc_html($job->Title); ?></h3>
-            <div class="job-details-fields">
-                <div class="job-details-row"><span class="job-details-label">Department:</span> <span class="job-details-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Job Type:</span> <span class="job-details-value"><?php echo esc_html($job->JobType); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Status:</span> <span class="job-details-value"><?php echo esc_html($job->Status); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Location:</span> <span class="job-details-value"><?php echo esc_html($job->Location); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Salary Range:</span> <span class="job-details-value"><?php echo esc_html($job->SalaryRange); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Posted Date:</span> <span class="job-details-value"><?php echo esc_html($job->PostedDate); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Closing Date:</span> <span class="job-details-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Program:</span> <span class="job-details-value"><?php echo esc_html($job->ProgramID); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Reports To:</span> <span class="job-details-value"><?php echo esc_html($job->ReportsTo); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Created By:</span> <span class="job-details-value"><?php echo esc_html($job->CreatedBy); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Last Modified:</span> <span class="job-details-value"><?php echo esc_html($job->LastModifiedDate); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Internal Posting:</span> <span class="job-details-value"><?php echo $job->IsInternal ? 'Yes' : 'No'; ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Description:</span> <span class="job-details-value"><?php echo nl2br(esc_html($job->Description)); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Requirements:</span> <span class="job-details-value"><?php echo nl2br(esc_html($job->Requirements)); ?></span></div>
-                <div class="job-details-row"><span class="job-details-label">Responsibilities:</span> <span class="job-details-value"><?php echo nl2br(esc_html($job->Responsibilities)); ?></span></div>
-            </div>
-            <div class="job-details-actions job-details-actions-centered">
-                <a href="#" class="button job-goto-btn modern-goto-btn" data-job-posting-id="<?php echo esc_attr($job->JobPostingID); ?>">Go to Job Posting</a>
-            </div>
-        </div>
-        <?php
+        echo '<div class="person-details-grid">';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Job Title</span><span class="person-detail-value">' . esc_html($job->Title) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Status</span><span class="person-detail-value">' . esc_html($job->Status) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Department</span><span class="person-detail-value">' . esc_html($job->DepartmentName) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Job Type</span><span class="person-detail-value">' . esc_html($job->JobType) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Location</span><span class="person-detail-value">' . esc_html($job->Location) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Salary Range</span><span class="person-detail-value">' . esc_html($job->SalaryRange) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Posted Date</span><span class="person-detail-value">' . esc_html($job->PostedDate) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Closing Date</span><span class="person-detail-value">' . esc_html($job->ClosingDate) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Program</span><span class="person-detail-value">' . esc_html($job->ProgramID) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Reports To</span><span class="person-detail-value">' . esc_html($job->ReportsTo) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Internal?</span><span class="person-detail-value">' . ($job->IsInternal ? 'Yes' : 'No') . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Description</span><span class="person-detail-value">' . esc_html($job->Description) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Requirements</span><span class="person-detail-value">' . esc_html($job->Requirements) . '</span></div>';
+        echo '<div class="person-detail-row"><span class="person-detail-label">Responsibilities</span><span class="person-detail-value">' . esc_html($job->Responsibilities) . '</span></div>';
+        echo '</div>';
         $html = ob_get_clean();
         wp_send_json_success($html);
     }

@@ -1930,4 +1930,89 @@ body.administration-dashboard-public {
     #job-postings-list {
         padding: 0 12px 12px 12px;
     }
+}
+
+/* Job Listings Table - match staff table */
+.job-listings-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+    font-size: 1.05rem;
+}
+.job-listings-table th, .job-listings-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e3e7ee;
+    text-align: left;
+}
+.job-listings-table th {
+    background: #f7fafd;
+    font-weight: 600;
+    color: #2271b1;
+}
+.job-listings-table tr:last-child td {
+    border-bottom: none;
+}
+.job-listings-table tr {
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.job-listings-table tr:hover {
+    background: #f0f4fa;
+}
+
+/* Modal details card for job posting */
+#job-posting-details-modal .modal-content {
+    max-width: 600px;
+    padding: 0;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 8px 32px rgba(34,113,177,0.12), 0 2px 8px rgba(0,0,0,0.04);
+}
+#job-posting-details-content .person-details-card {
+    padding: 32px 32px 24px 32px;
+    border-radius: 16px;
+    background: #f7fafd;
+    box-shadow: none;
+    margin: 0;
+}
+#job-posting-details-content .person-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px;
+    margin-top: 12px;
+}
+#job-posting-details-content .person-detail-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+}
+#job-posting-details-content .person-detail-label {
+    font-weight: 600;
+    color: #2271b1;
+    min-width: 120px;
+}
+#job-posting-details-content .person-detail-value {
+    color: #222;
+    word-break: break-word;
+}
+#job-posting-details-modal .close {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    font-size: 2rem;
+    color: #2271b1;
+    cursor: pointer;
+    z-index: 10;
+    background: none;
+    border: none;
+    outline: none;
+    transition: color 0.15s;
+}
+#job-posting-details-modal .close:hover {
+    color: #d7263d;
 } 

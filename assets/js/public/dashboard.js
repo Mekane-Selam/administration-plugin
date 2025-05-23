@@ -502,7 +502,7 @@
                 $list.html('<div class="no-data">No job postings found.</div>');
                 return;
             }
-            let html = '<div class="job-postings-list-table table-responsive"><table><thead><tr><th>Job Name</th><th>Status</th></tr></thead><tbody>';
+            let html = '<div class="hr-admin-staff-table-wrapper"><table class="hr-admin-staff-table job-listings-table"><thead><tr><th>Job Name</th><th>Status</th></tr></thead><tbody>';
             jobs.forEach(function(job) {
                 html += `<tr class="job-posting-row" data-job-posting-id="${job.JobPostingID}">` +
                     `<td>${job.Title ? Dashboard.escapeHtml(job.Title) : ''}</td>` +
@@ -547,7 +547,8 @@
                 },
                 success: function(response) {
                     if (response.success && response.data) {
-                        $('#job-posting-details-content').html(response.data);
+                        // Wrap the returned HTML in a styled card/grid for consistency
+                        $('#job-posting-details-content').html('<div class="person-details-card">' + response.data + '</div>');
                     } else {
                         $('#job-posting-details-content').html('<div class="error-message">Failed to load job posting details.</div>');
                     }
@@ -694,8 +695,6 @@
             var formData = $form.serializeArray();
             var data = { action: 'add_job_posting', nonce: administration_plugin.nonce };
             formData.forEach(function(field) { data[field.name] = field.value; });
-            // Log all fields being sent
-            console.log('Submitting job posting with data:', data);
             // Validate required fields
             if (!data.title || !data.job_type || !data.status) {
                 $message.html('<span class="error-message">Job Title, Job Type, and Status are required.</span>');

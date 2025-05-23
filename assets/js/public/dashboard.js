@@ -578,7 +578,7 @@
             let $container = $('#job-posting-view-container');
             if (!$container.length) {
                 $container = $('<div id="job-posting-view-container" class="job-posting-view-container" style="display:none;"></div>');
-                $('body').append($container);
+                $('.administration-public-dashboard').parent().append($container);
             }
             $container.html('<div class="loading">Loading job posting...</div>');
             $container.show();

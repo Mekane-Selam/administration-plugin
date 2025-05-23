@@ -1093,40 +1093,37 @@
             }
         });
 
-        // Staff Directory Modal Logic
-        const staffRows = document.querySelectorAll('.staff-row');
-        const staffModal = document.getElementById('staff-details-modal');
-        const staffModalClose = document.getElementById('close-staff-details-modal');
-        const staffDetailsContent = document.getElementById('staff-details-general-content');
-
-        staffRows.forEach(function(row) {
-            row.addEventListener('click', function() {
-                const personId = this.getAttribute('data-person-id');
-                // TODO: Replace with AJAX call to fetch real data
-                staffDetailsContent.innerHTML = '<div>Loading...</div>';
-                staffModal.style.display = 'flex';
-                // Example: Fetch details via AJAX (mock for now)
-                setTimeout(function() {
-                    staffDetailsContent.innerHTML = `
-                        <div><strong>Name:</strong> John Doe</div>
-                        <div><strong>Email:</strong> johndoe@example.com</div>
-                        <div><strong>Phone:</strong> (555) 123-4567</div>
-                        <div><strong>Role:</strong> Example Role</div>
-                        <div><strong>Program:</strong> Example Program</div>
-                    `;
-                }, 500);
-            });
+        // Remove direct event listeners for staff rows
+        // Add delegated event handler for staff row clicks
+        $(document).on('click', '.staff-row', function(e) {
+            e.preventDefault();
+            const personId = $(this).data('person-id');
+            const $staffModal = $('#staff-details-modal');
+            const $staffDetailsContent = $('#staff-details-general-content');
+            $staffDetailsContent.html('<div>Loading...</div>');
+            $staffModal.css('display', 'flex');
+            // Example: Fetch details via AJAX (mock for now)
+            setTimeout(function() {
+                $staffDetailsContent.html(`
+                    <div><strong>Name:</strong> John Doe</div>
+                    <div><strong>Email:</strong> johndoe@example.com</div>
+                    <div><strong>Phone:</strong> (555) 123-4567</div>
+                    <div><strong>Role:</strong> Example Role</div>
+                    <div><strong>Program:</strong> Example Program</div>
+                `);
+            }, 500);
         });
 
-        if (staffModalClose) {
-            staffModalClose.addEventListener('click', function() {
-                staffModal.style.display = 'none';
-            });
-        }
+        // Modal close button
+        $(document).on('click', '#close-staff-details-modal', function(e) {
+            e.preventDefault();
+            $('#staff-details-modal').css('display', 'none');
+        });
         // Optional: Close modal on outside click
-        window.addEventListener('click', function(event) {
-            if (event.target === staffModal) {
-                staffModal.style.display = 'none';
+        $(window).on('click', function(event) {
+            const $modal = $('#staff-details-modal');
+            if (event.target === $modal[0]) {
+                $modal.css('display', 'none');
             }
         });
     });

@@ -1370,15 +1370,16 @@
         },
 
         initEditJobPostingHandlers: function() {
-            // Edit Job Posting (inline edit in full view)
             $(document).off('click', '#edit-job-posting-btn').on('click', '#edit-job-posting-btn', function(e) {
                 e.preventDefault();
                 var $card = $(this).closest('.person-details-card');
-                var jobId = $(this).data('job-posting-id') || $('.job-posting-full-view').data('job-posting-id');
+                var $container = $('.job-posting-full-view');
+                var jobId = $(this).data('job-posting-id') || $container.data('job-posting-id');
                 // Gather current values from the DOM
                 var getVal = function(label) {
                     return $card.find('.person-detail-label:contains("' + label + '")').next('.person-detail-value').text().trim();
                 };
+                var title = $card.find('h2').text().replace(/^Job Posting:\s*/, '').trim();
                 var status = getVal('Status');
                 var department = getVal('Department');
                 var jobType = getVal('Job Type');
@@ -1399,10 +1400,12 @@
                 }).join('');
                 var internalOptions = `<option value="0"${isInternal==='0'?' selected':''}>No</option><option value="1"${isInternal==='1'?' selected':''}>Yes</option>`;
                 // Placeholders for dropdowns
-                var programSelect = `<select id="edit-job-program-id" name="program_id"><option value="">Loading...</option></select>`;
-                var reportsToSelect = `<select id="edit-job-reports-to" name="reports_to"><option value="">Loading...</option></select>`;
+                var programSelect = `<select id="edit-job-program-id" name="program_id" class="person-detail-value">`+
+                    `<option value="">Loading...</option></select>`;
+                var reportsToSelect = `<select id="edit-job-reports-to" name="reports_to" class="person-detail-value">`+
+                    `<option value="">Loading...</option></select>`;
                 // Build the form structure (mirroring the two-column layout)
-                var editHtml = `<form id="edit-job-posting-form"><div class="job-posting-details-two-col">
+                var editHtml = `<form id="edit-job-posting-form"><div class="job-posting-full-view" data-job-posting-id="${jobId}"><div class="job-posting-details-two-col">
                     <div class="job-posting-details-left">
                         <div class="job-posting-details-left-inner">
                             <div class="person-detail-row job-detail-status" style="grid-column: 1 / span 2;">
@@ -1410,10 +1413,11 @@
                                 <select class="person-detail-value" name="status">${statusOptions}</select>
                             </div>
                             <div class="job-posting-details-left-col">
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Job Title</span><input class="person-detail-value" type="text" name="title" value="${Dashboard.escapeHtml(title)}" required></div>
                                 <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Department</span><input class="person-detail-value" type="text" name="department_name" value="${Dashboard.escapeHtml(department)}"></div>
                                 <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Job Type</span><input class="person-detail-value" type="text" name="job_type" value="${Dashboard.escapeHtml(jobType)}"></div>
                                 <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Location</span><input class="person-detail-value" type="text" name="location" value="${Dashboard.escapeHtml(location)}"></div>
-                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Internal?</span><select class="person-detail-value" name="is_internal">${internalOptions}</select></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Internal?</span><select class="person-detail-value">${internalOptions}</select></div>
                             </div>
                             <div class="job-posting-details-left-col">
                                 <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Posted Date</span><input class="person-detail-value" type="date" name="posted_date" value="${postedDate}" disabled></div>
@@ -1436,7 +1440,7 @@
                 </div>
                 <div id="edit-job-posting-message"></div>
                 </form>`;
-                $card.html(editHtml);
+                $container.html(editHtml);
                 // Populate Program select
                 $.ajax({
                     url: administration_plugin.ajax_url,
@@ -1446,7 +1450,7 @@
                         if (response.success && Array.isArray(response.data)) {
                             var options = '<option value="">-- None --</option>';
                             response.data.forEach(function(program) {
-                                options += `<option value="${program.ProgramID}"${program.ProgramName===programName?' selected':''}>${Dashboard.escapeHtml(program.ProgramName)}</option>`;
+                                options += `<option value="${program.ProgramID}"${program.ProgramID===programName?' selected':''}>${Dashboard.escapeHtml(program.ProgramName)}</option>`;
                             });
                             $('#edit-job-program-id').html(options);
                         }
@@ -1462,7 +1466,7 @@
                             var options = '<option value="">-- None --</option>';
                             response.data.forEach(function(person) {
                                 var fullName = person.FirstName + ' ' + person.LastName;
-                                options += `<option value="${person.PersonID}"${fullName===reportsTo?' selected':''}>${Dashboard.escapeHtml(fullName)}</option>`;
+                                options += `<option value="${person.PersonID}"${person.PersonID==reportsTo?' selected':''}>${Dashboard.escapeHtml(fullName)}</option>`;
                             });
                             $('#edit-job-reports-to').html(options);
                         }

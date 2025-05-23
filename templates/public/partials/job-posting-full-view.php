@@ -1,7 +1,7 @@
 <?php
 // Modular job posting full view
 ?>
-<div class="job-posting-full-view">
+<div class="job-posting-full-view" data-job-posting-id="<?php echo esc_attr($job->JobPostingID); ?>">
     <button class="button button-primary back-to-dashboard-btn" id="back-to-dashboard-btn">&larr; Back to Dashboard</button>
     <div class="person-details-card" style="margin-top: 24px;">
         <h2 style="margin-bottom: 18px; color: #2271b1; font-size: 1.5rem; font-weight: 700; padding-left: 18px;">Job Posting: <?php echo esc_html($job->Title); ?></h2>

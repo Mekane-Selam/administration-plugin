@@ -17,9 +17,9 @@ $staff_members = $wpdb->get_results(
 ?>
 
 <div class="wrap administration-hr-admin">
-    <div class="hr-admin-grid" style="display: flex; flex-wrap: wrap; gap: 24px;">
+    <div class="hr-admin-grid">
         <!-- Staff Directory Card -->
-        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+        <div class="card">
             <div class="card-header">
                 <h2>Staff Members</h2>
             </div>
@@ -51,7 +51,7 @@ $staff_members = $wpdb->get_results(
             </div>
         </div>
         <!-- Placeholder Card 1 -->
-        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+        <div class="card">
             <div class="card-header">
                 <h2>HR Analytics</h2>
             </div>
@@ -60,7 +60,7 @@ $staff_members = $wpdb->get_results(
             </div>
         </div>
         <!-- Placeholder Card 2 -->
-        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+        <div class="card">
             <div class="card-header">
                 <h2>Open Positions</h2>
             </div>
@@ -69,7 +69,7 @@ $staff_members = $wpdb->get_results(
             </div>
         </div>
         <!-- Placeholder Card 3 -->
-        <div class="card" style="flex: 1 1 45%; min-width: 350px; max-width: 48%;">
+        <div class="card">
             <div class="card-header">
                 <h2>Recent Applications</h2>
             </div>

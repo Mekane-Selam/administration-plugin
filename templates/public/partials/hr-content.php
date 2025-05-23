@@ -6,7 +6,7 @@ $person_table = $wpdb->prefix . 'core_person';
 $roles_table = $wpdb->prefix . 'hr_roles';
 $programs_table = $wpdb->prefix . 'core_programs';
 
-$staff_members = $wpdb->get_results(
+$staff_rows = $wpdb->get_results(
     "SELECT s.PersonID, p.FirstName, p.LastName, r.RoleTitle, pr.ProgramName
      FROM $staff_table s
      LEFT JOIN $person_table p ON s.PersonID = p.PersonID
@@ -14,6 +14,27 @@ $staff_members = $wpdb->get_results(
      LEFT JOIN $programs_table pr ON s.ProgramID = pr.ProgramID
      ORDER BY p.LastName ASC, p.FirstName ASC"
 );
+
+// Group staff by PersonID
+$staff_members = [];
+foreach ($staff_rows as $row) {
+    $pid = $row->PersonID;
+    if (!isset($staff_members[$pid])) {
+        $staff_members[$pid] = [
+            'PersonID' => $row->PersonID,
+            'FirstName' => $row->FirstName,
+            'LastName' => $row->LastName,
+            'roles' => [],
+            'programs' => [],
+        ];
+    }
+    if ($row->RoleTitle && !in_array($row->RoleTitle, $staff_members[$pid]['roles'])) {
+        $staff_members[$pid]['roles'][] = $row->RoleTitle;
+    }
+    if ($row->ProgramName && !in_array($row->ProgramName, $staff_members[$pid]['programs'])) {
+        $staff_members[$pid]['programs'][] = $row->ProgramName;
+    }
+}
 ?>
 
 <div class="wrap administration-hr-admin">
@@ -36,10 +57,10 @@ $staff_members = $wpdb->get_results(
                             </thead>
                             <tbody>
                                 <?php foreach ($staff_members as $staff) : ?>
-                                    <tr class="staff-row" data-person-id="<?php echo esc_attr($staff->PersonID); ?>">
-                                        <td><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></td>
-                                        <td><?php echo esc_html($staff->RoleTitle ?: '—'); ?></td>
-                                        <td><?php echo esc_html($staff->ProgramName ?: '—'); ?></td>
+                                    <tr class="staff-row" data-person-id="<?php echo esc_attr($staff['PersonID']); ?>">
+                                        <td><?php echo esc_html($staff['FirstName'] . ' ' . $staff['LastName']); ?></td>
+                                        <td><?php echo count($staff['roles']) > 1 ? 'Multiple' : esc_html($staff['roles'][0] ?? '—'); ?></td>
+                                        <td><?php echo count($staff['programs']) > 1 ? 'Multiple' : esc_html($staff['programs'][0] ?? '—'); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>

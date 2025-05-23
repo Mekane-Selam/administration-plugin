@@ -999,7 +999,7 @@ class Administration_Plugin_Public {
             }
         }
 
-        // Roles (with program)
+        // Roles (with program) - core_person_roles
         $roles = $wpdb->get_results($wpdb->prepare(
             "SELECT pr.PersonRoleID, r.RoleName, p.ProgramName FROM $person_roles_table pr
             LEFT JOIN $roles_table r ON pr.RoleID = r.RoleID
@@ -1011,10 +1011,28 @@ class Administration_Plugin_Public {
         foreach ($roles as $role) {
             $roles_arr[] = [
                 'RoleName' => $role->RoleName,
+                'RoleTitle' => $role->RoleName, // for compatibility with frontend
                 'ProgramName' => $role->ProgramName
             ];
         }
-
+        // HR Staff roles
+        $hr_staff_table = $wpdb->prefix . 'hr_staff';
+        $hr_roles_table = $wpdb->prefix . 'hr_roles';
+        $hr_programs_table = $wpdb->prefix . 'core_programs';
+        $hr_roles = $wpdb->get_results($wpdb->prepare(
+            "SELECT s.StaffRolesID, r.RoleTitle, p.ProgramName FROM $hr_staff_table s
+            LEFT JOIN $hr_roles_table r ON s.StaffRolesID = r.StaffRoleID
+            LEFT JOIN $hr_programs_table p ON s.ProgramID = p.ProgramID
+            WHERE s.PersonID = %s",
+            $person_id
+        ));
+        foreach ($hr_roles as $role) {
+            $roles_arr[] = [
+                'RoleName' => $role->RoleTitle,
+                'RoleTitle' => $role->RoleTitle,
+                'ProgramName' => $role->ProgramName
+            ];
+        }
         wp_send_json_success([
             'general' => $general,
             'relationships' => $relationships,

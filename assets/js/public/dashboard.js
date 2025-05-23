@@ -1135,6 +1135,18 @@
                         generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><span class='person-detail-value'>${d.general.Birthday || ''}</span></div>`;
                         generalHtml += `</div>`;
                         generalHtml += `</div>`;
+
+                        // Add job roles section if present
+                        if (d.roles && d.roles.length) {
+                            generalHtml += `<div class='person-details-section' style='margin-top:24px;'>`;
+                            generalHtml += `<div class='person-details-section-header'><h3>Job Roles</h3></div>`;
+                            generalHtml += `<div class='person-details-card'><div class='person-details-grid'>`;
+                            d.roles.forEach(function(role) {
+                                generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>${role.ProgramName || 'Program'}</span><span class='person-detail-value'>${role.RoleTitle || role.RoleName || ''}</span></div>`;
+                            });
+                            generalHtml += `</div></div></div>`;
+                        }
+
                         $staffDetailsContent.html(generalHtml);
                     } else {
                         $staffDetailsContent.html('<div class="error-message">Failed to load staff details.</div>');

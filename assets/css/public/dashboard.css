@@ -1739,11 +1739,16 @@ body.administration-dashboard-public {
 /* HR Admin Dashboard Grid (Admin HR Content) */
 .hr-admin-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 24px;
+}
+.hr-admin-grid > .card {
+    min-width: 0;
 }
 @media (max-width: 900px) {
     .hr-admin-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: none;
     }
 } 

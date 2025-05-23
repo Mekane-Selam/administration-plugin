@@ -2152,4 +2152,17 @@ body.administration-dashboard-public {
     .job-posting-details-right {
         margin-top: 12px;
     }
+}
+.job-detail-status {
+    grid-column: 1 / span 2;
+    margin-bottom: 18px;
+}
+@media (max-width: 900px) {
+    .job-posting-details-left-inner {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .job-detail-status {
+        grid-column: 1 / span 1;
+    }
 } 

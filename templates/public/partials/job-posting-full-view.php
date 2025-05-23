@@ -12,8 +12,10 @@
         <div class="job-posting-details-two-col">
             <div class="job-posting-details-left">
                 <div class="job-posting-details-left-inner">
+                    <div class="person-detail-row job-detail-status" style="grid-column: 1 / span 2;">
+                        <span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span>
+                    </div>
                     <div class="job-posting-details-left-col">
-                        <div class="person-detail-row"><span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span></div>
                         <div class="person-detail-row"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
                         <div class="person-detail-row"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>
                         <div class="person-detail-row"><span class="person-detail-label">Location</span><span class="person-detail-value"><?php echo esc_html($job->Location); ?></span></div>

@@ -77,7 +77,12 @@ foreach ($staff_rows as $row) {
                 <h2>Job Postings</h2>
             </div>
             <div class="card-body">
-                <p>Job postings and open positions coming soon...</p>
+                <div class="job-postings-list-header">
+                    <button id="add-job-posting-btn" class="add-button" title="Add Job Posting">
+                        <span class="dashicons dashicons-plus-alt"></span>
+                    </button>
+                </div>
+                <div id="job-postings-list"></div>
             </div>
         </div>
         <!-- Blank Card 1 (Bottom Left) -->

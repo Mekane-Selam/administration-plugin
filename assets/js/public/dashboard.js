@@ -395,6 +395,11 @@
             if ($widget.length) {
                 this.loadHRData();
             }
+            // Also initialize job postings logic if the job postings card is present
+            if ($('.job-postings-list-header').length) {
+                Dashboard.loadJobPostingsList();
+                Dashboard.setupJobPostingsHandlers();
+            }
         },
 
         loadProgramsData: function() {
@@ -466,6 +471,227 @@
                     }
                 }
             });
+        },
+
+        loadJobPostingsList: function() {
+            const $list = $('#job-postings-list');
+            $list.html('<div class="loading">Loading job postings...</div>');
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_job_postings_list',
+                    nonce: administration_plugin.nonce
+                },
+                success: function(response) {
+                    if (response.success && Array.isArray(response.data)) {
+                        Dashboard.renderJobPostingsList(response.data);
+                    } else {
+                        $list.html('<div class="error-message">Failed to load job postings.</div>');
+                    }
+                },
+                error: function() {
+                    $list.html('<div class="error-message">Failed to load job postings.</div>');
+                }
+            });
+        },
+
+        renderJobPostingsList: function(jobs) {
+            const $list = $('#job-postings-list');
+            if (!jobs.length) {
+                $list.html('<div class="no-data">No job postings found.</div>');
+                return;
+            }
+            let html = '<div class="job-postings-list-table table-responsive"><table><thead><tr><th>Job Name</th><th>Status</th></tr></thead><tbody>';
+            jobs.forEach(function(job) {
+                html += `<tr class="job-posting-row" data-job-posting-id="${job.JobPostingID}">` +
+                    `<td>${job.Title ? Dashboard.escapeHtml(job.Title) : ''}</td>` +
+                    `<td>${job.Status ? Dashboard.escapeHtml(job.Status) : ''}</td>` +
+                    `</tr>`;
+            });
+            html += '</tbody></table></div>';
+            $list.html(html);
+        },
+
+        setupJobPostingsHandlers: function() {
+            // Open add job posting modal (to be implemented)
+            $(document).off('click', '#add-job-posting-btn').on('click', '#add-job-posting-btn', function(e) {
+                e.preventDefault();
+                Dashboard.openAddJobPostingModal();
+            });
+            // Show job posting details modal
+            $(document).off('click', '.job-posting-row').on('click', '.job-posting-row', function(e) {
+                e.preventDefault();
+                const jobPostingId = $(this).data('job-posting-id');
+                Dashboard.showJobPostingDetails(jobPostingId);
+            });
+        },
+
+        showJobPostingDetails: function(jobPostingId) {
+            // Create or select the modal
+            let $modal = $('#job-posting-details-modal');
+            if (!$modal.length) {
+                $modal = $('<div id="job-posting-details-modal" class="modal"><div class="modal-content"><span class="close" id="close-job-posting-details-modal" tabindex="0" role="button" aria-label="Close">&times;</span><div id="job-posting-details-content"></div></div></div>');
+                $('body').append($modal);
+            }
+            $('#job-posting-details-content').html('<div class="loading">Loading...</div>');
+            $modal.addClass('show');
+            // Fetch details via AJAX
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_job_posting_details',
+                    nonce: administration_plugin.nonce,
+                    job_posting_id: jobPostingId
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        $('#job-posting-details-content').html(response.data);
+                    } else {
+                        $('#job-posting-details-content').html('<div class="error-message">Failed to load job posting details.</div>');
+                    }
+                },
+                error: function() {
+                    $('#job-posting-details-content').html('<div class="error-message">Failed to load job posting details.</div>');
+                }
+            });
+        },
+
+        openAddJobPostingModal: function(e) {
+            // Remove any existing modal
+            $('#add-job-posting-modal').remove();
+            // Modal HTML
+            var modalHtml = `
+                <div id="add-job-posting-modal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" id="close-add-job-posting-modal" tabindex="0" role="button" aria-label="Close">&times;</span>
+                        <h2>Add New Job Posting</h2>
+                        <form id="add-job-posting-form">
+                            <div class="form-field">
+                                <label for="job-title">Job Title</label>
+                                <input type="text" id="job-title" name="title" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="job-department">Department</label>
+                                <input type="text" id="job-department" name="department_name">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-type">Job Type</label>
+                                <input type="text" id="job-type" name="job_type" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="job-status">Status</label>
+                                <select id="job-status" name="status" required>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                    <option value="Draft">Draft</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="job-location">Location</label>
+                                <input type="text" id="job-location" name="location">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-salary-range">Salary Range</label>
+                                <input type="text" id="job-salary-range" name="salary_range">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-posted-date">Posted Date</label>
+                                <input type="date" id="job-posted-date" name="posted_date" disabled placeholder="Auto-set">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-closing-date">Closing Date</label>
+                                <input type="date" id="job-closing-date" name="closing_date">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-program-id">Program ID</label>
+                                <input type="text" id="job-program-id" name="program_id">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-reports-to">Reports To (PersonID)</label>
+                                <input type="text" id="job-reports-to" name="reports_to">
+                            </div>
+                            <div class="form-field">
+                                <label for="job-is-internal">Internal Posting</label>
+                                <select id="job-is-internal" name="is_internal">
+                                    <option value="0">No</option>
+                                    <option value="1">Yes</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="job-description">Description</label>
+                                <textarea id="job-description" name="description"></textarea>
+                            </div>
+                            <div class="form-field">
+                                <label for="job-requirements">Requirements</label>
+                                <textarea id="job-requirements" name="requirements"></textarea>
+                            </div>
+                            <div class="form-field">
+                                <label for="job-responsibilities">Responsibilities</label>
+                                <textarea id="job-responsibilities" name="responsibilities"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="button button-primary">Save Job Posting</button>
+                                <button type="button" class="button" id="cancel-add-job-posting">Cancel</button>
+                            </div>
+                        </form>
+                        <div id="add-job-posting-message"></div>
+                    </div>
+                </div>
+            `;
+            $('body').append(modalHtml);
+            $('#add-job-posting-modal').addClass('show');
+            // Close handlers
+            $(document).off('click', '#close-add-job-posting-modal, #cancel-add-job-posting').on('click', '#close-add-job-posting-modal, #cancel-add-job-posting', function(e) {
+                e.preventDefault();
+                $('#add-job-posting-modal').removeClass('show');
+                setTimeout(function() { $('#add-job-posting-modal').remove(); }, 300);
+            });
+            // Submit handler
+            $(document).off('submit', '#add-job-posting-form').on('submit', '#add-job-posting-form', Dashboard.submitAddJobPostingForm);
+        },
+
+        submitAddJobPostingForm: function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $message = $('#add-job-posting-message');
+            // Gather form data
+            var formData = $form.serializeArray();
+            var data = { action: 'add_job_posting', nonce: administration_plugin.nonce };
+            formData.forEach(function(field) { data[field.name] = field.value; });
+            // Validate required fields
+            if (!data.title || !data.job_type || !data.status) {
+                $message.html('<span class="error-message">Job Title, Job Type, and Status are required.</span>');
+                return;
+            }
+            $message.html('<span class="loading">Saving job posting...</span>');
+            // AJAX submit
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    if (response.success) {
+                        $message.html('<span class="success-message">Job posting added successfully!</span>');
+                        setTimeout(function() {
+                            $('#add-job-posting-modal').removeClass('show');
+                            $form[0].reset();
+                            $message.html('');
+                            Dashboard.loadJobPostingsList();
+                        }, 800);
+                    } else {
+                        $message.html('<span class="error-message">' + (response.data || 'Error saving job posting.') + '</span>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $message.html('<span class="error-message">Error saving job posting. Please try again.</span>');
+                }
+            });
+        },
+
+        escapeHtml: function(text) {
+            return $('<div>').text(text).html();
         },
 
         openAddProgramModal: function(e) {

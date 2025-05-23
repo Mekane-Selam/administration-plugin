@@ -1101,20 +1101,49 @@
             console.log('[HR Modal] .staff-row clicked. personId:', personId, this);
             const $staffModal = $('#staff-details-modal');
             const $staffDetailsContent = $('#staff-details-general-content');
-            $staffDetailsContent.html('<div>Loading...</div>');
+            $staffDetailsContent.html('<div class="loading">Loading...</div>');
             $staffModal.addClass('show');
             console.log('[HR Modal] Modal should now be visible.');
-            // Example: Fetch details via AJAX (mock for now)
-            setTimeout(function() {
-                $staffDetailsContent.html(`
-                    <div><strong>Name:</strong> John Doe</div>
-                    <div><strong>Email:</strong> johndoe@example.com</div>
-                    <div><strong>Phone:</strong> (555) 123-4567</div>
-                    <div><strong>Role:</strong> Example Role</div>
-                    <div><strong>Program:</strong> Example Program</div>
-                `);
-                console.log('[HR Modal] Modal content loaded for personId:', personId);
-            }, 500);
+            // Fetch details via AJAX
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_full_person_details',
+                    nonce: administration_plugin.nonce,
+                    person_id: personId
+                },
+                success: function(response) {
+                    if (response.success && response.data && response.data.general) {
+                        // Render general details in the same style as people-content
+                        var d = response.data;
+                        var generalHtml = '';
+                        generalHtml += `<div class='person-details-card'>`;
+                        generalHtml += `<div class='person-details-grid'>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Person ID</span><span class='person-detail-value'>${d.general.PersonID || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>First Name</span><span class='person-detail-value'>${d.general.FirstName || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Last Name</span><span class='person-detail-value'>${d.general.LastName || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Title</span><span class='person-detail-value'>${d.general.Title || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Gender</span><span class='person-detail-value'>${d.general.Gender || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Email</span><span class='person-detail-value'>${d.general.Email || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Phone</span><span class='person-detail-value'>${d.general.Phone || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 1</span><span class='person-detail-value'>${d.general.AddressLine1 || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Address Line 2</span><span class='person-detail-value'>${d.general.AddressLine2 || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>City</span><span class='person-detail-value'>${d.general.City || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>State</span><span class='person-detail-value'>${d.general.State || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Zip</span><span class='person-detail-value'>${d.general.Zip || ''}</span></div>`;
+                        generalHtml += `<div class='person-detail-row'><span class='person-detail-label'>Birthday</span><span class='person-detail-value'>${d.general.Birthday || ''}</span></div>`;
+                        generalHtml += `</div>`;
+                        generalHtml += `</div>`;
+                        $staffDetailsContent.html(generalHtml);
+                    } else {
+                        $staffDetailsContent.html('<div class="error-message">Failed to load staff details.</div>');
+                    }
+                },
+                error: function() {
+                    $staffDetailsContent.html('<div class="error-message">Failed to load staff details.</div>');
+                }
+            });
         });
 
         // Modal close button

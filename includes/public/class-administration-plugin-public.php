@@ -1228,6 +1228,9 @@ class Administration_Plugin_Public {
         if (empty($fields['Title']) || empty($fields['JobType']) || empty($fields['Status'])) {
             wp_send_json_error('Title, Job Type, and Status are required.');
         }
+        // Get PersonID for current user
+        $person = Administration_Database::get_person_by_user_id(get_current_user_id());
+        $fields['CreatedBy'] = $person ? $person->PersonID : null;
         // Generate unique JobPostingID
         do {
             $unique_code = mt_rand(10000, 99999);

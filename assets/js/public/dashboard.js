@@ -694,6 +694,8 @@
             var formData = $form.serializeArray();
             var data = { action: 'add_job_posting', nonce: administration_plugin.nonce };
             formData.forEach(function(field) { data[field.name] = field.value; });
+            // Log all fields being sent
+            console.log('Submitting job posting with data:', data);
             // Validate required fields
             if (!data.title || !data.job_type || !data.status) {
                 $message.html('<span class="error-message">Job Title, Job Type, and Status are required.</span>');

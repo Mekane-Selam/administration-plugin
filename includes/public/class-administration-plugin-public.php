@@ -1291,8 +1291,36 @@ class Administration_Plugin_Public {
      */
     public function ajax_get_job_posting_full_view() {
         check_ajax_referer('administration_plugin_nonce', 'nonce');
-        // TODO: Implement fetching full job posting view
-        wp_send_json_success();
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $job_posting_id = isset($_POST['job_posting_id']) ? sanitize_text_field($_POST['job_posting_id']) : '';
+        if (!$job_posting_id) {
+            wp_send_json_error('Missing job posting ID.');
+        }
+        $table = $wpdb->prefix . 'hr_jobpostings';
+        $job = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE JobPostingID = %s", $job_posting_id));
+        if (!$job) {
+            wp_send_json_error('Job posting not found.');
+        }
+        // Fetch related program info
+        $program = null;
+        if ($job->ProgramID) {
+            $program = $wpdb->get_row($wpdb->prepare("SELECT ProgramID, ProgramName, ProgramType FROM {$wpdb->prefix}core_programs WHERE ProgramID = %s", $job->ProgramID));
+        }
+        // Fetch Reports To person name
+        $reports_to = null;
+        if ($job->ReportsTo) {
+            $person = $wpdb->get_row($wpdb->prepare("SELECT FirstName, LastName FROM {$wpdb->prefix}core_person WHERE PersonID = %s", $job->ReportsTo));
+            if ($person) {
+                $reports_to = $person->FirstName . ' ' . $person->LastName;
+            }
+        }
+        ob_start();
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/job-posting-full-view.php';
+        $html = ob_get_clean();
+        wp_send_json_success($html);
     }
 
     /**

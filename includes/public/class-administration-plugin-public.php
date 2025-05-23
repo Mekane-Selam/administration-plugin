@@ -51,6 +51,11 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_search_people', array($this, 'ajax_search_people'));
         // Register new AJAX handler
         add_action('wp_ajax_save_person_relationships', array($this, 'ajax_save_person_relationships'));
+        // Register AJAX handlers for job postings
+        add_action('wp_ajax_get_job_postings_list', array($this, 'ajax_get_job_postings_list'));
+        add_action('wp_ajax_add_job_posting', array($this, 'ajax_add_job_posting'));
+        add_action('wp_ajax_get_job_posting_details', array($this, 'ajax_get_job_posting_details'));
+        add_action('wp_ajax_get_job_posting_full_view', array($this, 'ajax_get_job_posting_full_view'));
     }
 
     /**
@@ -1170,6 +1175,127 @@ class Administration_Plugin_Public {
                 $wpdb->delete($rel_table, [ 'RelationshipID' => $rel->RelationshipID ]);
             }
         }
+        wp_send_json_success();
+    }
+
+    /**
+     * AJAX handler to get the list of active job postings
+     */
+    public function ajax_get_job_postings_list() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'hr_jobpostings';
+        $results = $wpdb->get_results($wpdb->prepare(
+            "SELECT JobPostingID, Title, DepartmentName, JobType, Location, SalaryRange, PostedDate, ClosingDate, Status FROM $table WHERE Status = %s ORDER BY PostedDate DESC",
+            'Active'
+        ));
+        wp_send_json_success($results);
+    }
+
+    /**
+     * AJAX handler to add a new job posting
+     */
+    public function ajax_add_job_posting() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'hr_jobpostings';
+        $fields = [
+            'ProgramID' => isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : null,
+            'Title' => isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '',
+            'Description' => isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '',
+            'Requirements' => isset($_POST['requirements']) ? sanitize_textarea_field($_POST['requirements']) : '',
+            'Responsibilities' => isset($_POST['responsibilities']) ? sanitize_textarea_field($_POST['responsibilities']) : '',
+            'JobType' => isset($_POST['job_type']) ? sanitize_text_field($_POST['job_type']) : '',
+            'Status' => isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'Draft',
+            'Location' => isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '',
+            'SalaryRange' => isset($_POST['salary_range']) ? sanitize_text_field($_POST['salary_range']) : '',
+            'PostedDate' => current_time('mysql', 1),
+            'ClosingDate' => isset($_POST['closing_date']) ? sanitize_text_field($_POST['closing_date']) : null,
+            'DepartmentName' => isset($_POST['department_name']) ? sanitize_text_field($_POST['department_name']) : '',
+            'ReportsTo' => isset($_POST['reports_to']) ? sanitize_text_field($_POST['reports_to']) : null,
+            'CreatedBy' => get_current_user_id(),
+            'LastModifiedDate' => current_time('mysql', 1),
+            'IsInternal' => isset($_POST['is_internal']) ? intval($_POST['is_internal']) : 0,
+        ];
+        // Validate required fields
+        if (empty($fields['Title']) || empty($fields['JobType']) || empty($fields['Status'])) {
+            wp_send_json_error('Title, Job Type, and Status are required.');
+        }
+        // Generate unique JobPostingID
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $job_posting_id = 'JOBPOST' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE JobPostingID = %s", $job_posting_id));
+        } while ($exists);
+        $fields['JobPostingID'] = $job_posting_id;
+        $result = $wpdb->insert($table, $fields);
+        if ($result) {
+            wp_send_json_success(['JobPostingID' => $job_posting_id]);
+        } else {
+            wp_send_json_error('Failed to add job posting.');
+        }
+    }
+
+    /**
+     * AJAX handler to fetch job posting details for the modal overlay
+     */
+    public function ajax_get_job_posting_details() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'hr_jobpostings';
+        $job_posting_id = isset($_POST['job_posting_id']) ? sanitize_text_field($_POST['job_posting_id']) : '';
+        if (!$job_posting_id) {
+            wp_send_json_error('Missing job posting ID.');
+        }
+        $job = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE JobPostingID = %s", $job_posting_id));
+        if (!$job) {
+            wp_send_json_error('Job posting not found.');
+        }
+        ob_start();
+        ?>
+        <div class="job-details-modal-content">
+            <h3 class="job-details-title"><?php echo esc_html($job->Title); ?></h3>
+            <div class="job-details-fields">
+                <div class="job-details-row"><span class="job-details-label">Department:</span> <span class="job-details-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Job Type:</span> <span class="job-details-value"><?php echo esc_html($job->JobType); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Status:</span> <span class="job-details-value"><?php echo esc_html($job->Status); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Location:</span> <span class="job-details-value"><?php echo esc_html($job->Location); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Salary Range:</span> <span class="job-details-value"><?php echo esc_html($job->SalaryRange); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Posted Date:</span> <span class="job-details-value"><?php echo esc_html($job->PostedDate); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Closing Date:</span> <span class="job-details-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Program:</span> <span class="job-details-value"><?php echo esc_html($job->ProgramID); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Reports To:</span> <span class="job-details-value"><?php echo esc_html($job->ReportsTo); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Created By:</span> <span class="job-details-value"><?php echo esc_html($job->CreatedBy); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Last Modified:</span> <span class="job-details-value"><?php echo esc_html($job->LastModifiedDate); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Internal Posting:</span> <span class="job-details-value"><?php echo $job->IsInternal ? 'Yes' : 'No'; ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Description:</span> <span class="job-details-value"><?php echo nl2br(esc_html($job->Description)); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Requirements:</span> <span class="job-details-value"><?php echo nl2br(esc_html($job->Requirements)); ?></span></div>
+                <div class="job-details-row"><span class="job-details-label">Responsibilities:</span> <span class="job-details-value"><?php echo nl2br(esc_html($job->Responsibilities)); ?></span></div>
+            </div>
+            <div class="job-details-actions job-details-actions-centered">
+                <a href="#" class="button job-goto-btn modern-goto-btn" data-job-posting-id="<?php echo esc_attr($job->JobPostingID); ?>">Go to Job Posting</a>
+            </div>
+        </div>
+        <?php
+        $html = ob_get_clean();
+        wp_send_json_success($html);
+    }
+
+    /**
+     * AJAX handler to fetch the full job posting view (page-like UI)
+     */
+    public function ajax_get_job_posting_full_view() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        // TODO: Implement fetching full job posting view
         wp_send_json_success();
     }
 } 

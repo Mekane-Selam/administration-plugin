@@ -1,88 +1,52 @@
 <?php
 // Get staff data from the database
 global $wpdb;
-$staff_members = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}hr_staff ORDER BY name ASC");
+$staff_table = $wpdb->prefix . 'hr_staff';
+$person_table = $wpdb->prefix . 'core_person';
+$roles_table = $wpdb->prefix . 'hr_roles';
+$programs_table = $wpdb->prefix . 'core_programs';
+
+$staff_members = $wpdb->get_results(
+    "SELECT s.PersonID, p.FirstName, p.LastName, r.RoleTitle, pr.ProgramName
+     FROM $staff_table s
+     LEFT JOIN $person_table p ON s.PersonID = p.PersonID
+     LEFT JOIN $roles_table r ON s.StaffRolesID = r.StaffRoleID
+     LEFT JOIN $programs_table pr ON s.ProgramID = pr.ProgramID
+     ORDER BY p.LastName ASC, p.FirstName ASC"
+);
 ?>
 
-<div class="dashboard-section hr-content">
-    <h2>HR Dashboard</h2>
-    
-    <div class="hr-grid">
-        <!-- Top Row -->
-        <div class="hr-row">
-            <!-- Staff List Section -->
-            <div class="hr-column staff-list">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Staff Directory</h3>
-                    </div>
-                    <div class="card-body">
-                        <?php if (!empty($staff_members)) : ?>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Department</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php foreach ($staff_members as $staff) : ?>
-                                            <tr>
-                                                <td><?php echo esc_html($staff->name); ?></td>
-                                                <td><?php echo esc_html($staff->position); ?></td>
-                                                <td><?php echo esc_html($staff->department); ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <?php else : ?>
-                            <p class="no-data">No staff members found.</p>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Top Right Placeholder -->
-            <div class="hr-column">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Section Title</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Content coming soon...</p>
-                    </div>
-                </div>
-            </div>
+<div class="wrap administration-hr-admin">
+    <h1>HR Staff Directory</h1>
+    <div class="card">
+        <div class="card-header">
+            <h2>Staff Members</h2>
         </div>
-
-        <!-- Bottom Row -->
-        <div class="hr-row">
-            <!-- Bottom Left Placeholder -->
-            <div class="hr-column">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Section Title</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Content coming soon...</p>
-                    </div>
+        <div class="card-body">
+            <?php if (!empty($staff_members)) : ?>
+                <div class="table-responsive">
+                    <table class="wp-list-table widefat fixed striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Program</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($staff_members as $staff) : ?>
+                                <tr>
+                                    <td><?php echo esc_html($staff->FirstName . ' ' . $staff->LastName); ?></td>
+                                    <td><?php echo esc_html($staff->RoleTitle ?: '—'); ?></td>
+                                    <td><?php echo esc_html($staff->ProgramName ?: '—'); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <!-- Bottom Right Placeholder -->
-            <div class="hr-column">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Section Title</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Content coming soon...</p>
-                    </div>
-                </div>
-            </div>
+            <?php else : ?>
+                <p class="no-data">No staff members found.</p>
+            <?php endif; ?>
         </div>
     </div>
 </div> 

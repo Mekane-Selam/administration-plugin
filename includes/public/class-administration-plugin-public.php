@@ -57,6 +57,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_job_posting_details', array($this, 'ajax_get_job_posting_details'));
         add_action('wp_ajax_get_job_posting_full_view', array($this, 'ajax_get_job_posting_full_view'));
         add_action('wp_ajax_get_programs_for_select', array($this, 'ajax_get_programs_for_select'));
+        add_action('wp_ajax_edit_job_posting', array($this, 'ajax_edit_job_posting'));
     }
 
     /**
@@ -1335,5 +1336,60 @@ class Administration_Plugin_Public {
         $table = $wpdb->prefix . 'core_programs';
         $programs = $wpdb->get_results("SELECT ProgramID, ProgramName FROM $table ORDER BY ProgramName");
         wp_send_json_success($programs);
+    }
+
+    /**
+     * AJAX handler to edit a job posting
+     */
+    public function ajax_edit_job_posting() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'hr_jobpostings';
+        $job_posting_id = isset($_POST['job_posting_id']) ? sanitize_text_field($_POST['job_posting_id']) : '';
+        $title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
+        $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+        $requirements = isset($_POST['requirements']) ? sanitize_textarea_field($_POST['requirements']) : '';
+        $responsibilities = isset($_POST['responsibilities']) ? sanitize_textarea_field($_POST['responsibilities']) : '';
+        $job_type = isset($_POST['job_type']) ? sanitize_text_field($_POST['job_type']) : '';
+        $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'Draft';
+        $location = isset($_POST['location']) ? sanitize_text_field($_POST['location']) : '';
+        $salary_range = isset($_POST['salary_range']) ? sanitize_text_field($_POST['salary_range']) : '';
+        $closing_date = isset($_POST['closing_date']) ? sanitize_text_field($_POST['closing_date']) : null;
+        $department_name = isset($_POST['department_name']) ? sanitize_text_field($_POST['department_name']) : '';
+        $reports_to = isset($_POST['reports_to']) && $_POST['reports_to'] !== '' ? sanitize_text_field($_POST['reports_to']) : null;
+        $is_internal = isset($_POST['is_internal']) ? intval($_POST['is_internal']) : 0;
+
+        if (!$job_posting_id || !$title || !$job_type || !$status) {
+            wp_send_json_error('Missing required fields.');
+        }
+
+        $result = $wpdb->update(
+            $table,
+            [
+                'Title' => $title,
+                'Description' => $description,
+                'Requirements' => $requirements,
+                'Responsibilities' => $responsibilities,
+                'JobType' => $job_type,
+                'Status' => $status,
+                'Location' => $location,
+                'SalaryRange' => $salary_range,
+                'ClosingDate' => $closing_date,
+                'DepartmentName' => $department_name,
+                'ReportsTo' => $reports_to,
+                'IsInternal' => $is_internal,
+                'LastModifiedDate' => current_time('mysql', 1)
+            ],
+            ['JobPostingID' => $job_posting_id]
+        );
+
+        if ($result !== false) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update job posting.');
+        }
     }
 } 

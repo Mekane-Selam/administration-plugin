@@ -525,6 +525,15 @@
                 const jobPostingId = $(this).data('job-posting-id');
                 Dashboard.showJobPostingDetails(jobPostingId);
             });
+            // Go to Job Posting button (delegated)
+            $(document).off('click', '.job-goto-btn').on('click', '.job-goto-btn', function(e) {
+                e.preventDefault();
+                const jobPostingId = $(this).data('job-posting-id');
+                $('#job-posting-details-modal').removeClass('show');
+                setTimeout(function() {
+                    Dashboard.showJobPostingFullView(jobPostingId);
+                }, 250); // Wait for modal to close for smooth transition
+            });
         },
 
         showJobPostingDetails: function(jobPostingId) {
@@ -1319,7 +1328,7 @@
                     $message.html('<span class="error-message">Error saving person. Please try again.</span>');
                 }
             });
-        }
+        },
     };
 
     // Initialize dashboard when document is ready

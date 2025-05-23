@@ -2015,4 +2015,24 @@ body.administration-dashboard-public {
 }
 #job-posting-details-modal .close:hover {
     color: #d7263d;
+}
+
+.job-goto-btn {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+    border-radius: 6px;
+    padding: 10px 28px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    margin: 0 auto;
+    display: inline-block;
+}
+.job-goto-btn:hover, .job-goto-btn:focus {
+    background: #135e96;
+    color: #fff;
+    border-color: #135e96;
 } 

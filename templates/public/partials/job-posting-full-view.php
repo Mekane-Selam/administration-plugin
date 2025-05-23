@@ -24,9 +24,9 @@
                     <div class="job-posting-details-left-col">
                         <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Posted Date</span><span class="person-detail-value"><?php echo esc_html($job->PostedDate); ?></span></div>
                         <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Closing Date</span><span class="person-detail-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
-                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramName) : esc_html($job->ProgramID); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program</span><span class="person-detail-value" data-program-id="<?php echo esc_attr($job->ProgramID); ?>"><?php echo $program ? esc_html($program->ProgramName) : esc_html($job->ProgramID); ?></span></div>
                         <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program Type</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramType) : ''; ?></span></div>
-                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Reports To</span><span class="person-detail-value"><?php echo $reports_to ? esc_html($reports_to) : esc_html($job->ReportsTo); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Reports To</span><span class="person-detail-value" data-person-id="<?php echo esc_attr($job->ReportsTo); ?>"><?php echo $reports_to ? esc_html($reports_to) : esc_html($job->ReportsTo); ?></span></div>
                     </div>
                 </div>
             </div>

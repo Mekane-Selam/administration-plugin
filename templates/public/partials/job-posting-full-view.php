@@ -9,21 +9,25 @@
             <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin: 0; padding-left: 18px;">General Info</h3>
             <button class="button button-primary" id="edit-job-posting-btn" style="margin-right: 18px;">Edit Job Posting</button>
         </div>
-        <div class="person-details-grid compact-job-details">
-            <div class="person-detail-row"><span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Location</span><span class="person-detail-value"><?php echo esc_html($job->Location); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Salary Range</span><span class="person-detail-value"><?php echo esc_html($job->SalaryRange); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Posted Date</span><span class="person-detail-value"><?php echo esc_html($job->PostedDate); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Closing Date</span><span class="person-detail-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Program</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramName) : esc_html($job->ProgramID); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Program Type</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramType) : ''; ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Reports To</span><span class="person-detail-value"><?php echo $reports_to ? esc_html($reports_to) : esc_html($job->ReportsTo); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Internal?</span><span class="person-detail-value"><?php echo $job->IsInternal ? 'Yes' : 'No'; ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Description</span><span class="person-detail-value"><?php echo esc_html($job->Description); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Requirements</span><span class="person-detail-value"><?php echo esc_html($job->Requirements); ?></span></div>
-            <div class="person-detail-row"><span class="person-detail-label">Responsibilities</span><span class="person-detail-value"><?php echo esc_html($job->Responsibilities); ?></span></div>
+        <div class="job-posting-details-two-col">
+            <div class="job-posting-details-left">
+                <div class="person-detail-row"><span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Location</span><span class="person-detail-value"><?php echo esc_html($job->Location); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Salary Range</span><span class="person-detail-value"><?php echo esc_html($job->SalaryRange); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Posted Date</span><span class="person-detail-value"><?php echo esc_html($job->PostedDate); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Closing Date</span><span class="person-detail-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Program</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramName) : esc_html($job->ProgramID); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Program Type</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramType) : ''; ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Reports To</span><span class="person-detail-value"><?php echo $reports_to ? esc_html($reports_to) : esc_html($job->ReportsTo); ?></span></div>
+                <div class="person-detail-row"><span class="person-detail-label">Internal?</span><span class="person-detail-value"><?php echo $job->IsInternal ? 'Yes' : 'No'; ?></span></div>
+            </div>
+            <div class="job-posting-details-right">
+                <div class="person-detail-row job-detail-long"><span class="person-detail-label">Description</span><span class="person-detail-value job-detail-long-value"><?php echo esc_html($job->Description); ?></span></div>
+                <div class="person-detail-row job-detail-long"><span class="person-detail-label">Requirements</span><span class="person-detail-value job-detail-long-value"><?php echo esc_html($job->Requirements); ?></span></div>
+                <div class="person-detail-row job-detail-long"><span class="person-detail-label">Responsibilities</span><span class="person-detail-value job-detail-long-value"><?php echo esc_html($job->Responsibilities); ?></span></div>
+            </div>
         </div>
     </div>
     <div class="job-posting-sections" style="margin-top: 36px;">

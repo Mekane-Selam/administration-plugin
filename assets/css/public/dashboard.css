@@ -902,7 +902,7 @@ body.administration-dashboard-public {
     justify-self: flex-end;
 
 }
-.add-button:hover {
+.add-button:hover, .add-button:focus {
     background: #135e96;
     box-shadow: 0 4px 16px rgba(34,113,177,0.13);
 }
@@ -2092,4 +2092,54 @@ body.administration-dashboard-public {
     background: #135e96;
     color: #fff;
     border-color: #135e96;
+}
+
+/* Job Posting Full View Two-Column Layout */
+.job-posting-details-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 32px 36px;
+    margin: 0 18px 0 18px;
+    align-items: flex-start;
+}
+.job-posting-details-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.job-posting-details-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+.job-detail-long .person-detail-label {
+    font-size: 1.05rem;
+    color: #2271b1;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+.job-detail-long-value {
+    display: block;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e3e7ee;
+    padding: 18px 22px;
+    min-height: 90px;
+    font-size: 1.08rem;
+    color: #222;
+    font-family: inherit;
+    box-shadow: 0 1px 4px rgba(34,113,177,0.04);
+    max-width: 100%;
+    white-space: pre-line;
+    word-break: break-word;
+}
+@media (max-width: 900px) {
+    .job-posting-details-two-col {
+        grid-template-columns: 1fr;
+        gap: 18px 0;
+        margin: 0 2vw;
+    }
+    .job-posting-details-right {
+        margin-top: 12px;
+    }
 } 

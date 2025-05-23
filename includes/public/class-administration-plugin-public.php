@@ -56,6 +56,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_add_job_posting', array($this, 'ajax_add_job_posting'));
         add_action('wp_ajax_get_job_posting_details', array($this, 'ajax_get_job_posting_details'));
         add_action('wp_ajax_get_job_posting_full_view', array($this, 'ajax_get_job_posting_full_view'));
+        add_action('wp_ajax_get_programs_for_select', array($this, 'ajax_get_programs_for_select'));
     }
 
     /**
@@ -1206,7 +1207,7 @@ class Administration_Plugin_Public {
         global $wpdb;
         $table = $wpdb->prefix . 'hr_jobpostings';
         $fields = [
-            'ProgramID' => isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : null,
+            'ProgramID' => isset($_POST['program_id']) && $_POST['program_id'] !== '' ? sanitize_text_field($_POST['program_id']) : null,
             'Title' => isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '',
             'Description' => isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '',
             'Requirements' => isset($_POST['requirements']) ? sanitize_textarea_field($_POST['requirements']) : '',
@@ -1218,7 +1219,7 @@ class Administration_Plugin_Public {
             'PostedDate' => current_time('mysql', 1),
             'ClosingDate' => isset($_POST['closing_date']) ? sanitize_text_field($_POST['closing_date']) : null,
             'DepartmentName' => isset($_POST['department_name']) ? sanitize_text_field($_POST['department_name']) : '',
-            'ReportsTo' => isset($_POST['reports_to']) ? sanitize_text_field($_POST['reports_to']) : null,
+            'ReportsTo' => isset($_POST['reports_to']) && $_POST['reports_to'] !== '' ? sanitize_text_field($_POST['reports_to']) : null,
             'CreatedBy' => get_current_user_id(),
             'LastModifiedDate' => current_time('mysql', 1),
             'IsInternal' => isset($_POST['is_internal']) ? intval($_POST['is_internal']) : 0,
@@ -1297,5 +1298,19 @@ class Administration_Plugin_Public {
         check_ajax_referer('administration_plugin_nonce', 'nonce');
         // TODO: Implement fetching full job posting view
         wp_send_json_success();
+    }
+
+    /**
+     * AJAX handler to get all programs for select dropdowns
+     */
+    public function ajax_get_programs_for_select() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_programs';
+        $programs = $wpdb->get_results("SELECT ProgramID, ProgramName FROM $table ORDER BY ProgramName");
+        wp_send_json_success($programs);
     }
 } 

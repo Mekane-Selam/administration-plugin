@@ -605,12 +605,16 @@
                                 <input type="date" id="job-closing-date" name="closing_date">
                             </div>
                             <div class="form-field">
-                                <label for="job-program-id">Program ID</label>
-                                <input type="text" id="job-program-id" name="program_id">
+                                <label for="job-program-id">Program</label>
+                                <select id="job-program-id" name="program_id">
+                                    <option value="">-- None --</option>
+                                </select>
                             </div>
                             <div class="form-field">
-                                <label for="job-reports-to">Reports To (PersonID)</label>
-                                <input type="text" id="job-reports-to" name="reports_to">
+                                <label for="job-reports-to">Reports To</label>
+                                <select id="job-reports-to" name="reports_to">
+                                    <option value="">-- None --</option>
+                                </select>
                             </div>
                             <div class="form-field">
                                 <label for="job-is-internal">Internal Posting</label>
@@ -642,6 +646,36 @@
             `;
             $('body').append(modalHtml);
             $('#add-job-posting-modal').addClass('show');
+            // Populate Program select
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: { action: 'get_programs_for_select', nonce: administration_plugin.nonce },
+                success: function(response) {
+                    if (response.success && Array.isArray(response.data)) {
+                        var options = '<option value="">-- None --</option>';
+                        response.data.forEach(function(program) {
+                            options += `<option value="${program.ProgramID}">${Dashboard.escapeHtml(program.ProgramName)}</option>`;
+                        });
+                        $('#job-program-id').html(options);
+                    }
+                }
+            });
+            // Populate Reports To select
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: { action: 'get_people_for_owner_select', nonce: administration_plugin.nonce },
+                success: function(response) {
+                    if (response.success && Array.isArray(response.data)) {
+                        var options = '<option value="">-- None --</option>';
+                        response.data.forEach(function(person) {
+                            options += `<option value="${person.PersonID}">${Dashboard.escapeHtml(person.FirstName + ' ' + person.LastName)}</option>`;
+                        });
+                        $('#job-reports-to').html(options);
+                    }
+                }
+            });
             // Close handlers
             $(document).off('click', '#close-add-job-posting-modal, #cancel-add-job-posting').on('click', '#close-add-job-posting-modal, #cancel-add-job-posting', function(e) {
                 e.preventDefault();

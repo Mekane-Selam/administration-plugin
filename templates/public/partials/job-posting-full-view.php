@@ -16,18 +16,17 @@
                         <span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span>
                     </div>
                     <div class="job-posting-details-left-col">
-                        <div class="person-detail-row"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Location</span><span class="person-detail-value"><?php echo esc_html($job->Location); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Salary Range</span><span class="person-detail-value"><?php echo esc_html($job->SalaryRange); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Location</span><span class="person-detail-value"><?php echo esc_html($job->Location); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Internal?</span><span class="person-detail-value"><?php echo $job->IsInternal ? 'Yes' : 'No'; ?></span></div>
                     </div>
                     <div class="job-posting-details-left-col">
-                        <div class="person-detail-row"><span class="person-detail-label">Posted Date</span><span class="person-detail-value"><?php echo esc_html($job->PostedDate); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Closing Date</span><span class="person-detail-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Program</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramName) : esc_html($job->ProgramID); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Program Type</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramType) : ''; ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Reports To</span><span class="person-detail-value"><?php echo $reports_to ? esc_html($reports_to) : esc_html($job->ReportsTo); ?></span></div>
-                        <div class="person-detail-row"><span class="person-detail-label">Internal?</span><span class="person-detail-value"><?php echo $job->IsInternal ? 'Yes' : 'No'; ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Posted Date</span><span class="person-detail-value"><?php echo esc_html($job->PostedDate); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Closing Date</span><span class="person-detail-value"><?php echo esc_html($job->ClosingDate); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramName) : esc_html($job->ProgramID); ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program Type</span><span class="person-detail-value"><?php echo $program ? esc_html($program->ProgramType) : ''; ?></span></div>
+                        <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Reports To</span><span class="person-detail-value"><?php echo $reports_to ? esc_html($reports_to) : esc_html($job->ReportsTo); ?></span></div>
                     </div>
                 </div>
             </div>

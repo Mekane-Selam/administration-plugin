@@ -2165,4 +2165,26 @@ body.administration-dashboard-public {
     .job-detail-status {
         grid-column: 1 / span 1;
     }
+}
+
+.job-detail-balance {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+}
+.job-detail-balance .person-detail-label {
+    flex: 0 0 120px;
+    margin-bottom: 0;
+}
+.job-detail-balance .person-detail-value {
+    flex: 1 1 auto;
+    min-width: 0;
+    word-break: break-word;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+@media (max-width: 900px) {
+    .job-detail-balance {
+        min-height: 38px;
+    }
 } 

@@ -630,8 +630,9 @@
                                 <label for="job-status">Status</label>
                                 <select id="job-status" name="status" required>
                                     <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                    <option value="Draft">Draft</option>
+                                    <option value="Done">Done</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="Backlog">Backlog</option>
                                 </select>
                             </div>
                             <div class="form-field">

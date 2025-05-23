@@ -2,10 +2,14 @@
 // Modular job posting full view
 ?>
 <div class="job-posting-full-view">
-    <button class="button back-to-dashboard-btn" id="back-to-dashboard-btn">&larr; Back to Dashboard</button>
+    <button class="button button-primary back-to-dashboard-btn" id="back-to-dashboard-btn">&larr; Back to Dashboard</button>
     <div class="person-details-card" style="margin-top: 24px;">
-        <h2 style="margin-bottom: 18px; color: #2271b1; font-size: 1.5rem; font-weight: 700;">Job Posting: <?php echo esc_html($job->Title); ?></h2>
-        <div class="person-details-grid">
+        <h2 style="margin-bottom: 18px; color: #2271b1; font-size: 1.5rem; font-weight: 700; padding-left: 18px;">Job Posting: <?php echo esc_html($job->Title); ?></h2>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin: 0; padding-left: 18px;">General Info</h3>
+            <button class="button button-primary" id="edit-job-posting-btn" style="margin-right: 18px;">Edit Job Posting</button>
+        </div>
+        <div class="person-details-grid compact-job-details">
             <div class="person-detail-row"><span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span></div>
             <div class="person-detail-row"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
             <div class="person-detail-row"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>
@@ -23,14 +27,6 @@
         </div>
     </div>
     <div class="job-posting-sections" style="margin-top: 36px;">
-        <div class="person-details-card" style="margin-bottom: 32px;">
-            <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">Applications</h3>
-            <div class="job-applications-list">(Applications list coming soon...)</div>
-        </div>
-        <div class="person-details-card" style="margin-bottom: 32px;">
-            <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">Edit Job Details</h3>
-            <div class="job-edit-form">(Edit form coming soon...)</div>
-        </div>
         <div class="person-details-card">
             <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">Track Applications & Interviews</h3>
             <div class="job-tracking-section">(Tracking features coming soon...)</div>

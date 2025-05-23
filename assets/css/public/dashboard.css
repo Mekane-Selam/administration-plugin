@@ -647,7 +647,7 @@ body.administration-dashboard-public {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 28px;
-    padding: 20px 0 0 0;
+    padding: 20px 0 20px 0;
 }
 .program-card {
     background: #fff;
@@ -2055,4 +2055,41 @@ body.administration-dashboard-public {
     font-family: 'Segoe UI', Arial, sans-serif;
     width: 100%;
     display: block;
+}
+
+.compact-job-details {
+    gap: 10px 18px !important;
+}
+.compact-job-details .person-detail-row {
+    padding: 0 0 1px 0;
+    font-size: 0.98rem;
+}
+.compact-job-details .person-detail-label {
+    font-size: 0.95rem;
+    padding-left: 0;
+}
+.compact-job-details .person-detail-value {
+    font-size: 1rem;
+    padding: 7px 14px;
+    min-height: 24px;
+    max-width: 320px;
+}
+.button.back-to-dashboard-btn {
+    background: #2271b1;
+    color: #fff;
+    border: 1px solid #2271b1;
+    border-radius: 6px;
+    padding: 10px 28px;
+    font-size: 1.08rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    margin: 0 0 18px 0;
+    display: inline-block;
+}
+.button.back-to-dashboard-btn:hover, .button.back-to-dashboard-btn:focus {
+    background: #135e96;
+    color: #fff;
+    border-color: #135e96;
 } 

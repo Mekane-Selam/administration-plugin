@@ -2017,6 +2017,14 @@ body.administration-dashboard-public {
     color: #d7263d;
 }
 
+.job-details-actions {
+    margin: 32px 0 12px 0;
+    text-align: center;
+}
+.job-goto-btn {
+    margin: 18px 0 0 0;
+}
+
 .job-goto-btn {
     background: #2271b1;
     color: #fff;

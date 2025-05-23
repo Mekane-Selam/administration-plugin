@@ -572,6 +572,38 @@
             });
         },
 
+        showJobPostingFullView: function(jobPostingId) {
+            // Hide dashboard, show job posting view container
+            $('.administration-public-dashboard').hide();
+            let $container = $('#job-posting-view-container');
+            if (!$container.length) {
+                $container = $('<div id="job-posting-view-container" class="job-posting-view-container" style="display:none;"></div>');
+                $('body').append($container);
+            }
+            $container.html('<div class="loading">Loading job posting...</div>');
+            $container.show();
+            // Fetch full view via AJAX
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_job_posting_full_view',
+                    nonce: administration_plugin.nonce,
+                    job_posting_id: jobPostingId
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        $container.html(response.data);
+                    } else {
+                        $container.html('<div class="error-message">Failed to load job posting.</div>');
+                    }
+                },
+                error: function() {
+                    $container.html('<div class="error-message">Failed to load job posting.</div>');
+                }
+            });
+        },
+
         openAddJobPostingModal: function(e) {
             // Remove any existing modal
             $('#add-job-posting-modal').remove();

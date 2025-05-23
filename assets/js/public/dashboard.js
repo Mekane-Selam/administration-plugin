@@ -1102,7 +1102,7 @@
             const $staffModal = $('#staff-details-modal');
             const $staffDetailsContent = $('#staff-details-general-content');
             $staffDetailsContent.html('<div>Loading...</div>');
-            $staffModal.css('display', 'flex');
+            $staffModal.addClass('show');
             console.log('[HR Modal] Modal should now be visible.');
             // Example: Fetch details via AJAX (mock for now)
             setTimeout(function() {
@@ -1120,14 +1120,14 @@
         // Modal close button
         $(document).on('click', '#close-staff-details-modal', function(e) {
             e.preventDefault();
-            $('#staff-details-modal').css('display', 'none');
+            $('#staff-details-modal').removeClass('show');
             console.log('[HR Modal] Modal closed via close button.');
         });
         // Optional: Close modal on outside click
         $(window).on('click', function(event) {
             const $modal = $('#staff-details-modal');
             if (event.target === $modal[0]) {
-                $modal.css('display', 'none');
+                $modal.removeClass('show');
                 console.log('[HR Modal] Modal closed via outside click.');
             }
         });

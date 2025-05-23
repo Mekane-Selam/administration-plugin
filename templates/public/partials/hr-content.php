@@ -81,7 +81,7 @@ $staff_members = $wpdb->get_results(
 </div>
 
 <!-- Staff Details Modal -->
-<div id="staff-details-modal" class="modal" style="display: none;">
+<div id="staff-details-modal" class="modal">
     <div class="modal-content">
         <span class="close" id="close-staff-details-modal" tabindex="0" role="button" aria-label="Close">&times;</span>
         <h2>Staff Details</h2>

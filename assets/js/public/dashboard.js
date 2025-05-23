@@ -1361,6 +1361,11 @@
                 }
             });
         },
+
+        backToDashboard: function() {
+            $('#job-posting-view-container').hide();
+            $('.administration-public-dashboard').show();
+        },
     };
 
     // Initialize dashboard when document is ready

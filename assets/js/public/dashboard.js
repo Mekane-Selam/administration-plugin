@@ -1093,15 +1093,17 @@
             }
         });
 
-        // Remove direct event listeners for staff rows
-        // Add delegated event handler for staff row clicks
+        // Add trace logging for staff row modal
+        console.log('[HR Modal] Attaching .staff-row click handler (delegated)');
         $(document).on('click', '.staff-row', function(e) {
             e.preventDefault();
             const personId = $(this).data('person-id');
+            console.log('[HR Modal] .staff-row clicked. personId:', personId, this);
             const $staffModal = $('#staff-details-modal');
             const $staffDetailsContent = $('#staff-details-general-content');
             $staffDetailsContent.html('<div>Loading...</div>');
             $staffModal.css('display', 'flex');
+            console.log('[HR Modal] Modal should now be visible.');
             // Example: Fetch details via AJAX (mock for now)
             setTimeout(function() {
                 $staffDetailsContent.html(`
@@ -1111,6 +1113,7 @@
                     <div><strong>Role:</strong> Example Role</div>
                     <div><strong>Program:</strong> Example Program</div>
                 `);
+                console.log('[HR Modal] Modal content loaded for personId:', personId);
             }, 500);
         });
 
@@ -1118,12 +1121,14 @@
         $(document).on('click', '#close-staff-details-modal', function(e) {
             e.preventDefault();
             $('#staff-details-modal').css('display', 'none');
+            console.log('[HR Modal] Modal closed via close button.');
         });
         // Optional: Close modal on outside click
         $(window).on('click', function(event) {
             const $modal = $('#staff-details-modal');
             if (event.target === $modal[0]) {
                 $modal.css('display', 'none');
+                console.log('[HR Modal] Modal closed via outside click.');
             }
         });
     });

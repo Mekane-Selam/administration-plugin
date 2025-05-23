@@ -404,7 +404,10 @@
                 // Toggle handler
                 $(document).off('change', '#toggle-all-job-postings').on('change', '#toggle-all-job-postings', function() {
                     Dashboard.loadJobPostingsList(this.checked);
+                    $('#toggle-job-postings-label').text(this.checked ? 'Show All' : 'Show Active');
                 });
+                // Set initial label
+                $('#toggle-job-postings-label').text($('#toggle-all-job-postings').is(':checked') ? 'Show All' : 'Show Active');
             }
         },
 

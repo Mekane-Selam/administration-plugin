@@ -549,6 +549,10 @@
                     if (response.success && response.data) {
                         // Wrap the returned HTML in a styled card/grid for consistency
                         $('#job-posting-details-content').html('<div class="person-details-card">' + response.data + '</div>');
+                        // Add Go to Job Posting button in a consistent footer area
+                        if ($('#job-posting-details-content .job-goto-btn').length === 0) {
+                            $('#job-posting-details-content').append('<div class="job-details-actions" style="text-align:center; margin-top:24px;"><button class="button job-goto-btn" data-job-posting-id="' + jobPostingId + '">Go to Job Posting</button></div>');
+                        }
                     } else {
                         $('#job-posting-details-content').html('<div class="error-message">Failed to load job posting details.</div>');
                     }

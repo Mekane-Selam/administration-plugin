@@ -2,7 +2,7 @@
 // Modular job posting full view
 ?>
 <div class="job-posting-full-view">
-    <button class="button back-to-dashboard-btn" onclick="Dashboard.backToDashboard()">&larr; Back to Dashboard</button>
+    <button class="button back-to-dashboard-btn" id="back-to-dashboard-btn">&larr; Back to Dashboard</button>
     <div class="person-details-card" style="margin-top: 24px;">
         <h2 style="margin-bottom: 18px; color: #2271b1; font-size: 1.5rem; font-weight: 700;">Job Posting: <?php echo esc_html($job->Title); ?></h2>
         <div class="person-details-grid">

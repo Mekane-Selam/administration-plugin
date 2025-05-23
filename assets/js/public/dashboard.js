@@ -1478,6 +1478,12 @@
                 console.log('[HR Modal] Modal closed via outside click.');
             }
         });
+
+        // Back to Dashboard button for job posting view
+        $(document).on('click', '#back-to-dashboard-btn', function(e) {
+            e.preventDefault();
+            Dashboard.backToDashboard();
+        });
     });
 
 })(jQuery); 

@@ -65,14 +65,54 @@ class Administration_Plugin_Public {
      * Register the stylesheets for the public-facing side of the site.
      */
     public function enqueue_styles() {
-        // Remove global enqueuing of dashboard styles
+        wp_enqueue_style(
+            'administration-plugin-dashboard',
+            ADMINISTRATION_PLUGIN_URL . 'assets/css/public/dashboard.css',
+            array(),
+            ADMINISTRATION_PLUGIN_VERSION,
+            'all'
+        );
+        wp_enqueue_style(
+            'administration-plugin-program-view',
+            ADMINISTRATION_PLUGIN_URL . 'assets/css/public/program-view.css',
+            array(),
+            ADMINISTRATION_PLUGIN_VERSION,
+            'all'
+        );
     }
 
     /**
      * Register the JavaScript for the public-facing side of the site.
      */
     public function enqueue_scripts() {
-        // Remove global enqueuing of dashboard scripts
+        wp_enqueue_script(
+            'administration-plugin-program-view',
+            ADMINISTRATION_PLUGIN_URL . 'assets/js/public/program-view.js',
+            array('jquery'),
+            ADMINISTRATION_PLUGIN_VERSION,
+            true
+        );
+        wp_enqueue_script(
+            'administration-plugin-dashboard',
+            ADMINISTRATION_PLUGIN_URL . 'assets/js/public/dashboard.js',
+            array('jquery', 'administration-plugin-program-view'),
+            ADMINISTRATION_PLUGIN_VERSION,
+            true
+        );
+
+        // Define program types for localization
+        $program_types = array('Education', 'Health', 'Social');
+
+        // Localize the script with new data for AJAX and nonce
+        wp_localize_script(
+            'administration-plugin-dashboard',
+            'administration_plugin',
+            array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('administration_plugin_nonce'),
+                'program_types' => $program_types
+            )
+        );
     }
 
     /**
@@ -86,32 +126,14 @@ class Administration_Plugin_Public {
         if (!is_user_logged_in() || !current_user_can('manage_options')) {
             return '<p>' . __('You do not have permission to view this content.', 'administration-plugin') . '</p>';
         }
-        // Enqueue dashboard styles/scripts only for dashboard
-        wp_enqueue_style(
-            'administration-plugin-dashboard',
-            ADMINISTRATION_PLUGIN_URL . 'assets/css/public/dashboard.css',
-            array(),
-            ADMINISTRATION_PLUGIN_VERSION,
-            'all'
-        );
-        wp_enqueue_script(
-            'administration-plugin-dashboard',
-            ADMINISTRATION_PLUGIN_URL . 'assets/js/public/dashboard.js',
-            array('jquery'),
-            ADMINISTRATION_PLUGIN_VERSION,
-            true
-        );
-        // Localize script for AJAX
-        wp_localize_script(
-            'administration-plugin-dashboard',
-            'administration_plugin',
-            array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('administration_plugin_nonce'),
-            )
-        );
+
+        // Start output buffering
         ob_start();
+
+        // Include the dashboard template
         require_once ADMINISTRATION_PLUGIN_PATH . 'templates/public/dashboard.php';
+
+        // Return the buffered content
         return ob_get_clean();
     }
 
@@ -1378,23 +1400,6 @@ class Administration_Plugin_Public {
     }
 
     public function render_careers_job_list($atts = array()) {
-        // Enqueue careers styles/scripts only for careers page
-        wp_enqueue_style(
-            'administration-plugin-careers',
-            ADMINISTRATION_PLUGIN_URL . 'assets/css/public/careers.css',
-            array(),
-            ADMINISTRATION_PLUGIN_VERSION,
-            'all'
-        );
-        wp_enqueue_script(
-            'administration-plugin-careers',
-            ADMINISTRATION_PLUGIN_URL . 'assets/js/public/careers.js',
-            array('jquery'),
-            ADMINISTRATION_PLUGIN_VERSION,
-            true
-        );
-        // Pass AJAX URL to JS
-        wp_add_inline_script('administration-plugin-careers', 'window.careers_plugin_ajax_url = "' . admin_url('admin-ajax.php') . '";', 'before');
         ob_start();
         include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/careers-list.php';
         return ob_get_clean();

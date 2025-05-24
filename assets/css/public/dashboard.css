@@ -1851,10 +1851,12 @@ body.administration-dashboard-public {
 }
 .job-postings-list-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 12px;
-    padding-right: 4px;
+    margin-bottom: 12px;
+    padding-left: 20px;
+    padding-top: 10px;
 }
 #add-job-posting-btn.add-button {
     background: #2271b1;

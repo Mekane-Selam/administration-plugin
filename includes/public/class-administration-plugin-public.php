@@ -9,6 +9,7 @@ class Administration_Plugin_Public {
     public function __construct() {
         // Register shortcodes
         add_shortcode('administration_dashboard', array($this, 'render_dashboard'));
+        add_shortcode('careers_job_list', array($this, 'render_careers_job_list'));
 
         // Register AJAX handlers for dashboard content
         add_action('wp_ajax_load_dashboard_page', array($this, 'ajax_load_dashboard_page'));
@@ -1396,5 +1397,11 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to update job posting.');
         }
+    }
+
+    public function render_careers_job_list($atts = array()) {
+        ob_start();
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/careers-list.php';
+        return ob_get_clean();
     }
 } 

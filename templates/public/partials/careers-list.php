@@ -5,4 +5,7 @@ wp_enqueue_script('administration-plugin-careers', plugins_url('assets/js/public
 // Pass AJAX URL to JS
 wp_add_inline_script('administration-plugin-careers', 'window.careers_plugin_ajax_url = "' . admin_url('admin-ajax.php') . '";', 'before');
 ?>
-<div class="careers-job-list"></div> 
+<div class="careers-section">
+  <div class="careers-section-title">Current Job Openings</div>
+  <div class="careers-job-list"></div>
+</div> 

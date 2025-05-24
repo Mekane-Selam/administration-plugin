@@ -38,10 +38,17 @@ function ajax_apply_for_job_posting() {
     $person_id = $wpdb->get_var($wpdb->prepare("SELECT PersonID FROM {$wpdb->prefix}core_person WHERE Email = %s", $email));
     $external_id = null;
     if (!$person_id) {
+        // Generate unique ExternalApplicantID
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $external_id_str = 'EXT' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}hr_externalapplicants WHERE ExternalApplicantID = %s", $external_id_str));
+        } while ($exists);
         // Insert into hr_externalapplicants if not exists
         $wpdb->insert(
             $wpdb->prefix . 'hr_externalapplicants',
             array(
+                'ExternalApplicantID' => $external_id_str,
                 'FirstName' => $first_name,
                 'LastName' => $last_name,
                 'Email' => $email,
@@ -49,9 +56,9 @@ function ajax_apply_for_job_posting() {
                 'CreatedDate' => current_time('mysql'),
                 'LastModifiedDate' => current_time('mysql'),
             ),
-            array('%s','%s','%s','%s','%s','%s')
+            array('%s','%s','%s','%s','%s','%s','%s')
         );
-        $external_id = $wpdb->insert_id;
+        $external_id = $external_id_str;
     }
     // Generate unique ApplicationID
     do {

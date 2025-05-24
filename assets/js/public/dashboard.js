@@ -1485,6 +1485,37 @@
                     }
                 });
             });
+            // Add submit handler for edit job posting form
+            $(document).off('submit', '#edit-job-posting-form').on('submit', '#edit-job-posting-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $container = $('.job-posting-full-view');
+                var jobId = $container.data('job-posting-id');
+                var formData = $form.serializeArray();
+                var data = { action: 'edit_job_posting', nonce: administration_plugin.nonce, job_posting_id: jobId };
+                formData.forEach(function(field) { data[field.name] = field.value; });
+                var $msg = $('#edit-job-posting-message');
+                $msg.html('<span class="loading">Saving changes...</span>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            $msg.html('<span class="success-message">Job posting updated!</span>');
+                            setTimeout(function() {
+                                // Reload the full view
+                                Dashboard.showJobPostingFullView(jobId);
+                            }, 700);
+                        } else {
+                            $msg.html('<span class="error-message">' + (response.data || 'Failed to update job posting.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $msg.html('<span class="error-message">Failed to update job posting.</span>');
+                    }
+                });
+            });
         },
     };
 

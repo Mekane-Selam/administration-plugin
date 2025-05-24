@@ -354,6 +354,7 @@ class Administration_Database {
             CreatedBy VARCHAR(25) NULL,
             LastModifiedDate DATETIME NOT NULL,
             IsInternal TINYINT(1) DEFAULT 0,
+            DriveFolderID VARCHAR(100) NULL,
             PRIMARY KEY (JobPostingID),
             CONSTRAINT fk_jobposting_program FOREIGN KEY (ProgramID) REFERENCES $programs_table(ProgramID) ON DELETE SET NULL,
             CONSTRAINT fk_jobposting_reports_to FOREIGN KEY (ReportsTo) REFERENCES $person_table(PersonID) ON DELETE SET NULL,

@@ -4,6 +4,19 @@ add_action('wp_ajax_nopriv_get_careers_job_postings', 'ajax_get_careers_job_post
 add_action('wp_ajax_get_careers_job_postings', 'ajax_get_careers_job_postings');
 add_action('wp_ajax_nopriv_apply_for_job_posting', 'ajax_apply_for_job_posting');
 add_action('wp_ajax_apply_for_job_posting', 'ajax_apply_for_job_posting');
+
+// Google Drive integration config
+require_once dirname(__FILE__, 2) . '/integrations/class-google-drive.php';
+$google_drive_credentials = '/var/credentials/ninth-arena-450804-u2-0c435a1bf729.json';
+$job_postings_parent_folder = '15uxOSGKsmbEh1ojQZTADpGZ10grYs4LB';
+
+function create_job_posting_drive_folder($job_title, $job_posting_id) {
+    global $google_drive_credentials, $job_postings_parent_folder;
+    $drive = new Administration_Google_Drive($google_drive_credentials, $job_postings_parent_folder);
+    $folder_name = 'Job - ' . preg_replace('/[^a-zA-Z0-9 _-]/', '', $job_title) . ' - ' . $job_posting_id;
+    return $drive->createFolder($folder_name);
+}
+
 function ajax_get_careers_job_postings() {
     global $wpdb;
     $table = $wpdb->prefix . 'hr_jobpostings';

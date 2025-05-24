@@ -1247,6 +1247,14 @@ class Administration_Plugin_Public {
         $fields['JobPostingID'] = $job_posting_id;
         $result = $wpdb->insert($table, $fields);
         if ($result) {
+            // Create Google Drive folder for this job posting
+            if (!function_exists('create_job_posting_drive_folder')) {
+                require_once dirname(__FILE__, 2) . '/ajax/ajax_careers.php';
+            }
+            $drive_folder_id = create_job_posting_drive_folder($fields['Title'], $job_posting_id);
+            if ($drive_folder_id) {
+                $wpdb->update($table, ['DriveFolderID' => $drive_folder_id], ['JobPostingID' => $job_posting_id]);
+            }
             wp_send_json_success(['JobPostingID' => $job_posting_id]);
         } else {
             wp_send_json_error('Failed to add job posting.');

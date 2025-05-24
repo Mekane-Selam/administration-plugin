@@ -32,6 +32,11 @@ require_once ADMINISTRATION_PLUGIN_PATH . 'includes/class-administration-plugin.
 // Register autoloader
 Administration_Plugin_Autoloader::register();
 
+// Modular AJAX handler loader (for includes/ajax/*.php)
+foreach (glob(ADMINISTRATION_PLUGIN_PATH . 'includes/ajax/*.php') as $ajax_file) {
+    require_once $ajax_file;
+}
+
 // Activation/Deactivation hooks
 register_activation_hook(__FILE__, array('Administration_Plugin_Activator', 'activate'));
 register_deactivation_hook(__FILE__, array('Administration_Plugin_Deactivator', 'deactivate'));

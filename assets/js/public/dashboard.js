@@ -1408,7 +1408,82 @@
                 };
                 postedDate = formatDate(postedDate);
                 closingDate = formatDate(closingDate);
-                // ... rest of the edit form logic, using programId and reportsToId for selects, and pre-filling date fields ...
+                // Build edit form HTML
+                var statusOptions = ['Active','Done','Cancelled','Backlog'].map(function(opt) {
+                    return `<option value="${opt}"${status === opt ? ' selected' : ''}>${opt}</option>`;
+                }).join('');
+                var internalOptions = `<option value="0"${isInternal==='0'?' selected':''}>No</option><option value="1"${isInternal==='1'?' selected':''}>Yes</option>`;
+                var programSelect = `<select id="edit-job-program-id" name="program_id" class="person-detail-value">`+
+                    `<option value="">Loading...</option></select>`;
+                var reportsToSelect = `<select id="edit-job-reports-to" name="reports_to" class="person-detail-value">`+
+                    `<option value="">Loading...</option></select>`;
+                var editHtml = `<form id="edit-job-posting-form"><div class="job-posting-full-view" data-job-posting-id="${jobId}"><div class="job-posting-details-two-col">
+                    <div class="job-posting-details-left">
+                        <div class="job-posting-details-left-inner">
+                            <div class="person-detail-row job-detail-status" style="grid-column: 1 / span 2;">
+                                <span class="person-detail-label">Status</span>
+                                <select class="person-detail-value" name="status">${statusOptions}</select>
+                            </div>
+                            <div class="job-posting-details-left-col">
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Job Title</span><input class="person-detail-value" type="text" name="title" value="${Dashboard.escapeHtml(title)}" required></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Department</span><input class="person-detail-value" type="text" name="department_name" value="${Dashboard.escapeHtml(department)}"></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Job Type</span><input class="person-detail-value" type="text" name="job_type" value="${Dashboard.escapeHtml(jobType)}"></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Location</span><input class="person-detail-value" type="text" name="location" value="${Dashboard.escapeHtml(location)}"></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Internal?</span><select class="person-detail-value" name="is_internal">${internalOptions}</select></div>
+                            </div>
+                            <div class="job-posting-details-left-col">
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Posted Date</span><input class="person-detail-value" type="date" name="posted_date" value="${postedDate}" disabled></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Closing Date</span><input class="person-detail-value" type="date" name="closing_date" value="${closingDate}"></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program</span>${programSelect}</div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Program Type</span><input class="person-detail-value" type="text" name="program_type" value="${Dashboard.escapeHtml(programType)}" disabled></div>
+                                <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Reports To</span>${reportsToSelect}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="job-posting-details-right">
+                        <div class="person-detail-row job-detail-long"><span class="person-detail-label">Description</span><textarea class="person-detail-value job-detail-long-value" name="description">${Dashboard.escapeHtml(description)}</textarea></div>
+                        <div class="person-detail-row job-detail-long"><span class="person-detail-label">Requirements</span><textarea class="person-detail-value job-detail-long-value" name="requirements">${Dashboard.escapeHtml(requirements)}</textarea></div>
+                        <div class="person-detail-row job-detail-long"><span class="person-detail-label">Responsibilities</span><textarea class="person-detail-value job-detail-long-value" name="responsibilities">${Dashboard.escapeHtml(responsibilities)}</textarea></div>
+                    </div>
+                </div>
+                <div class="edit-job-actions" style="margin-top:24px; text-align:right;">
+                    <button type="submit" class="button button-primary">Save</button>
+                    <button type="button" class="button button-secondary" id="cancel-edit-job-posting">Cancel</button>
+                </div>
+                <div id="edit-job-posting-message"></div>
+                </form>`;
+                $container.html(editHtml);
+                // Populate Program select
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_programs_for_select', nonce: administration_plugin.nonce },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data)) {
+                            var options = '<option value="">-- None --</option>';
+                            response.data.forEach(function(program) {
+                                options += `<option value="${program.ProgramID}"${program.ProgramID==programId?' selected':''}>${Dashboard.escapeHtml(program.ProgramName)}</option>`;
+                            });
+                            $('#edit-job-program-id').html(options);
+                        }
+                    }
+                });
+                // Populate Reports To select
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_people_for_owner_select', nonce: administration_plugin.nonce },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data)) {
+                            var options = '<option value="">-- None --</option>';
+                            response.data.forEach(function(person) {
+                                var fullName = person.FirstName + ' ' + person.LastName;
+                                options += `<option value="${person.PersonID}"${person.PersonID==reportsToId?' selected':''}>${Dashboard.escapeHtml(fullName)}</option>`;
+                            });
+                            $('#edit-job-reports-to').html(options);
+                        }
+                    }
+                });
             });
         },
     };

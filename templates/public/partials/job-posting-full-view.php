@@ -7,7 +7,7 @@
         <h2 style="margin-bottom: 18px; color: #2271b1; font-size: 1.5rem; font-weight: 700; padding-left: 18px;">Job Posting: <?php echo esc_html($job->Title); ?></h2>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
             <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin: 0; padding-left: 18px;">General Info</h3>
-            <button class="button button-secondary" id="edit-job-posting-btn" data-job-posting-id="<?php echo esc_attr($job->JobPostingID); ?>" style="margin-right: 18px; min-width: 140px;">Edit Job Posting</button>
+            <button class="button button-secondary person-details-edit-btn" id="edit-job-posting-btn" data-job-posting-id="<?php echo esc_attr($job->JobPostingID); ?>" style="margin-right: 18px; min-width: 140px;">Edit Job Posting</button>
         </div>
         <div class="job-posting-details-two-col">
             <div class="job-posting-details-left">

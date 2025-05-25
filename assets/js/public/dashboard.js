@@ -1446,12 +1446,10 @@
                         <div class="person-detail-row job-detail-long"><span class="person-detail-label">Responsibilities</span><textarea class="person-detail-value job-detail-long-value" name="responsibilities">${Dashboard.escapeHtml(responsibilities)}</textarea></div>
                     </div>
                 </div>
-                <div class="edit-job-actions" style="margin-top:24px; text-align:right; display: flex; gap: 12px; justify-content: flex-end;">
+                <div class="edit-job-actions" style="margin-top:24px; display: flex; gap: 12px; justify-content: flex-end; align-items: center;">
                     <button type="submit" class="button button-primary save-job-posting-btn">Save</button>
                     <button type="button" class="button button-secondary cancel-job-posting-btn">Cancel</button>
-                </div>
-                <div class="edit-job-delete-actions" style="margin-top: 32px; text-align: right;">
-                    <button type="button" class="button button-danger delete-job-posting-btn" style="background: #e74c3c; color: #fff; border: none;">Delete Job Posting</button>
+                    <button type="button" class="button button-danger delete-job-posting-btn">Delete Job Posting</button>
                 </div>
                 <div id="edit-job-posting-message"></div>
                 </form>`;

@@ -2257,4 +2257,33 @@ input:checked + .slider:before {
 .button-danger:hover, .button-danger:focus {
   background: #c0392b !important;
   color: #fff !important;
+}
+
+.job-drive-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  color: #2271b1;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 1.05rem;
+  transition: color 0.18s;
+}
+.job-drive-link:hover, .job-drive-link:focus {
+  color: #135e96;
+  text-decoration: underline;
+}
+.job-drive-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+}
+.job-drive-label {
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: inherit;
+  margin-left: 2px;
 } 

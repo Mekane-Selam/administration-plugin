@@ -18,8 +18,12 @@
                     <div class="person-detail-row job-detail-balance" style="grid-column: 1 / span 2; align-items: center; margin-bottom: 6px;">
                         <span class="person-detail-label">Drive Folder</span>
                         <?php if (!empty($job->DriveFolderID)): ?>
-                        <a href="https://drive.google.com/drive/folders/<?php echo esc_attr($job->DriveFolderID); ?>" target="_blank" class="job-drive-link" title="Open Google Drive Folder" style="display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; color: #2271b1; font-weight: 500; text-decoration: none;">
-                            <span class="dashicons dashicons-google-drive" style="font-size: 1.2em;"></span> <span>Open Folder</span>
+                        <a href="https://drive.google.com/drive/folders/<?php echo esc_attr($job->DriveFolderID); ?>" target="_blank" class="job-drive-link" title="Open Google Drive Folder">
+                            <span class="job-drive-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">
+                                <!-- Google Drive SVG icon -->
+                                <svg width="22" height="22" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;"><g><polygon fill="#FFC107" points="21.6,27.7 13.1,42 34.9,42 43.4,27.7"/><polygon fill="#1976D2" points="6.6,27.7 13.1,42 21.6,27.7 15.1,14.3"/><polygon fill="#388E3C" points="32.9,14.3 26.4,27.7 34.9,42 43.4,27.7"/><polygon fill="#FFA000" points="21.6,27.7 26.4,27.7 32.9,14.3 15.1,14.3"/></g></svg>
+                            </span>
+                            <span class="job-drive-label">Open Folder</span>
                         </a>
                         <?php else: ?>
                         <span class="person-detail-value" style="color: #888;">—</span>

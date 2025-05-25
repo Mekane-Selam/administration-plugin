@@ -52,8 +52,17 @@
     </div>
     <div class="job-posting-sections" style="margin-top: 36px;">
         <div class="person-details-card">
-            <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin-bottom: 12px;">Track Applications & Interviews</h3>
-            <div class="job-tracking-section">(Tracking features coming soon...)</div>
+            <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin-bottom: 18px; padding-top: 8px;">Track Applications & Interviews</h3>
+            <div class="job-applications-content-split" style="display: flex; gap: 32px; min-height: 260px;">
+                <div class="job-applications-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
+                    <h4 class="job-applications-list-title" style="margin: 0 0 14px 0; color: #1d2327; font-size: 1.08rem; font-weight: 600;">Applicants</h4>
+                    <div class="job-applicants-list-grid">
+                        <!-- PHP: Applicant cards will go here -->
+                        <div class="job-applicant-empty">No applicants yet.</div>
+                    </div>
+                </div>
+                <div class="job-applicant-details-panel" style="flex: 1 1 0; min-width: 0; display: none;"></div>
+            </div>
         </div>
     </div>
 </div> 

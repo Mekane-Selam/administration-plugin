@@ -1496,7 +1496,7 @@ class Administration_Plugin_Public {
         $details = [
             'ApplicationID' => $app->ApplicationID,
             'Status' => $app->Status,
-            'CreatedDate' => $app->CreatedDate,
+            'SubmissionDate' => $app->SubmissionDate,
             'Notes' => $app->Notes,
             'ResumeURL' => $app->ResumeURL,
             'CoverLetterURL' => $app->CoverLetterURL,

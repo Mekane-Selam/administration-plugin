@@ -1545,7 +1545,7 @@
             html += '</select>';
             html += '<span class="status-updated-message" style="display:none;">Status Updated!</span>';
             html += '</div>';
-            html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Applied:</span> <span>' + (data.CreatedDate ? data.CreatedDate.split(' ')[0] : '-') + '</span></div>';
+            html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Applied:</span> <span>' + (data.SubmissionDate ? data.SubmissionDate.split(' ')[0] : '-') + '</span></div>';
             if (data.ResumeURL) {
                 html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Resume:</span> <a href="' + data.ResumeURL + '" target="_blank" class="job-applicant-details-link">View Resume</a></div>';
             }

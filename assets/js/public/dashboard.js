@@ -1667,7 +1667,7 @@
         },
 
         renderAssignmentDetailsPanel: function(data) {
-            var html = '<div class="assignment-details-inner">';
+            var html = '';
             html += '<div class="assignment-details-title" style="font-size:1.32rem;font-weight:700;color:#2271b1;margin-bottom:8px;line-height:1.2;">' + Dashboard.escapeHtml(data.Title) + '</div>';
             html += '<div class="assignment-details-meta" style="display:flex;gap:18px;font-size:1.01rem;color:#6a7a8c;margin-bottom:16px;">';
             if (data.DueDate) html += '<span class="assignment-details-duedate" style="display:inline-block;">Due: <b>' + data.DueDate + '</b></span>';
@@ -1677,7 +1677,6 @@
             html += '<div class="assignment-details-actions" style="display:flex;gap:12px;margin-top:10px;">';
             html += '<button class="button button-secondary edit-assignment-btn" data-assignment-id="' + data.AssignmentID + '">Edit</button>';
             html += '<button class="button button-danger delete-assignment-btn" data-assignment-id="' + data.AssignmentID + '">Delete</button>';
-            html += '</div>';
             html += '</div>';
             $('.course-assignment-details-panel').html(html).addClass('active').show();
         },

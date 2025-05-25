@@ -97,7 +97,7 @@
           <div class="course-assignment-empty">No assignments yet.</div>
         </div>
       </div>
-      <div class="course-assignment-details-panel"><div class="assignment-details-inner"></div></div>
+      <div class="course-assignment-details-panel"></div>
     </div>
   </div>
   <div class="tab-pane" id="curriculum">
@@ -228,6 +228,7 @@
   padding: 0 0 0 0;
   border-bottom: 1px solid #e3e7ee;
   margin-bottom: 20px;
+  padding-bottom: 10px;
 }
 .course-detail-assignments-search-container {
   flex: 1;

@@ -46,7 +46,7 @@ jQuery(function($) {
         <div class="careers-modal">
           <button class="careers-modal-close" title="Close">&times;</button>
           <div class="careers-modal-title">Apply for: <span>${jobTitle}</span></div>
-          <form class="careers-apply-form" autocomplete="off">
+          <form class="careers-apply-form" autocomplete="off" enctype="multipart/form-data">
             <input type="hidden" name="job_posting_id" value="${jobId}">
             <div class="careers-form-row">
               <label>First Name <span class="required">*</span></label>
@@ -61,12 +61,16 @@ jQuery(function($) {
               <input type="email" name="email" required maxlength="128">
             </div>
             <div class="careers-form-row">
-              <label>Phone</label>
-              <input type="text" name="phone" maxlength="32">
+              <label>Phone <span class="required">*</span></label>
+              <input type="text" name="phone" required maxlength="32">
             </div>
             <div class="careers-form-row">
-              <label>Cover Letter</label>
-              <textarea name="cover_letter" rows="3" maxlength="2000"></textarea>
+              <label>Resume (PDF, optional)</label>
+              <input type="file" name="resume" accept="application/pdf">
+            </div>
+            <div class="careers-form-row">
+              <label>Cover Letter (PDF, optional)</label>
+              <input type="file" name="cover_letter" accept="application/pdf">
             </div>
             <div class="careers-form-row">
               <label>Additional Notes</label>
@@ -123,17 +127,37 @@ jQuery(function($) {
         $(this).removeClass('input-error');
       }
     });
+    // Validate file inputs (PDF, max 5MB)
+    var fileInputs = [
+      { name: 'resume', label: 'Resume' },
+      { name: 'cover_letter', label: 'Cover Letter' }
+    ];
+    for (var i = 0; i < fileInputs.length; i++) {
+      var file = $form.find('input[name="' + fileInputs[i].name + '"]')[0].files[0];
+      if (file) {
+        if (file.type !== 'application/pdf') {
+          $msg.text(fileInputs[i].label + ' must be a PDF.').addClass('error').show();
+          return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          $msg.text(fileInputs[i].label + ' must be less than 5MB.').addClass('error').show();
+          return;
+        }
+      }
+    }
     if (!valid) {
       $msg.text('Please fill in all required fields.').addClass('error').show();
       return;
     }
-    // Submit via AJAX
-    var data = $form.serializeArray();
-    data.push({ name: 'action', value: 'apply_for_job_posting' });
+    // Submit via AJAX with FormData
+    var formData = new FormData($form[0]);
+    formData.append('action', 'apply_for_job_posting');
     $.ajax({
       url: window.careers_plugin_ajax_url,
       type: 'POST',
-      data: data,
+      data: formData,
+      processData: false,
+      contentType: false,
       success: function(response) {
         if (response.success) {
           $msg.text('Application submitted successfully!').addClass('success').show();

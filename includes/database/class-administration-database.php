@@ -374,6 +374,7 @@ class Administration_Database {
             ResumeURL VARCHAR(255),
             CoverLetterURL VARCHAR(255),
             ReferralSource VARCHAR(100),
+            ApplicantDriveFolderID VARCHAR(100),
             PRIMARY KEY (ApplicationID),
             CONSTRAINT fk_application_jobposting FOREIGN KEY (JobPostingID) REFERENCES $job_postings_table(JobPostingID) ON DELETE SET NULL,
             CONSTRAINT fk_application_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE SET NULL

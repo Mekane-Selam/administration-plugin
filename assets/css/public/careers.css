@@ -224,6 +224,25 @@
 .careers-form-message.success {
   color: #2271b1;
 }
+.careers-apply-form input[type="file"] {
+  border: 1px solid #e3e7ee;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 1.08rem;
+  color: #222;
+  background: #f7fafd;
+  transition: border 0.2s, box-shadow 0.2s;
+  outline: none;
+  margin-top: 2px;
+}
+.careers-apply-form input[type="file"]:focus {
+  border-color: #2271b1;
+  background: #fff;
+}
+.careers-apply-form input[type="file"].input-error {
+  border-color: #e74c3c !important;
+  background: #fff0f0 !important;
+}
 @media (max-width: 600px) {
   .careers-modal {
     min-width: 0;

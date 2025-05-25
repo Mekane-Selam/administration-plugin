@@ -29,7 +29,7 @@ function ajax_get_careers_job_postings() {
 }
 function ajax_apply_for_job_posting() {
     global $wpdb;
-    $required = array('job_posting_id', 'first_name', 'last_name', 'email');
+    $required = array('job_posting_id', 'first_name', 'last_name', 'email', 'phone');
     foreach ($required as $field) {
         if (empty($_POST[$field])) {
             wp_send_json_error('Missing required fields.');
@@ -40,13 +40,8 @@ function ajax_apply_for_job_posting() {
     $first_name = sanitize_text_field($_POST['first_name']);
     $last_name = sanitize_text_field($_POST['last_name']);
     $email = sanitize_email($_POST['email']);
-    $phone = isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '';
-    $cover_letter = isset($_POST['cover_letter']) ? sanitize_textarea_field($_POST['cover_letter']) : '';
+    $phone = sanitize_text_field($_POST['phone']);
     $notes = isset($_POST['notes']) ? sanitize_textarea_field($_POST['notes']) : '';
-    $combined_notes = $cover_letter;
-    if ($notes) {
-        $combined_notes .= ($cover_letter ? "\n\n" : "") . $notes;
-    }
     // Check if applicant exists in core_person
     $person_id = $wpdb->get_var($wpdb->prepare("SELECT PersonID FROM {$wpdb->prefix}core_person WHERE Email = %s", $email));
     $external_id = null;
@@ -57,7 +52,6 @@ function ajax_apply_for_job_posting() {
             $external_id = 'EXTAPP' . $unique_code;
             $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}hr_externalapplicants WHERE ExternalApplicantID = %s", $external_id));
         } while ($exists);
-        // Insert into hr_externalapplicants if not exists
         $wpdb->insert(
             $wpdb->prefix . 'hr_externalapplicants',
             array(
@@ -78,6 +72,41 @@ function ajax_apply_for_job_posting() {
         $application_id = 'APP' . $unique_code;
         $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}hr_applications WHERE ApplicationID = %s", $application_id));
     } while ($exists);
+    // Get job posting folder ID
+    $job = $wpdb->get_row($wpdb->prepare("SELECT DriveFolderID, Title FROM {$wpdb->prefix}hr_jobpostings WHERE JobPostingID = %s", $job_posting_id));
+    $applicant_folder_id = null;
+    $resume_url = '';
+    $cover_letter_url = '';
+    $has_file = isset($_FILES['resume']) && $_FILES['resume']['size'] > 0;
+    $has_cover = isset($_FILES['cover_letter']) && $_FILES['cover_letter']['size'] > 0;
+    if (($has_file || $has_cover) && $job && $job->DriveFolderID) {
+        require_once dirname(__FILE__, 2) . '/integrations/class-google-drive.php';
+        $google_drive_credentials = '/var/credentials/ninth-arena-450804-u2-0c435a1bf729.json';
+        $job_postings_parent_folder = '15uxOSGKsmbEh1ojQZTADpGZ10grYs4LB';
+        $drive = new Administration_Google_Drive($google_drive_credentials, $job_postings_parent_folder);
+        // Create applicant folder
+        $applicant_folder_name = 'Applicant - ' . preg_replace('/[^a-zA-Z0-9 _-]/', '', $last_name) . ', ' . preg_replace('/[^a-zA-Z0-9 _-]/', '', $first_name) . ' - ' . $application_id;
+        try {
+            $applicant_folder_id = $drive->createFolder($applicant_folder_name, $job->DriveFolderID);
+            // Upload resume
+            if ($has_file && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
+                $tmp_path = $_FILES['resume']['tmp_name'];
+                $file_name = 'Resume - ' . $last_name . ', ' . $first_name . ' - ' . $application_id . '.pdf';
+                $file_id = $drive->uploadFile($tmp_path, $file_name, $applicant_folder_id);
+                $resume_url = $drive->getFileUrl($file_id);
+            }
+            // Upload cover letter
+            if ($has_cover && $_FILES['cover_letter']['error'] === UPLOAD_ERR_OK) {
+                $tmp_path = $_FILES['cover_letter']['tmp_name'];
+                $file_name = 'Cover Letter - ' . $last_name . ', ' . $first_name . ' - ' . $application_id . '.pdf';
+                $file_id = $drive->uploadFile($tmp_path, $file_name, $applicant_folder_id);
+                $cover_letter_url = $drive->getFileUrl($file_id);
+            }
+        } catch (Exception $e) {
+            wp_send_json_error('Failed to upload files to Google Drive: ' . $e->getMessage());
+            wp_die();
+        }
+    }
     // Insert into hr_applications
     $result = $wpdb->insert(
         $wpdb->prefix . 'hr_applications',
@@ -89,9 +118,12 @@ function ajax_apply_for_job_posting() {
             'Status' => 'New',
             'SubmissionDate' => current_time('mysql'),
             'LastModifiedDate' => current_time('mysql'),
-            'Notes' => $combined_notes,
+            'Notes' => $notes,
+            'ResumeURL' => $resume_url,
+            'CoverLetterURL' => $cover_letter_url,
+            'ApplicantDriveFolderID' => $applicant_folder_id,
         ),
-        array('%s','%s','%s','%s','%s','%s','%s','%s')
+        array('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')
     );
     if ($result) {
         wp_send_json_success();

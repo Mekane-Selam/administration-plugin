@@ -116,6 +116,7 @@ jQuery(function($) {
     e.preventDefault();
     var $form = $(this);
     var $msg = $form.find('.careers-form-message');
+    var $submitBtn = $form.find('.careers-modal-submit');
     $msg.hide().removeClass('error success');
     // Validate required fields
     var valid = true;
@@ -149,6 +150,8 @@ jQuery(function($) {
       $msg.text('Please fill in all required fields.').addClass('error').show();
       return;
     }
+    // Progress indicator: disable button and show 'Submitting...'
+    $submitBtn.prop('disabled', true).addClass('submitting').text('Submitting...');
     // Submit via AJAX with FormData
     var formData = new FormData($form[0]);
     formData.append('action', 'apply_for_job_posting');
@@ -159,6 +162,7 @@ jQuery(function($) {
       processData: false,
       contentType: false,
       success: function(response) {
+        $submitBtn.prop('disabled', false).removeClass('submitting').text('Submit Application');
         if (response.success) {
           $msg.text('Application submitted successfully!').addClass('success').show();
           $form[0].reset();
@@ -168,6 +172,7 @@ jQuery(function($) {
         }
       },
       error: function() {
+        $submitBtn.prop('disabled', false).removeClass('submitting').text('Submit Application');
         $msg.text('Failed to submit application.').addClass('error').show();
       }
     });

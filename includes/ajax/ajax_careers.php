@@ -79,23 +79,22 @@ function ajax_apply_for_job_posting() {
     $cover_letter_url = '';
     $has_file = isset($_FILES['resume']) && $_FILES['resume']['size'] > 0;
     $has_cover = isset($_FILES['cover_letter']) && $_FILES['cover_letter']['size'] > 0;
-    if (($has_file || $has_cover) && $job && $job->DriveFolderID) {
+    if ($job && $job->DriveFolderID) {
         require_once dirname(__FILE__, 2) . '/integrations/class-google-drive.php';
         $google_drive_credentials = '/var/credentials/ninth-arena-450804-u2-0c435a1bf729.json';
         $job_postings_parent_folder = '15uxOSGKsmbEh1ojQZTADpGZ10grYs4LB';
         $drive = new Administration_Google_Drive($google_drive_credentials, $job_postings_parent_folder);
-        // Create applicant folder
         $applicant_folder_name = 'Applicant - ' . preg_replace('/[^a-zA-Z0-9 _-]/', '', $last_name) . ', ' . preg_replace('/[^a-zA-Z0-9 _-]/', '', $first_name) . ' - ' . $application_id;
         try {
+            // Always create the applicant folder
             $applicant_folder_id = $drive->createFolder($applicant_folder_name, $job->DriveFolderID);
-            // Upload resume
+            // Only upload files if present
             if ($has_file && $_FILES['resume']['error'] === UPLOAD_ERR_OK) {
                 $tmp_path = $_FILES['resume']['tmp_name'];
                 $file_name = 'Resume - ' . $last_name . ', ' . $first_name . ' - ' . $application_id . '.pdf';
                 $file_id = $drive->uploadFile($tmp_path, $file_name, $applicant_folder_id);
                 $resume_url = $drive->getFileUrl($file_id);
             }
-            // Upload cover letter
             if ($has_cover && $_FILES['cover_letter']['error'] === UPLOAD_ERR_OK) {
                 $tmp_path = $_FILES['cover_letter']['tmp_name'];
                 $file_name = 'Cover Letter - ' . $last_name . ', ' . $first_name . ' - ' . $application_id . '.pdf';
@@ -103,8 +102,12 @@ function ajax_apply_for_job_posting() {
                 $cover_letter_url = $drive->getFileUrl($file_id);
             }
         } catch (Exception $e) {
-            wp_send_json_error('Failed to upload files to Google Drive: ' . $e->getMessage());
-            wp_die();
+            error_log('Google Drive error (application upload): ' . $e->getMessage());
+            if (!$applicant_folder_id) {
+                wp_send_json_error('Failed to create applicant folder in Google Drive: ' . $e->getMessage());
+                wp_die();
+            }
+            // If folder was created but file upload failed, continue but log the error
         }
     }
     // Insert into hr_applications

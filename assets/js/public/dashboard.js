@@ -1923,6 +1923,36 @@
                 }
             });
         });
+
+        // Replace old add-assignment-btn event with new class
+        $(document).off('click', '.add-course-assignment-btn').on('click', '.add-course-assignment-btn', function() {
+            var $tabContent = $(this).closest('.tab-pane');
+            var courseId = $tabContent.closest('.course-detail-tab-content').data('course-id');
+            Dashboard.showAddAssignmentModal(courseId);
+        });
+
+        // Assignment search filter
+        $(document).off('input', '.course-detail-assignments-search').on('input', '.course-detail-assignments-search', function() {
+            var search = $(this).val().toLowerCase();
+            $('.course-assignments-list-grid .course-assignment-row').each(function() {
+                var title = $(this).find('.course-assignment-title').text().toLowerCase();
+                var meta = $(this).find('.course-assignment-meta').text().toLowerCase();
+                if (title.includes(search) || meta.includes(search)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+            // Show/hide empty message
+            var visible = $('.course-assignments-list-grid .course-assignment-row:visible').length;
+            if (visible === 0) {
+                if ($('.course-assignments-list-grid .course-assignment-empty').length === 0) {
+                    $('.course-assignments-list-grid').append('<div class="course-assignment-empty">No assignments found.</div>');
+                }
+            } else {
+                $('.course-assignments-list-grid .course-assignment-empty').remove();
+            }
+        });
     });
 
     // Add event handler for Cancel button

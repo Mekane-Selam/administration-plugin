@@ -82,18 +82,21 @@
     <?php include plugin_dir_path(__FILE__) . 'course-detail-enrollments.php'; ?>
   </div>
   <div class="tab-pane" id="assignments">
-    <div class="course-assignments-section">
-      <div class="course-assignments-toolbar">
-        <button class="button button-primary add-assignment-btn">Add Assignment</button>
+    <div class="course-detail-assignments-toolbar">
+      <div class="course-detail-assignments-search-container">
+        <input type="text" class="course-detail-assignments-search" placeholder="Search assignments...">
       </div>
-      <div class="course-assignments-content-split" style="display: flex; gap: 32px; min-height: 220px;">
-        <div class="course-assignments-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
-          <div class="course-assignments-list-grid">
-            <div class="course-assignment-empty">No assignments yet.</div>
-          </div>
+      <div class="course-detail-assignments-actions">
+        <button class="add-course-assignment-btn button button-primary">Add Assignment</button>
+      </div>
+    </div>
+    <div class="course-assignments-content-split" style="display: flex; gap: 32px; min-height: 220px;">
+      <div class="course-assignments-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
+        <div class="course-assignments-list-grid">
+          <div class="course-assignment-empty">No assignments yet.</div>
         </div>
-        <div class="course-assignment-details-panel" style="flex: 1 1 0; min-width: 0; display: none;"></div>
       </div>
+      <div class="course-assignment-details-panel" style="flex: 1 1 0; min-width: 0; display: none;"></div>
     </div>
   </div>
   <div class="tab-pane" id="curriculum">
@@ -215,5 +218,56 @@
 
 .add-course-enrollment-btn .dashicons {
     font-size: 1.2rem;
+}
+
+.course-detail-assignments-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 0 0;
+  border-bottom: 1px solid #e3e7ee;
+  margin-bottom: 20px;
+}
+.course-detail-assignments-search-container {
+  flex: 1;
+  max-width: 300px;
+  margin-right: 16px;
+}
+.course-detail-assignments-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e3e7ee;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #f8fafc;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.course-detail-assignments-search:focus {
+  border-color: #2271b1;
+  box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
+  outline: none;
+}
+.course-detail-assignments-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.add-course-assignment-btn {
+  background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(34,113,177,0.10);
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.add-course-assignment-btn:hover {
+  background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
+  transform: translateY(-2px);
 }
 </style> 

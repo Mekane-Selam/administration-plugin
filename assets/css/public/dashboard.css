@@ -2438,68 +2438,68 @@ button.button-primary, button.button-secondary, button.button-danger {
 .job-applicant-details-card {
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 24px 28px 18px 28px;
-  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.06);
+  border-radius: 12px;
+  padding: 32px 36px 24px 36px;
+  box-shadow: 0 4px 24px rgba(34,113,177,0.10), 0 1.5px 6px rgba(0,0,0,0.03);
   min-height: 180px;
   margin-top: 8px;
+  max-width: 520px;
+  margin-left: 0;
+  margin-right: auto;
 }
 .job-applicant-details-name {
-  font-size: 1.18rem;
+  font-size: 1.22rem;
   font-weight: 700;
   color: #1d2327;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
 .job-applicant-details-meta {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 1.01rem;
+  gap: 18px;
+  font-size: 1.04rem;
   color: #444;
   margin-bottom: 10px;
 }
-.job-applicant-details-email {
-  color: #2271b1;
-  font-weight: 500;
-}
-.job-applicant-details-phone {
-  color: #444;
+.job-applicant-details-divider {
+  border-bottom: 1.5px solid #e3e7ee;
+  margin: 14px 0 18px 0;
 }
 .job-applicant-details-status-row {
-  margin-bottom: 10px;
-  font-size: 1.01rem;
-}
-.job-applicant-details-status {
-  padding: 2px 12px;
-  border-radius: 12px;
-  font-size: 0.98rem;
-  font-weight: 500;
-  background: #e5e7eb;
-  color: #444;
-  margin-left: 2px;
-}
-.job-applicant-details-status.active {
-  background: #d1fae5;
-  color: #047857;
-}
-.job-applicant-details-status.reviewed {
-  background: #fef3c7;
-  color: #b45309;
-}
-.job-applicant-details-status.rejected {
-  background: #fee2e2;
-  color: #b91c1c;
-}
-.job-applicant-details-status.hired {
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-.job-applicant-details-row {
-  margin-bottom: 8px;
-  font-size: 1.01rem;
+  margin-bottom: 16px;
+  font-size: 1.05rem;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+}
+.job-applicant-details-status-label {
+  font-weight: 500;
+  color: #1d2327;
+  min-width: 90px;
+}
+.job-applicant-details-status-select {
+  padding: 7px 18px;
+  border-radius: 8px;
+  border: 1px solid #b6d4ef;
+  font-size: 1.01rem;
+  font-weight: 500;
+  background: #f7fafd;
+  color: #2271b1;
+  transition: border 0.18s, background 0.18s;
+  outline: none;
+  min-width: 180px;
+  max-width: 260px;
+}
+.job-applicant-details-status-select:focus {
+  border-color: #2271b1;
+  background: #eaf4fb;
+}
+.job-applicant-details-row {
+  margin-bottom: 12px;
+  font-size: 1.03rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .job-applicant-details-label {
   font-weight: 500;
@@ -2514,4 +2514,23 @@ button.button-primary, button.button-secondary, button.button-danger {
 }
 .job-applicant-details-link:hover, .job-applicant-details-link:focus {
   color: #135e96;
+}
+.status-updated-message {
+  background: #edfaef;
+  color: #00a32a;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 18px;
+  margin-bottom: 12px;
+  margin-top: 0;
+  font-size: 1.01rem;
+  text-align: left;
+  box-shadow: 0 1px 4px rgba(34,113,177,0.06);
+  display: inline-block;
+  opacity: 1;
+  transition: opacity 0.4s;
+}
+.status-updated-message.hide {
+  opacity: 0;
+  transition: opacity 0.4s;
 }

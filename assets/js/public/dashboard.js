@@ -1521,17 +1521,30 @@
 
         // Applicant card click handler
         renderApplicantDetailsPanel: function(data) {
+            var statusOptions = [
+                { value: 'New', label: 'New' },
+                { value: 'Interview(s) Scheduled', label: 'Interview(s) Scheduled' },
+                { value: 'Pending Decision', label: 'Pending Decision' },
+                { value: 'Decision Made', label: 'Decision Made' }
+            ];
             var html = '<div class="job-applicant-details-card">';
-            if (data.Applicant) {
-                html += '<div class="job-applicant-details-name">' +
-                    (data.Applicant.FirstName ? data.Applicant.FirstName : '') + ' ' +
-                    (data.Applicant.LastName ? data.Applicant.LastName : '') + '</div>';
-                html += '<div class="job-applicant-details-meta">';
-                if (data.Applicant.Email) html += '<span class="job-applicant-details-email">' + data.Applicant.Email + '</span>';
-                if (data.Applicant.Phone) html += '<span class="job-applicant-details-phone">' + data.Applicant.Phone + '</span>';
-                html += '</div>';
-            }
-            html += '<div class="job-applicant-details-status-row"><span class="job-applicant-details-label">Status:</span> <span class="job-applicant-details-status ' + (data.Status ? data.Status.toLowerCase() : '') + '">' + (data.Status || '-') + '</span></div>';
+            html += '<div class="job-applicant-details-name">' +
+                (data.Applicant && data.Applicant.FirstName ? data.Applicant.FirstName : '') + ' ' +
+                (data.Applicant && data.Applicant.LastName ? data.Applicant.LastName : '') + '</div>';
+            html += '<div class="job-applicant-details-meta">';
+            if (data.Applicant && data.Applicant.Email) html += '<span class="job-applicant-details-email">' + data.Applicant.Email + '</span>';
+            if (data.Applicant && data.Applicant.Phone) html += '<span class="job-applicant-details-phone">' + data.Applicant.Phone + '</span>';
+            html += '</div>';
+            html += '<div class="job-applicant-details-divider"></div>';
+            html += '<div class="job-applicant-details-status-row">';
+            html += '<span class="job-applicant-details-status-label">Status:</span>';
+            html += '<select class="job-applicant-details-status-select" data-application-id="' + data.ApplicationID + '">';
+            statusOptions.forEach(function(opt) {
+                html += '<option value="' + opt.value + '"' + (data.Status === opt.value ? ' selected' : '') + '>' + opt.label + '</option>';
+            });
+            html += '</select>';
+            html += '<span class="status-updated-message" style="display:none;">Status Updated!</span>';
+            html += '</div>';
             html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Applied:</span> <span>' + (data.CreatedDate ? data.CreatedDate.split(' ')[0] : '-') + '</span></div>';
             if (data.ResumeURL) {
                 html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Resume:</span> <a href="' + data.ResumeURL + '" target="_blank" class="job-applicant-details-link">View Resume</a></div>';
@@ -1544,6 +1557,38 @@
             }
             html += '</div>';
             $('.job-applicant-details-panel').html(html).show();
+
+            // Attach change handler for status dropdown
+            $('.job-applicant-details-status-select').off('change').on('change', function() {
+                var $select = $(this);
+                var newStatus = $select.val();
+                var applicationId = $select.data('application-id');
+                var $msg = $select.closest('.job-applicant-details-status-row').find('.status-updated-message');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'update_job_applicant_status',
+                        nonce: administration_plugin.nonce,
+                        application_id: applicationId,
+                        status: newStatus
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $msg.stop(true, true).fadeIn(120).removeClass('hide');
+                            setTimeout(function() {
+                                $msg.addClass('hide');
+                                setTimeout(function() { $msg.hide(); }, 400);
+                            }, 1500);
+                        } else {
+                            alert(response.data || 'Failed to update status.');
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to update status.');
+                    }
+                });
+            });
         },
     };
 

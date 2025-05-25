@@ -65,6 +65,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_get_job_applicants_list', array($this, 'ajax_get_job_applicants_list'));
         add_action('wp_ajax_get_job_applicant_details', array($this, 'ajax_get_job_applicant_details'));
         add_action('wp_ajax_nopriv_get_job_applicant_details', array($this, 'ajax_get_job_applicant_details'));
+        add_action('wp_ajax_update_job_applicant_status', array($this, 'ajax_update_job_applicant_status'));
+        add_action('wp_ajax_nopriv_update_job_applicant_status', array($this, 'ajax_update_job_applicant_status'));
     }
 
     /**
@@ -1500,6 +1502,24 @@ class Administration_Plugin_Public {
             'Type' => $is_external ? 'external' : 'internal',
         ];
         wp_send_json_success($details);
+    }
+
+    public function ajax_update_job_applicant_status() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $application_id = isset($_POST['application_id']) ? sanitize_text_field($_POST['application_id']) : '';
+        $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+        $allowed = ['New', 'Interview(s) Scheduled', 'Pending Decision', 'Decision Made'];
+        if (!$application_id || !in_array($status, $allowed)) {
+            wp_send_json_error('Invalid application ID or status.');
+        }
+        $applications_table = $wpdb->prefix . 'hr_applications';
+        $result = $wpdb->update($applications_table, ['Status' => $status], ['ApplicationID' => $application_id]);
+        if ($result !== false) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update status.');
+        }
     }
 
     public function render_careers_job_list($atts = array()) {

@@ -45,6 +45,7 @@ function ajax_apply_for_job_posting() {
     // Check if applicant exists in core_person
     $person_id = $wpdb->get_var($wpdb->prepare("SELECT PersonID FROM {$wpdb->prefix}core_person WHERE Email = %s", $email));
     $external_id = null;
+    $external_applicant_created = false;
     if (!$person_id) {
         // Generate unique ExternalApplicantID
         do {
@@ -65,6 +66,7 @@ function ajax_apply_for_job_posting() {
             ),
             array('%s','%s','%s','%s','%s','%s','%s')
         );
+        $external_applicant_created = true;
     }
     // Generate unique ApplicationID
     do {
@@ -131,6 +133,10 @@ function ajax_apply_for_job_posting() {
     if ($result) {
         wp_send_json_success();
     } else {
+        // If we just created an external applicant, delete it to avoid orphaned records
+        if ($external_applicant_created && $external_id) {
+            $wpdb->delete($wpdb->prefix . 'hr_externalapplicants', array('ExternalApplicantID' => $external_id));
+        }
         wp_send_json_error('Failed to save application.');
     }
     wp_die();

@@ -50,10 +50,11 @@ class Administration_Google_Drive {
     // Get a shareable URL for a file (sets permission if needed)
     public function getFileUrl($fileId) {
         // Set file to anyone with the link can view
-        $this->service->permissions->create($fileId, [
+        $permission = new Google_Service_Drive_Permission([
             'type' => 'anyone',
             'role' => 'reader',
-        ], ['supportsAllDrives' => true]);
+        ]);
+        $this->service->permissions->create($fileId, $permission, ['supportsAllDrives' => true]);
         $file = $this->service->files->get($fileId, [
             'fields' => 'webViewLink',
             'supportsAllDrives' => true

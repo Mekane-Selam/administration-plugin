@@ -23,7 +23,10 @@ class Administration_Google_Drive {
             'mimeType' => 'application/vnd.google-apps.folder',
             'parents' => [$parentId ? $parentId : $this->parent_folder_id]
         ]);
-        $folder = $this->service->files->create($fileMetadata, ['fields' => 'id']);
+        $folder = $this->service->files->create($fileMetadata, [
+            'fields' => 'id',
+            'supportsAllDrives' => true
+        ]);
         return $folder->id;
     }
 
@@ -38,7 +41,8 @@ class Administration_Google_Drive {
             'data' => $content,
             'mimeType' => mime_content_type($filePath),
             'uploadType' => 'multipart',
-            'fields' => 'id'
+            'fields' => 'id',
+            'supportsAllDrives' => true
         ]);
         return $file->id;
     }
@@ -49,8 +53,11 @@ class Administration_Google_Drive {
         $this->service->permissions->create($fileId, [
             'type' => 'anyone',
             'role' => 'reader',
+        ], ['supportsAllDrives' => true]);
+        $file = $this->service->files->get($fileId, [
+            'fields' => 'webViewLink',
+            'supportsAllDrives' => true
         ]);
-        $file = $this->service->files->get($fileId, ['fields' => 'webViewLink']);
         return $file->webViewLink;
     }
 }

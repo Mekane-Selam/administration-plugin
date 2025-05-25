@@ -64,7 +64,7 @@
                         $applications_table = $wpdb->prefix . 'hr_applications';
                         $person_table = $wpdb->prefix . 'core_person';
                         $external_table = $wpdb->prefix . 'hr_externalapplicants';
-                        $apps = $wpdb->get_results($wpdb->prepare("SELECT * FROM $applications_table WHERE JobPostingID = %s ORDER BY CreatedDate DESC", $job->JobPostingID));
+                        $apps = $wpdb->get_results($wpdb->prepare("SELECT * FROM $applications_table WHERE JobPostingID = %s ORDER BY SubmissionDate DESC", $job->JobPostingID));
                         if ($apps && count($apps) > 0):
                             foreach ($apps as $app):
                                 $is_external = $app->ExternalApplicantID && !$app->PersonID;

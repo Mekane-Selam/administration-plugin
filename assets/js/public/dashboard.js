@@ -1667,19 +1667,19 @@
         },
 
         renderAssignmentDetailsPanel: function(data) {
-            var html = '<div class="course-assignment-details-card">';
-            html += '<div class="course-assignment-details-title">' + Dashboard.escapeHtml(data.Title) + '</div>';
-            html += '<div class="course-assignment-details-meta">';
-            if (data.DueDate) html += '<span class="course-assignment-details-duedate">Due: ' + data.DueDate + '</span>';
-            if (data.MaxScore) html += '<span class="course-assignment-details-maxscore">Max: ' + data.MaxScore + '</span>';
+            var html = '<div class="assignment-details-inner">';
+            html += '<div class="assignment-details-title" style="font-size:1.32rem;font-weight:700;color:#2271b1;margin-bottom:8px;line-height:1.2;">' + Dashboard.escapeHtml(data.Title) + '</div>';
+            html += '<div class="assignment-details-meta" style="display:flex;gap:18px;font-size:1.01rem;color:#6a7a8c;margin-bottom:16px;">';
+            if (data.DueDate) html += '<span class="assignment-details-duedate" style="display:inline-block;">Due: <b>' + data.DueDate + '</b></span>';
+            if (data.MaxScore) html += '<span class="assignment-details-maxscore" style="display:inline-block;">Max: <b>' + data.MaxScore + '</b></span>';
             html += '</div>';
-            if (data.Description) html += '<div class="course-assignment-details-desc">' + Dashboard.escapeHtml(data.Description) + '</div>';
-            html += '<div class="course-assignment-details-actions">';
+            if (data.Description) html += '<div class="assignment-details-desc" style="font-size:1.04rem;color:#1d2327;margin-bottom:22px;white-space:pre-line;">' + Dashboard.escapeHtml(data.Description) + '</div>';
+            html += '<div class="assignment-details-actions" style="display:flex;gap:12px;margin-top:10px;">';
             html += '<button class="button button-secondary edit-assignment-btn" data-assignment-id="' + data.AssignmentID + '">Edit</button>';
             html += '<button class="button button-danger delete-assignment-btn" data-assignment-id="' + data.AssignmentID + '">Delete</button>';
             html += '</div>';
             html += '</div>';
-            $('.course-assignment-details-panel').html(html).show();
+            $('.course-assignment-details-panel').html(html).addClass('active').show();
         },
 
         // Add Assignment Modal
@@ -1988,9 +1988,11 @@
     });
 
     $(document).on('click', '.course-assignment-row', function() {
+        $('.course-assignment-row').removeClass('selected');
+        $(this).addClass('selected');
         var assignmentId = $(this).data('assignment-id');
         var $panel = $('.course-assignment-details-panel');
-        $panel.html('<div class="loading">Loading assignment...</div>').show();
+        $panel.html('<div class="loading">Loading assignment...</div>').addClass('active').show();
         $.ajax({
             url: administration_plugin.ajax_url,
             type: 'POST',

@@ -90,13 +90,14 @@
         <button class="add-course-assignment-btn button button-primary">Add Assignment</button>
       </div>
     </div>
-    <div class="course-assignments-content-split" style="display: flex; gap: 32px; min-height: 220px;">
-      <div class="course-assignments-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
+    <div style="height: 14px;"></div>
+    <div class="course-assignments-content-split assignments-split-with-rule">
+      <div class="course-assignments-list">
         <div class="course-assignments-list-grid">
           <div class="course-assignment-empty">No assignments yet.</div>
         </div>
       </div>
-      <div class="course-assignment-details-panel" style="flex: 1 1 0; min-width: 0; display: none;"></div>
+      <div class="course-assignment-details-panel"><div class="assignment-details-inner"></div></div>
     </div>
   </div>
   <div class="tab-pane" id="curriculum">
@@ -269,5 +270,91 @@
 .add-course-assignment-btn:hover {
   background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
   transform: translateY(-2px);
+}
+.course-assignments-content-split.assignments-split-with-rule {
+  display: flex;
+  gap: 0;
+  min-height: 220px;
+  position: relative;
+}
+.course-assignments-list {
+  flex: 0 0 320px;
+  max-width: 340px;
+  min-width: 220px;
+  border-right: 1.5px solid #e3e7ee;
+  padding-right: 0;
+  background: #fcfdff;
+  z-index: 1;
+}
+.course-assignment-details-panel {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-left: 32px;
+  background: #fff;
+  z-index: 0;
+  display: none;
+}
+.course-assignment-details-panel.active {
+  display: block;
+}
+.course-assignments-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.course-assignment-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 18px;
+  border-radius: 7px;
+  font-size: 0.97rem;
+  font-weight: 500;
+  color: #1d2327;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  min-height: 36px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.course-assignment-row:hover, .course-assignment-row.selected {
+  background: #eaf4fb;
+  color: #2271b1;
+}
+.course-assignment-title {
+  flex: 1 1 0;
+  font-size: 0.98em;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.course-assignment-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.93em;
+  color: #6a7a8c;
+  min-width: 0;
+}
+.course-assignment-duedate, .course-assignment-maxscore {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.course-assignment-empty {
+  color: #b6b6b6;
+  font-style: italic;
+  padding: 18px 0 0 18px;
+}
+.assignment-details-inner {
+  max-width: 540px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(34,113,177,0.07);
+  padding: 32px 36px 28px 36px;
+  min-height: 120px;
 }
 </style> 

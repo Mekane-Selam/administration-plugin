@@ -2345,3 +2345,14 @@ button.button-primary, button.button-secondary, button.button-danger {
   align-items: center;
   justify-content: center;
 } 
+
+.person-detail-row.job-detail-balance {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0;
+  padding: 0;
+}
+.job-drive-link {
+  margin-left: 0;
+}

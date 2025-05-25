@@ -1442,7 +1442,7 @@ class Administration_Plugin_Public {
         $applications_table = $wpdb->prefix . 'hr_applications';
         $person_table = $wpdb->prefix . 'core_person';
         $external_table = $wpdb->prefix . 'hr_externalapplicants';
-        $apps = $wpdb->get_results($wpdb->prepare("SELECT * FROM $applications_table WHERE JobPostingID = %s ORDER BY CreatedDate DESC", $job_posting_id));
+        $apps = $wpdb->get_results($wpdb->prepare("SELECT * FROM $applications_table WHERE JobPostingID = %s ORDER BY SubmissionDate DESC", $job_posting_id));
         $result = [];
         foreach ($apps as $app) {
             $is_external = $app->ExternalApplicantID && !$app->PersonID;

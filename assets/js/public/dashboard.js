@@ -1629,6 +1629,83 @@
                 });
             });
         },
+
+        // --- Course Assignments Tab Logic ---
+        loadCourseAssignments: function(courseId) {
+            var $listGrid = $('.course-assignments-list-grid');
+            var $detailsPanel = $('.course-assignment-details-panel');
+            $listGrid.html('<div class="loading">Loading assignments...</div>');
+            $detailsPanel.hide().empty();
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_course_assignments',
+                    nonce: administration_plugin.nonce,
+                    course_id: courseId
+                },
+                success: function(response) {
+                    if (response.success && response.data && response.data.length) {
+                        var html = '';
+                        response.data.forEach(function(a) {
+                            html += '<div class="course-assignment-row" data-assignment-id="' + a.AssignmentID + '">';
+                            html += '<div class="course-assignment-title">' + Dashboard.escapeHtml(a.Title) + '</div>';
+                            html += '<div class="course-assignment-meta">';
+                            if (a.DueDate) html += '<span class="course-assignment-duedate">Due: ' + a.DueDate + '</span>';
+                            if (a.MaxScore) html += '<span class="course-assignment-maxscore">Max: ' + a.MaxScore + '</span>';
+                            html += '</div></div>';
+                        });
+                        $listGrid.html(html);
+                    } else {
+                        $listGrid.html('<div class="course-assignment-empty">No assignments yet.</div>');
+                    }
+                },
+                error: function() {
+                    $listGrid.html('<div class="error-message">Failed to load assignments.</div>');
+                }
+            });
+        },
+
+        renderAssignmentDetailsPanel: function(data) {
+            var html = '<div class="course-assignment-details-card">';
+            html += '<div class="course-assignment-details-title">' + Dashboard.escapeHtml(data.Title) + '</div>';
+            html += '<div class="course-assignment-details-meta">';
+            if (data.DueDate) html += '<span class="course-assignment-details-duedate">Due: ' + data.DueDate + '</span>';
+            if (data.MaxScore) html += '<span class="course-assignment-details-maxscore">Max: ' + data.MaxScore + '</span>';
+            html += '</div>';
+            if (data.Description) html += '<div class="course-assignment-details-desc">' + Dashboard.escapeHtml(data.Description) + '</div>';
+            html += '<div class="course-assignment-details-actions">';
+            html += '<button class="button button-secondary edit-assignment-btn" data-assignment-id="' + data.AssignmentID + '">Edit</button>';
+            html += '<button class="button button-danger delete-assignment-btn" data-assignment-id="' + data.AssignmentID + '">Delete</button>';
+            html += '</div>';
+            html += '</div>';
+            $('.course-assignment-details-panel').html(html).show();
+        },
+
+        // Add Assignment Modal
+        showAddAssignmentModal: function(courseId) {
+            var modalHtml = '<div class="modal assignment-modal" id="add-assignment-modal">';
+            modalHtml += '<div class="modal-content" style="max-width: 480px;">';
+            modalHtml += '<button class="close" id="close-add-assignment-modal">&times;</button>';
+            modalHtml += '<h2>Add Assignment</h2>';
+            modalHtml += '<form id="add-assignment-form">';
+            modalHtml += '<input type="hidden" name="course_id" value="' + courseId + '">';
+            modalHtml += '<div class="form-field"><label>Title <span class="required">*</span></label><input type="text" name="title" required maxlength="150"></div>';
+            modalHtml += '<div class="form-field"><label>Description</label><textarea name="description" rows="3"></textarea></div>';
+            modalHtml += '<div class="form-field"><label>Due Date</label><input type="date" name="due_date"></div>';
+            modalHtml += '<div class="form-field"><label>Max Score</label><input type="number" name="max_score" min="0" step="0.01"></div>';
+            modalHtml += '<div class="form-actions"><button type="submit" class="button button-primary">Add Assignment</button></div>';
+            modalHtml += '<div class="form-message" style="display:none;"></div>';
+            modalHtml += '</form></div></div>';
+            $('body').append(modalHtml);
+            setTimeout(function() { $('#add-assignment-modal').addClass('show'); }, 10);
+        },
+
+        escapeHtml: function(str) {
+            return String(str).replace(/[&<>\"]/g, function(s) {
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'})[s];
+            });
+        }
     };
 
     // Initialize dashboard when document is ready
@@ -1785,6 +1862,67 @@
                 }
             });
         });
+
+        $(document).on('click', '.tab-button[data-tab="assignments"]', function() {
+            var $tabContent = $(this).closest('.course-detail-tabs').next('.course-detail-tab-content');
+            var courseId = $tabContent.data('course-id');
+            Dashboard.loadCourseAssignments(courseId);
+        });
+
+        $(document).on('click', '#close-add-assignment-modal, #add-assignment-modal', function(e) {
+            if ($(e.target).is('#close-add-assignment-modal') || $(e.target).is('#add-assignment-modal')) {
+                $('#add-assignment-modal').removeClass('show');
+                setTimeout(function() { $('#add-assignment-modal').remove(); }, 200);
+            }
+        });
+        $(document).on('click', '.modal-content', function(e) { e.stopPropagation(); });
+
+        $(document).on('submit', '#add-assignment-form', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $msg = $form.find('.form-message');
+            var $btn = $form.find('button[type="submit"]');
+            $msg.hide().removeClass('error success');
+            var valid = true;
+            $form.find('[required]').each(function() {
+                if (!$(this).val().trim()) {
+                    valid = false;
+                    $(this).addClass('input-error');
+                } else {
+                    $(this).removeClass('input-error');
+                }
+            });
+            if (!valid) {
+                $msg.text('Please fill in all required fields.').addClass('error').show();
+                return;
+            }
+            $btn.prop('disabled', true).text('Adding...');
+            var formData = $form.serializeArray();
+            var data = { action: 'add_assignment', nonce: administration_plugin.nonce };
+            formData.forEach(function(f) { data[f.name] = f.value; });
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    $btn.prop('disabled', false).text('Add Assignment');
+                    if (response.success) {
+                        $msg.text('Assignment added!').addClass('success').show();
+                        setTimeout(function() {
+                            $('#add-assignment-modal').removeClass('show');
+                            setTimeout(function() { $('#add-assignment-modal').remove(); }, 200);
+                            Dashboard.loadCourseAssignments(data.course_id);
+                        }, 900);
+                    } else {
+                        $msg.text(response.data || 'Failed to add assignment.').addClass('error').show();
+                    }
+                },
+                error: function() {
+                    $btn.prop('disabled', false).text('Add Assignment');
+                    $msg.text('Failed to add assignment.').addClass('error').show();
+                }
+            });
+        });
     });
 
     // Add event handler for Cancel button
@@ -1815,6 +1953,31 @@
             },
             error: function() {
                 alert('Failed to delete job posting.');
+            }
+        });
+    });
+
+    $(document).on('click', '.course-assignment-row', function() {
+        var assignmentId = $(this).data('assignment-id');
+        var $panel = $('.course-assignment-details-panel');
+        $panel.html('<div class="loading">Loading assignment...</div>').show();
+        $.ajax({
+            url: administration_plugin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'get_assignment_details',
+                nonce: administration_plugin.nonce,
+                assignment_id: assignmentId
+            },
+            success: function(response) {
+                if (response.success && response.data) {
+                    Dashboard.renderAssignmentDetailsPanel(response.data);
+                } else {
+                    $panel.html('<div class="error-message">Failed to load assignment details.</div>');
+                }
+            },
+            error: function() {
+                $panel.html('<div class="error-message">Failed to load assignment details.</div>');
             }
         });
     });

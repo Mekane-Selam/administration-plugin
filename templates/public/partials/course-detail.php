@@ -88,7 +88,6 @@
       </div>
       <div class="course-assignments-content-split" style="display: flex; gap: 32px; min-height: 220px;">
         <div class="course-assignments-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
-          <div class="course-assignments-list-title" style="margin: 0 0 14px 0; color: #1d2327; font-size: 1.08rem; font-weight: 600;">Assignments</div>
           <div class="course-assignments-list-grid">
             <div class="course-assignment-empty">No assignments yet.</div>
           </div>

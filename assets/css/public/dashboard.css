@@ -2330,3 +2330,10 @@ button.button-danger:hover, button.button-danger:focus {
   background: #c0392b !important;
   color: #fff !important;
 } 
+
+.edit-job-actions .button {
+  min-width: 140px;
+  flex: 1 1 0;
+  text-align: center;
+  box-sizing: border-box;
+} 

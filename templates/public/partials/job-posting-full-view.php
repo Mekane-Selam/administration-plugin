@@ -16,7 +16,6 @@
                         <span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span>
                     </div>
                     <div class="person-detail-row job-detail-balance" style="grid-column: 1 / span 2; align-items: center; margin-bottom: 6px;">
-                        <span class="person-detail-label">Drive Folder</span>
                         <?php if (!empty($job->DriveFolderID)): ?>
                         <a href="https://drive.google.com/drive/folders/<?php echo esc_attr($job->DriveFolderID); ?>" target="_blank" class="job-drive-link" title="Open Google Drive Folder">
                             <span class="job-drive-icon" aria-hidden="true" style="display:inline-flex;align-items:center;">

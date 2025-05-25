@@ -52,10 +52,12 @@
     </div>
     <div class="job-posting-sections" style="margin-top: 36px;">
         <div class="person-details-card">
-            <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin-bottom: 18px; padding-top: 8px;">Track Applications & Interviews</h3>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin: 0; padding-left: 18px;">Track Applications & Interviews</h3>
+            </div>
             <div class="job-applications-content-split" style="display: flex; gap: 32px; min-height: 260px;">
                 <div class="job-applications-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
-                    <h4 class="job-applications-list-title" style="margin: 0 0 14px 0; color: #1d2327; font-size: 1.08rem; font-weight: 600;">Applicants</h4>
+                    <h4 class="job-applications-list-title" style="margin: 0 0 14px 0; color: #1d2327; font-size: 1.08rem; font-weight: 600; padding-left: 18px;">Applicants</h4>
                     <div class="job-applicants-list-grid">
                         <!-- PHP: Applicant cards will go here -->
                         <div class="job-applicant-empty">No applicants yet.</div>

@@ -1674,11 +1674,13 @@
             e.preventDefault();
             var $card = $(this);
             var applicationId = $card.data('application-id');
+            console.log('[Applicant] Card clicked. applicationId:', applicationId);
             if (!applicationId) return;
             $('.job-applicant-card').removeClass('selected');
             $card.addClass('selected');
             var $panel = $('.job-applicant-details-panel');
             $panel.html('<div class="loading" style="padding: 32px 0 0 18px; color: #2271b1;">Loading applicant details...</div>').show();
+            console.log('[Applicant] Sending AJAX for get_job_applicant_details', applicationId);
             $.ajax({
                 url: administration_plugin.ajax_url,
                 type: 'POST',

@@ -2444,8 +2444,8 @@ button.button-primary, button.button-secondary, button.button-danger {
   min-height: 180px;
   margin-top: 8px;
   max-width: 520px;
-  margin-left: 0;
-  margin-right: auto;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 .job-applicant-details-name {
   font-size: 1.22rem;
@@ -2531,6 +2531,73 @@ button.button-primary, button.button-secondary, button.button-danger {
   transition: opacity 0.4s;
 }
 .status-updated-message.hide {
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.job-applicant-notes-card {
+  background: #fff;
+  border: 1px solid #e3e7ee;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(34,113,177,0.06);
+  padding: 24px 28px 18px 28px;
+  margin-top: 22px;
+  margin-bottom: 0;
+  max-width: 520px;
+  margin-left: 10px;
+  margin-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.job-applicant-notes-label {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #2271b1;
+  margin-bottom: 4px;
+}
+.job-applicant-notes-textarea {
+  width: 100%;
+  min-height: 64px;
+  border-radius: 8px;
+  border: 1px solid #b6d4ef;
+  font-size: 1.01rem;
+  padding: 10px 14px;
+  background: #f7fafd;
+  color: #1d2327;
+  resize: vertical;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  transition: border 0.18s, background 0.18s;
+}
+.job-applicant-notes-textarea:focus {
+  border-color: #2271b1;
+  background: #eaf4fb;
+  outline: none;
+}
+.job-applicant-notes-save-btn {
+  align-self: flex-end;
+  margin-top: 6px;
+  min-width: 120px;
+  font-size: 1.01rem;
+  padding: 8px 22px;
+}
+.notes-updated-message {
+  background: #edfaef;
+  color: #00a32a;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 18px;
+  margin-bottom: 0;
+  margin-top: 0;
+  font-size: 1.01rem;
+  text-align: left;
+  box-shadow: 0 1px 4px rgba(34,113,177,0.06);
+  display: inline-block;
+  opacity: 1;
+  transition: opacity 0.4s;
+}
+.notes-updated-message.hide {
   opacity: 0;
   transition: opacity 0.4s;
 }

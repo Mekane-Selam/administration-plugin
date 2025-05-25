@@ -67,6 +67,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_get_job_applicant_details', array($this, 'ajax_get_job_applicant_details'));
         add_action('wp_ajax_update_job_applicant_status', array($this, 'ajax_update_job_applicant_status'));
         add_action('wp_ajax_nopriv_update_job_applicant_status', array($this, 'ajax_update_job_applicant_status'));
+        add_action('wp_ajax_update_job_applicant_notes', array($this, 'ajax_update_job_applicant_notes'));
+        add_action('wp_ajax_nopriv_update_job_applicant_notes', array($this, 'ajax_update_job_applicant_notes'));
     }
 
     /**
@@ -1519,6 +1521,23 @@ class Administration_Plugin_Public {
             wp_send_json_success();
         } else {
             wp_send_json_error('Failed to update status.');
+        }
+    }
+
+    public function ajax_update_job_applicant_notes() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $application_id = isset($_POST['application_id']) ? sanitize_text_field($_POST['application_id']) : '';
+        $notes = isset($_POST['notes']) ? sanitize_textarea_field($_POST['notes']) : '';
+        if (!$application_id) {
+            wp_send_json_error('Invalid application ID.');
+        }
+        $applications_table = $wpdb->prefix . 'hr_applications';
+        $result = $wpdb->update($applications_table, ['Notes' => $notes], ['ApplicationID' => $application_id]);
+        if ($result !== false) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update notes.');
         }
     }
 

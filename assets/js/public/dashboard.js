@@ -1552,9 +1552,13 @@
             if (data.CoverLetterURL) {
                 html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Cover Letter:</span> <a href="' + data.CoverLetterURL + '" target="_blank" class="job-applicant-details-link">View Cover Letter</a></div>';
             }
-            if (data.Notes) {
-                html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Notes:</span> <span>' + data.Notes + '</span></div>';
-            }
+            html += '</div>';
+            // Notes card
+            html += '<div class="job-applicant-notes-card">';
+            html += '<div class="job-applicant-notes-label">Notes</div>';
+            html += '<textarea class="job-applicant-notes-textarea" rows="4" placeholder="Add notes...">' + (data.Notes ? data.Notes : '') + '</textarea>';
+            html += '<button class="button button-primary job-applicant-notes-save-btn" data-application-id="' + data.ApplicationID + '">Save</button>';
+            html += '<span class="notes-updated-message" style="display:none;">Notes Updated!</span>';
             html += '</div>';
             $('.job-applicant-details-panel').html(html).show();
 
@@ -1586,6 +1590,41 @@
                     },
                     error: function() {
                         alert('Failed to update status.');
+                    }
+                });
+            });
+            // Attach save handler for notes
+            $('.job-applicant-notes-save-btn').off('click').on('click', function() {
+                var $btn = $(this);
+                var applicationId = $btn.data('application-id');
+                var $textarea = $btn.siblings('.job-applicant-notes-textarea');
+                var notes = $textarea.val();
+                var $msg = $btn.siblings('.notes-updated-message');
+                $btn.prop('disabled', true).text('Saving...');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'update_job_applicant_notes',
+                        nonce: administration_plugin.nonce,
+                        application_id: applicationId,
+                        notes: notes
+                    },
+                    success: function(response) {
+                        $btn.prop('disabled', false).text('Save');
+                        if (response.success) {
+                            $msg.stop(true, true).fadeIn(120).removeClass('hide');
+                            setTimeout(function() {
+                                $msg.addClass('hide');
+                                setTimeout(function() { $msg.hide(); }, 400);
+                            }, 1500);
+                        } else {
+                            alert(response.data || 'Failed to update notes.');
+                        }
+                    },
+                    error: function() {
+                        $btn.prop('disabled', false).text('Save');
+                        alert('Failed to update notes.');
                     }
                 });
             });

@@ -72,10 +72,6 @@ jQuery(function($) {
               <label>Cover Letter (PDF, optional)</label>
               <input type="file" name="cover_letter" accept="application/pdf">
             </div>
-            <div class="careers-form-row">
-              <label>Additional Notes</label>
-              <textarea name="notes" rows="2" maxlength="1000"></textarea>
-            </div>
             <div class="careers-form-actions">
               <button type="submit" class="careers-modal-submit">Submit Application</button>
             </div>

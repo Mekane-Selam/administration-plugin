@@ -59,6 +59,7 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_job_posting_full_view', array($this, 'ajax_get_job_posting_full_view'));
         add_action('wp_ajax_get_programs_for_select', array($this, 'ajax_get_programs_for_select'));
         add_action('wp_ajax_edit_job_posting', array($this, 'ajax_edit_job_posting'));
+        add_action('wp_ajax_delete_job_posting', array($this, 'ajax_delete_job_posting'));
     }
 
     /**
@@ -1404,6 +1405,25 @@ class Administration_Plugin_Public {
             wp_send_json_success();
         } else {
             wp_send_json_error('Failed to update job posting.');
+        }
+    }
+
+    public function ajax_delete_job_posting() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'hr_jobpostings';
+        $job_posting_id = isset($_POST['job_posting_id']) ? sanitize_text_field($_POST['job_posting_id']) : '';
+        if (!$job_posting_id) {
+            wp_send_json_error('Missing job posting ID.');
+        }
+        $result = $wpdb->delete($table, array('JobPostingID' => $job_posting_id));
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to delete job posting.');
         }
     }
 

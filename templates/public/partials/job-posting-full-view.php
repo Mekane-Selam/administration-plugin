@@ -15,6 +15,16 @@
                     <div class="person-detail-row job-detail-status" style="grid-column: 1 / span 2;">
                         <span class="person-detail-label">Status</span><span class="person-detail-value"><?php echo esc_html($job->Status); ?></span>
                     </div>
+                    <div class="person-detail-row job-detail-balance" style="grid-column: 1 / span 2; align-items: center; margin-bottom: 6px;">
+                        <span class="person-detail-label">Drive Folder</span>
+                        <?php if (!empty($job->DriveFolderID)): ?>
+                        <a href="https://drive.google.com/drive/folders/<?php echo esc_attr($job->DriveFolderID); ?>" target="_blank" class="job-drive-link" title="Open Google Drive Folder" style="display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; color: #2271b1; font-weight: 500; text-decoration: none;">
+                            <span class="dashicons dashicons-google-drive" style="font-size: 1.2em;"></span> <span>Open Folder</span>
+                        </a>
+                        <?php else: ?>
+                        <span class="person-detail-value" style="color: #888;">—</span>
+                        <?php endif; ?>
+                    </div>
                     <div class="job-posting-details-left-col">
                         <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Department</span><span class="person-detail-value"><?php echo esc_html($job->DepartmentName); ?></span></div>
                         <div class="person-detail-row job-detail-balance"><span class="person-detail-label">Job Type</span><span class="person-detail-value"><?php echo esc_html($job->JobType); ?></span></div>

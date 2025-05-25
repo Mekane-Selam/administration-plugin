@@ -1446,9 +1446,12 @@
                         <div class="person-detail-row job-detail-long"><span class="person-detail-label">Responsibilities</span><textarea class="person-detail-value job-detail-long-value" name="responsibilities">${Dashboard.escapeHtml(responsibilities)}</textarea></div>
                     </div>
                 </div>
-                <div class="edit-job-actions" style="margin-top:24px; text-align:right;">
-                    <button type="submit" class="button button-primary">Save</button>
-                    <button type="button" class="button button-secondary" id="cancel-edit-job-posting">Cancel</button>
+                <div class="edit-job-actions" style="margin-top:24px; text-align:right; display: flex; gap: 12px; justify-content: flex-end;">
+                    <button type="submit" class="button button-primary save-job-posting-btn">Save</button>
+                    <button type="button" class="button button-secondary cancel-job-posting-btn">Cancel</button>
+                </div>
+                <div class="edit-job-delete-actions" style="margin-top: 32px; text-align: right;">
+                    <button type="button" class="button button-danger delete-job-posting-btn" style="background: #e74c3c; color: #fff; border: none;">Delete Job Posting</button>
                 </div>
                 <div id="edit-job-posting-message"></div>
                 </form>`;
@@ -1639,6 +1642,38 @@
         $(document).on('click', '#back-to-dashboard-btn', function(e) {
             e.preventDefault();
             Dashboard.backToDashboard();
+        });
+    });
+
+    // Add event handler for Cancel button
+    $(document).off('click', '.cancel-job-posting-btn').on('click', '.cancel-job-posting-btn', function(e) {
+        e.preventDefault();
+        var jobId = $('.job-posting-full-view').data('job-posting-id');
+        Dashboard.loadJobPostingFullView(jobId);
+    });
+    // Add event handler for Delete button
+    $(document).off('click', '.delete-job-posting-btn').on('click', '.delete-job-posting-btn', function(e) {
+        e.preventDefault();
+        if (!confirm('Are you sure you want to delete this job posting? This action cannot be undone.')) return;
+        var jobId = $('.job-posting-full-view').data('job-posting-id');
+        $.ajax({
+            url: administration_plugin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'delete_job_posting',
+                nonce: administration_plugin.nonce,
+                job_posting_id: jobId
+            },
+            success: function(response) {
+                if (response.success) {
+                    Dashboard.backToDashboard();
+                } else {
+                    alert(response.data || 'Failed to delete job posting.');
+                }
+            },
+            error: function() {
+                alert('Failed to delete job posting.');
+            }
         });
     });
 

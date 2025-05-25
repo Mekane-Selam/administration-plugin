@@ -2240,4 +2240,21 @@ input:checked + .slider:before {
 }
 .slider.round:before {
   border-radius: 50%;
+}
+
+.button-danger {
+  background: #e74c3c !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.08);
+  font-weight: 500;
+  padding: 10px 28px;
+  font-size: 1.08rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.button-danger:hover, .button-danger:focus {
+  background: #c0392b !important;
+  color: #fff !important;
 } 

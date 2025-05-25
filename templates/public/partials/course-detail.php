@@ -104,7 +104,23 @@
     <p>Curriculum content will go here.</p>
   </div>
   <div class="tab-pane" id="grades">
-    <p>Grades content will go here.</p>
+    <div class="course-detail-grades-toolbar">
+      <div class="course-detail-grades-search-container">
+        <input type="text" class="course-detail-grades-search" placeholder="Search assignments...">
+      </div>
+      <div class="course-detail-grades-actions">
+        <button class="add-course-grade-btn button button-primary">Add Grade</button>
+      </div>
+    </div>
+    <div style="height: 14px;"></div>
+    <div class="course-grades-content-split grades-split-with-rule">
+      <div class="course-grades-assignments-list">
+        <div class="course-grades-assignments-list-grid">
+          <div class="course-grades-assignment-empty">No assignments yet.</div>
+        </div>
+      </div>
+      <div class="course-grades-details-panel"></div>
+    </div>
   </div>
   <div class="tab-pane" id="attendance">
     <p>Attendance content will go here.</p>
@@ -357,5 +373,132 @@
   box-shadow: 0 2px 12px rgba(34,113,177,0.07);
   padding: 32px 36px 28px 36px;
   min-height: 120px;
+}
+.course-detail-grades-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e3e7ee;
+  margin-bottom: 20px;
+}
+.course-detail-grades-search-container {
+  flex: 1;
+  max-width: 300px;
+  margin-right: 16px;
+}
+.course-detail-grades-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e3e7ee;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #f8fafc;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.course-detail-grades-search:focus {
+  border-color: #2271b1;
+  box-shadow: 0 0 0 2px rgba(34,113,177,0.10);
+  outline: none;
+}
+.course-detail-grades-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.add-course-grade-btn {
+  background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(34,113,177,0.10);
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.add-course-grade-btn:hover {
+  background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
+  transform: translateY(-2px);
+}
+.course-grades-content-split.grades-split-with-rule {
+  display: flex;
+  gap: 0;
+  min-height: 220px;
+  position: relative;
+}
+.course-grades-assignments-list {
+  flex: 0 0 320px;
+  max-width: 340px;
+  min-width: 220px;
+  border-right: 1.5px solid #e3e7ee;
+  padding-right: 0;
+  background: #fcfdff;
+  z-index: 1;
+}
+.course-grades-details-panel {
+  flex: 1 1 0;
+  min-width: 0;
+  padding-left: 32px;
+  background: #fff;
+  z-index: 0;
+  display: none;
+}
+.course-grades-details-panel.active {
+  display: block;
+}
+.course-grades-assignments-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.course-grades-assignment-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 18px;
+  border-radius: 7px;
+  font-size: 0.97rem;
+  font-weight: 500;
+  color: #1d2327;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  min-height: 36px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.course-grades-assignment-row:hover, .course-grades-assignment-row.selected {
+  background: #eaf4fb;
+  color: #2271b1;
+}
+.course-grades-assignment-title {
+  flex: 1 1 0;
+  font-size: 0.98em;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.course-grades-assignment-meta {
+  display: flex;
+  gap: 10px;
+  font-size: 0.93em;
+  color: #6a7a8c;
+  min-width: 0;
+}
+.course-grades-assignment-duedate, .course-grades-assignment-maxscore {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.course-grades-assignment-empty {
+  color: #b6b6b6;
+  font-style: italic;
+  padding: 18px 0 0 18px;
 }
 </style> 

@@ -59,6 +59,8 @@ class Administration_Database {
         $hr_staff_table = $wpdb->prefix . 'hr_staff';
         $hr_roles_table = $wpdb->prefix . 'hr_roles';
         
+        // New table
+        $progtype_edu_assignmentgrades_table = $wpdb->prefix . 'progtype_edu_assignmentgrades';
 
         // List of all tables
         $tables = [
@@ -94,7 +96,8 @@ class Administration_Database {
             $hr_staff_table,
             $hr_roles_table,
             $progtype_edu_courseenrollments_table,
-            $progtype_edu_assignments_table
+            $progtype_edu_assignments_table,
+            $progtype_edu_assignmentgrades_table
         ];
 
         // Check if tables already exist
@@ -553,6 +556,18 @@ class Administration_Database {
             MaxScore DECIMAL(8,2),
             PRIMARY KEY (AssignmentID),
             CONSTRAINT fk_assignment_course FOREIGN KEY (CourseID) REFERENCES $progtype_edu_courses_table(CourseID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_assignmentgrades_table (
+            GradeID VARCHAR(25) NOT NULL,
+            AssignmentID VARCHAR(25) NOT NULL,
+            PersonID VARCHAR(25) NOT NULL,
+            Score DECIMAL(8,2) NOT NULL,
+            Feedback TEXT,
+            GradedDate DATE,
+            PRIMARY KEY (GradeID),
+            CONSTRAINT fk_grade_assignment FOREIGN KEY (AssignmentID) REFERENCES $progtype_edu_assignments_table(AssignmentID) ON DELETE CASCADE,
+            CONSTRAINT fk_grade_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

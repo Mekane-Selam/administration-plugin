@@ -1647,7 +1647,7 @@
     $(document).off('click', '.cancel-job-posting-btn').on('click', '.cancel-job-posting-btn', function(e) {
         e.preventDefault();
         var jobId = $('.job-posting-full-view').data('job-posting-id');
-        Dashboard.loadJobPostingFullView(jobId);
+        Dashboard.showJobPostingFullView(jobId);
     });
     // Add event handler for Delete button
     $(document).off('click', '.delete-job-posting-btn').on('click', '.delete-job-posting-btn', function(e) {

@@ -2286,4 +2286,47 @@ input:checked + .slider:before {
   font-weight: 500;
   color: inherit;
   margin-left: 2px;
+}
+
+/* Ensure button-primary, button-secondary, and button-danger are styled everywhere */
+.button.button-primary, button.button-primary {
+  background: #2271b1;
+  color: #fff;
+  border: 1px solid #2271b1;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.button.button-primary:hover, button.button-primary:hover,
+.button.button-primary:focus, button.button-primary:focus {
+  background: #135e96;
+  color: #fff;
+  border-color: #135e96;
+}
+.button.button-secondary, button.button-secondary {
+  background: #f7fafd;
+  color: #2271b1;
+  border: 1px solid #b6d4ef;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.button.button-secondary:hover, button.button-secondary:focus,
+button.button-secondary:hover, button.button-secondary:focus {
+  background: #eaf4fb;
+  color: #135e96;
+  border-color: #2271b1;
+}
+.button.button-danger, button.button-danger {
+  background: #e74c3c !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s, border 0.2s;
+}
+.button.button-danger:hover, button.button-danger:focus,
+button.button-danger:hover, button.button-danger:focus {
+  background: #c0392b !important;
+  color: #fff !important;
 } 

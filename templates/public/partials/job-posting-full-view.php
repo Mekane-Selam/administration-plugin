@@ -53,14 +53,45 @@
     <div class="job-posting-sections" style="margin-top: 36px;">
         <div class="person-details-card">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin: 0; padding-left: 18px;">Track Applications & Interviews</h3>
+                <h3 style="color: #2271b1; font-size: 1.15rem; font-weight: 600; margin: 0; padding-left: 18px; padding-top: 20px">Track Applications & Interviews</h3>
             </div>
             <div class="job-applications-content-split" style="display: flex; gap: 32px; min-height: 260px;">
                 <div class="job-applications-list" style="flex: 0 0 320px; max-width: 340px; min-width: 220px;">
                     <h4 class="job-applications-list-title" style="margin: 0 0 14px 0; color: #1d2327; font-size: 1.08rem; font-weight: 600; padding-left: 18px;">Applicants</h4>
                     <div class="job-applicants-list-grid">
-                        <!-- PHP: Applicant cards will go here -->
+                        <?php
+                        global $wpdb;
+                        $applications_table = $wpdb->prefix . 'hr_applications';
+                        $person_table = $wpdb->prefix . 'core_person';
+                        $external_table = $wpdb->prefix . 'hr_externalapplicants';
+                        $apps = $wpdb->get_results($wpdb->prepare("SELECT * FROM $applications_table WHERE JobPostingID = %s ORDER BY CreatedDate DESC", $job->JobPostingID));
+                        if ($apps && count($apps) > 0):
+                            foreach ($apps as $app):
+                                $is_external = $app->ExternalApplicantID && !$app->PersonID;
+                                if ($is_external) {
+                                    $applicant = $wpdb->get_row($wpdb->prepare("SELECT * FROM $external_table WHERE ExternalApplicantID = %s", $app->ExternalApplicantID));
+                                    $name = $applicant ? trim($applicant->FirstName . ' ' . $applicant->LastName) : 'External Applicant';
+                                    $email = $applicant ? $applicant->Email : '';
+                                    $phone = $applicant ? $applicant->Phone : '';
+                                } else {
+                                    $applicant = $wpdb->get_row($wpdb->prepare("SELECT * FROM $person_table WHERE PersonID = %s", $app->PersonID));
+                                    $name = $applicant ? trim($applicant->FirstName . ' ' . $applicant->LastName) : 'Applicant';
+                                    $email = $applicant ? $applicant->Email : '';
+                                    $phone = $applicant ? $applicant->Phone : '';
+                                }
+                        ?>
+                        <div class="job-applicant-card" data-application-id="<?php echo esc_attr($app->ApplicationID); ?>">
+                            <div class="job-applicant-card-main">
+                                <div class="job-applicant-card-name"><?php echo esc_html($name); ?></div>
+                                <div class="job-applicant-card-meta">
+                                    <span class="job-applicant-card-email"><?php echo esc_html($email); ?></span>
+                                    <span class="job-applicant-card-status <?php echo esc_attr(strtolower($app->Status)); ?>"><?php echo esc_html($app->Status); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; else: ?>
                         <div class="job-applicant-empty">No applicants yet.</div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="job-applicant-details-panel" style="flex: 1 1 0; min-width: 0; display: none;"></div>

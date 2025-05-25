@@ -2356,3 +2356,162 @@ button.button-primary, button.button-secondary, button.button-danger {
 .job-drive-link {
   margin-left: 0;
 }
+
+/* Applicant cards for job posting tracking */
+.job-applicants-list-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 8px 8px 8px;
+}
+.job-applicant-card {
+  background: #f7fafd;
+  border: 1px solid #dbeafe;
+  border-radius: 7px;
+  padding: 14px 16px 10px 16px;
+  cursor: pointer;
+  transition: box-shadow 0.18s, border 0.18s, background 0.18s;
+  box-shadow: 0 1px 2px rgba(30, 64, 175, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.job-applicant-card:hover, .job-applicant-card.selected {
+  background: #e6f0fa;
+  border-color: #2271b1;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.08);
+}
+.job-applicant-card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.job-applicant-card-name {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #1d2327;
+  margin-bottom: 2px;
+}
+.job-applicant-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.98rem;
+  color: #444;
+}
+.job-applicant-card-email {
+  color: #2271b1;
+  font-weight: 500;
+}
+.job-applicant-card-status {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.93rem;
+  font-weight: 500;
+  background: #e5e7eb;
+  color: #444;
+  margin-left: 2px;
+}
+.job-applicant-card-status.active {
+  background: #d1fae5;
+  color: #047857;
+}
+.job-applicant-card-status.reviewed {
+  background: #fef3c7;
+  color: #b45309;
+}
+.job-applicant-card-status.rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.job-applicant-card-status.hired {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.job-applicant-empty {
+  color: #888;
+  font-size: 1.01rem;
+  padding: 18px 0 0 18px;
+}
+
+/* Applicant details panel styles */
+.job-applicant-details-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 24px 28px 18px 28px;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, 0.06);
+  min-height: 180px;
+  margin-top: 8px;
+}
+.job-applicant-details-name {
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: #1d2327;
+  margin-bottom: 6px;
+}
+.job-applicant-details-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 1.01rem;
+  color: #444;
+  margin-bottom: 10px;
+}
+.job-applicant-details-email {
+  color: #2271b1;
+  font-weight: 500;
+}
+.job-applicant-details-phone {
+  color: #444;
+}
+.job-applicant-details-status-row {
+  margin-bottom: 10px;
+  font-size: 1.01rem;
+}
+.job-applicant-details-status {
+  padding: 2px 12px;
+  border-radius: 12px;
+  font-size: 0.98rem;
+  font-weight: 500;
+  background: #e5e7eb;
+  color: #444;
+  margin-left: 2px;
+}
+.job-applicant-details-status.active {
+  background: #d1fae5;
+  color: #047857;
+}
+.job-applicant-details-status.reviewed {
+  background: #fef3c7;
+  color: #b45309;
+}
+.job-applicant-details-status.rejected {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+.job-applicant-details-status.hired {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.job-applicant-details-row {
+  margin-bottom: 8px;
+  font-size: 1.01rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.job-applicant-details-label {
+  font-weight: 500;
+  color: #1d2327;
+  min-width: 90px;
+}
+.job-applicant-details-link {
+  color: #2271b1;
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.18s;
+}
+.job-applicant-details-link:hover, .job-applicant-details-link:focus {
+  color: #135e96;
+}

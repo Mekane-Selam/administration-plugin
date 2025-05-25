@@ -60,6 +60,11 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_get_programs_for_select', array($this, 'ajax_get_programs_for_select'));
         add_action('wp_ajax_edit_job_posting', array($this, 'ajax_edit_job_posting'));
         add_action('wp_ajax_delete_job_posting', array($this, 'ajax_delete_job_posting'));
+        // Register AJAX handlers for job applicants (admin and public)
+        add_action('wp_ajax_get_job_applicants_list', array($this, 'ajax_get_job_applicants_list'));
+        add_action('wp_ajax_nopriv_get_job_applicants_list', array($this, 'ajax_get_job_applicants_list'));
+        add_action('wp_ajax_get_job_applicant_details', array($this, 'ajax_get_job_applicant_details'));
+        add_action('wp_ajax_nopriv_get_job_applicant_details', array($this, 'ajax_get_job_applicant_details'));
     }
 
     /**
@@ -1425,6 +1430,76 @@ class Administration_Plugin_Public {
         } else {
             wp_send_json_error('Failed to delete job posting.');
         }
+    }
+
+    public function ajax_get_job_applicants_list() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $job_posting_id = isset($_POST['job_posting_id']) ? sanitize_text_field($_POST['job_posting_id']) : '';
+        if (!$job_posting_id) {
+            wp_send_json_error('Missing job posting ID.');
+        }
+        $applications_table = $wpdb->prefix . 'hr_applications';
+        $person_table = $wpdb->prefix . 'core_person';
+        $external_table = $wpdb->prefix . 'hr_externalapplicants';
+        $apps = $wpdb->get_results($wpdb->prepare("SELECT * FROM $applications_table WHERE JobPostingID = %s ORDER BY CreatedDate DESC", $job_posting_id));
+        $result = [];
+        foreach ($apps as $app) {
+            $is_external = $app->ExternalApplicantID && !$app->PersonID;
+            if ($is_external) {
+                $applicant = $wpdb->get_row($wpdb->prepare("SELECT * FROM $external_table WHERE ExternalApplicantID = %s", $app->ExternalApplicantID));
+                $name = $applicant ? trim($applicant->FirstName . ' ' . $applicant->LastName) : 'External Applicant';
+                $email = $applicant ? $applicant->Email : '';
+                $phone = $applicant ? $applicant->Phone : '';
+            } else {
+                $applicant = $wpdb->get_row($wpdb->prepare("SELECT * FROM $person_table WHERE PersonID = %s", $app->PersonID));
+                $name = $applicant ? trim($applicant->FirstName . ' ' . $applicant->LastName) : 'Applicant';
+                $email = $applicant ? $applicant->Email : '';
+                $phone = $applicant ? $applicant->Phone : '';
+            }
+            $result[] = [
+                'ApplicationID' => $app->ApplicationID,
+                'Name' => $name,
+                'Email' => $email,
+                'Phone' => $phone,
+                'Status' => $app->Status,
+                'Type' => $is_external ? 'external' : 'internal',
+            ];
+        }
+        wp_send_json_success($result);
+    }
+
+    public function ajax_get_job_applicant_details() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $application_id = isset($_POST['application_id']) ? sanitize_text_field($_POST['application_id']) : '';
+        if (!$application_id) {
+            wp_send_json_error('Missing application ID.');
+        }
+        $applications_table = $wpdb->prefix . 'hr_applications';
+        $person_table = $wpdb->prefix . 'core_person';
+        $external_table = $wpdb->prefix . 'hr_externalapplicants';
+        $app = $wpdb->get_row($wpdb->prepare("SELECT * FROM $applications_table WHERE ApplicationID = %s", $application_id));
+        if (!$app) {
+            wp_send_json_error('Application not found.');
+        }
+        $is_external = $app->ExternalApplicantID && !$app->PersonID;
+        if ($is_external) {
+            $applicant = $wpdb->get_row($wpdb->prepare("SELECT * FROM $external_table WHERE ExternalApplicantID = %s", $app->ExternalApplicantID));
+        } else {
+            $applicant = $wpdb->get_row($wpdb->prepare("SELECT * FROM $person_table WHERE PersonID = %s", $app->PersonID));
+        }
+        $details = [
+            'ApplicationID' => $app->ApplicationID,
+            'Status' => $app->Status,
+            'CreatedDate' => $app->CreatedDate,
+            'Notes' => $app->Notes,
+            'ResumeURL' => $app->ResumeURL,
+            'CoverLetterURL' => $app->CoverLetterURL,
+            'Applicant' => $applicant,
+            'Type' => $is_external ? 'external' : 'internal',
+        ];
+        wp_send_json_success($details);
     }
 
     public function render_careers_job_list($atts = array()) {

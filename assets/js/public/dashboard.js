@@ -1518,6 +1518,33 @@
                 });
             });
         },
+
+        // Applicant card click handler
+        renderApplicantDetailsPanel: function(data) {
+            var html = '<div class="job-applicant-details-card">';
+            if (data.Applicant) {
+                html += '<div class="job-applicant-details-name">' +
+                    (data.Applicant.FirstName ? data.Applicant.FirstName : '') + ' ' +
+                    (data.Applicant.LastName ? data.Applicant.LastName : '') + '</div>';
+                html += '<div class="job-applicant-details-meta">';
+                if (data.Applicant.Email) html += '<span class="job-applicant-details-email">' + data.Applicant.Email + '</span>';
+                if (data.Applicant.Phone) html += '<span class="job-applicant-details-phone">' + data.Applicant.Phone + '</span>';
+                html += '</div>';
+            }
+            html += '<div class="job-applicant-details-status-row"><span class="job-applicant-details-label">Status:</span> <span class="job-applicant-details-status ' + (data.Status ? data.Status.toLowerCase() : '') + '">' + (data.Status || '-') + '</span></div>';
+            html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Applied:</span> <span>' + (data.CreatedDate ? data.CreatedDate.split(' ')[0] : '-') + '</span></div>';
+            if (data.ResumeURL) {
+                html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Resume:</span> <a href="' + data.ResumeURL + '" target="_blank" class="job-applicant-details-link">View Resume</a></div>';
+            }
+            if (data.CoverLetterURL) {
+                html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Cover Letter:</span> <a href="' + data.CoverLetterURL + '" target="_blank" class="job-applicant-details-link">View Cover Letter</a></div>';
+            }
+            if (data.Notes) {
+                html += '<div class="job-applicant-details-row"><span class="job-applicant-details-label">Notes:</span> <span>' + data.Notes + '</span></div>';
+            }
+            html += '</div>';
+            $('.job-applicant-details-panel').html(html).show();
+        },
     };
 
     // Initialize dashboard when document is ready
@@ -1640,6 +1667,37 @@
         $(document).on('click', '#back-to-dashboard-btn', function(e) {
             e.preventDefault();
             Dashboard.backToDashboard();
+        });
+
+        // Applicant card click handler
+        $(document).on('click', '.job-applicant-card', function(e) {
+            e.preventDefault();
+            var $card = $(this);
+            var applicationId = $card.data('application-id');
+            if (!applicationId) return;
+            $('.job-applicant-card').removeClass('selected');
+            $card.addClass('selected');
+            var $panel = $('.job-applicant-details-panel');
+            $panel.html('<div class="loading" style="padding: 32px 0 0 18px; color: #2271b1;">Loading applicant details...</div>').show();
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_job_applicant_details',
+                    nonce: administration_plugin.nonce,
+                    application_id: applicationId
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        Dashboard.renderApplicantDetailsPanel(response.data);
+                    } else {
+                        $panel.html('<div class="error-message">Failed to load applicant details.</div>');
+                    }
+                },
+                error: function() {
+                    $panel.html('<div class="error-message">Failed to load applicant details.</div>');
+                }
+            });
         });
     });
 

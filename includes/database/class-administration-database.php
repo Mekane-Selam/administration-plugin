@@ -53,6 +53,7 @@ class Administration_Database {
         $progtype_edu_enrollment_table = $wpdb->prefix . 'progtype_edu_enrollment';
         $progtype_edu_courses_table = $wpdb->prefix . 'progtype_edu_courses';
         $progtype_edu_courseenrollments_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
+        $progtype_edu_assignments_table = $wpdb->prefix . 'progtype_edu_assignments';
 
         // Program Types Tables
         $hr_staff_table = $wpdb->prefix . 'hr_staff';
@@ -92,7 +93,8 @@ class Administration_Database {
             $progtype_edu_courses_table,
             $hr_staff_table,
             $hr_roles_table,
-            $progtype_edu_courseenrollments_table
+            $progtype_edu_courseenrollments_table,
+            $progtype_edu_assignments_table
         ];
 
         // Check if tables already exist
@@ -540,6 +542,17 @@ class Administration_Database {
             CONSTRAINT fk_hr_staff_person FOREIGN KEY (PersonID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE CASCADE,
             CONSTRAINT fk_hr_staff_roles FOREIGN KEY (StaffRolesID) REFERENCES {$wpdb->prefix}hr_roles(StaffRoleID) ON DELETE SET NULL,
             CONSTRAINT fk_hr_staff_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_assignments_table (
+            AssignmentID VARCHAR(25) NOT NULL,
+            CourseID VARCHAR(25) NOT NULL,
+            Title VARCHAR(150) NOT NULL,
+            Description TEXT,
+            DueDate DATE,
+            MaxScore DECIMAL(8,2),
+            PRIMARY KEY (AssignmentID),
+            CONSTRAINT fk_assignment_course FOREIGN KEY (CourseID) REFERENCES $progtype_edu_courses_table(CourseID) ON DELETE CASCADE
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

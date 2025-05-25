@@ -69,6 +69,16 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_update_job_applicant_status', array($this, 'ajax_update_job_applicant_status'));
         add_action('wp_ajax_update_job_applicant_notes', array($this, 'ajax_update_job_applicant_notes'));
         add_action('wp_ajax_nopriv_update_job_applicant_notes', array($this, 'ajax_update_job_applicant_notes'));
+        add_action('wp_ajax_get_course_assignments', array($this, 'ajax_get_course_assignments'));
+        add_action('wp_ajax_nopriv_get_course_assignments', array($this, 'ajax_get_course_assignments'));
+        add_action('wp_ajax_get_assignment_details', array($this, 'ajax_get_assignment_details'));
+        add_action('wp_ajax_nopriv_get_assignment_details', array($this, 'ajax_get_assignment_details'));
+        add_action('wp_ajax_add_assignment', array($this, 'ajax_add_assignment'));
+        add_action('wp_ajax_nopriv_add_assignment', array($this, 'ajax_add_assignment'));
+        add_action('wp_ajax_edit_assignment', array($this, 'ajax_edit_assignment'));
+        add_action('wp_ajax_nopriv_edit_assignment', array($this, 'ajax_edit_assignment'));
+        add_action('wp_ajax_delete_assignment', array($this, 'ajax_delete_assignment'));
+        add_action('wp_ajax_nopriv_delete_assignment', array($this, 'ajax_delete_assignment'));
     }
 
     /**
@@ -1538,6 +1548,95 @@ class Administration_Plugin_Public {
             wp_send_json_success();
         } else {
             wp_send_json_error('Failed to update notes.');
+        }
+    }
+
+    public function ajax_get_course_assignments() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
+        if (!$course_id) wp_send_json_error('Missing course ID.');
+        $table = $wpdb->prefix . 'progtype_edu_assignments';
+        $assignments = $wpdb->get_results($wpdb->prepare("SELECT AssignmentID, Title, DueDate, MaxScore FROM $table WHERE CourseID = %s ORDER BY DueDate ASC, Title ASC", $course_id));
+        wp_send_json_success($assignments);
+    }
+
+    public function ajax_get_assignment_details() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $assignment_id = isset($_POST['assignment_id']) ? sanitize_text_field($_POST['assignment_id']) : '';
+        if (!$assignment_id) wp_send_json_error('Missing assignment ID.');
+        $table = $wpdb->prefix . 'progtype_edu_assignments';
+        $assignment = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE AssignmentID = %s", $assignment_id));
+        if (!$assignment) wp_send_json_error('Assignment not found.');
+        wp_send_json_success($assignment);
+    }
+
+    public function ajax_add_assignment() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $course_id = isset($_POST['course_id']) ? sanitize_text_field($_POST['course_id']) : '';
+        $title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
+        $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+        $due_date = isset($_POST['due_date']) ? sanitize_text_field($_POST['due_date']) : null;
+        $max_score = isset($_POST['max_score']) ? floatval($_POST['max_score']) : null;
+        if (!$course_id || !$title) wp_send_json_error('Course and title required.');
+        $table = $wpdb->prefix . 'progtype_edu_assignments';
+        // Generate unique AssignmentID
+        do {
+            $unique_code = mt_rand(10000, 99999);
+            $assignment_id = 'ASSIGN' . $unique_code;
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE AssignmentID = %s", $assignment_id));
+        } while ($exists);
+        $result = $wpdb->insert($table, [
+            'AssignmentID' => $assignment_id,
+            'CourseID' => $course_id,
+            'Title' => $title,
+            'Description' => $description,
+            'DueDate' => $due_date,
+            'MaxScore' => $max_score
+        ]);
+        if ($result) {
+            wp_send_json_success(['AssignmentID' => $assignment_id]);
+        } else {
+            wp_send_json_error('Failed to add assignment.');
+        }
+    }
+
+    public function ajax_edit_assignment() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $assignment_id = isset($_POST['assignment_id']) ? sanitize_text_field($_POST['assignment_id']) : '';
+        $title = isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '';
+        $description = isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '';
+        $due_date = isset($_POST['due_date']) ? sanitize_text_field($_POST['due_date']) : null;
+        $max_score = isset($_POST['max_score']) ? floatval($_POST['max_score']) : null;
+        if (!$assignment_id || !$title) wp_send_json_error('Assignment and title required.');
+        $table = $wpdb->prefix . 'progtype_edu_assignments';
+        $result = $wpdb->update($table, [
+            'Title' => $title,
+            'Description' => $description,
+            'DueDate' => $due_date,
+            'MaxScore' => $max_score
+        ], ['AssignmentID' => $assignment_id]);
+        if ($result !== false) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to update assignment.');
+        }
+    }
+
+    public function ajax_delete_assignment() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        global $wpdb;
+        $assignment_id = isset($_POST['assignment_id']) ? sanitize_text_field($_POST['assignment_id']) : '';
+        if (!$assignment_id) wp_send_json_error('Missing assignment ID.');
+        $table = $wpdb->prefix . 'progtype_edu_assignments';
+        $result = $wpdb->delete($table, ['AssignmentID' => $assignment_id]);
+        if ($result) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error('Failed to delete assignment.');
         }
     }
 

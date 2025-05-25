@@ -2331,9 +2331,17 @@ button.button-danger:hover, button.button-danger:focus {
   color: #fff !important;
 } 
 
-.edit-job-actions .button {
-  min-width: 140px;
-  flex: 1 1 0;
-  text-align: center;
+/* Consistent button sizing for Save, Cancel, Delete in job posting edit */
+.button.button-primary, .button.button-secondary, .button.button-danger,
+button.button-primary, button.button-secondary, button.button-danger {
+  height: 44px;
+  min-width: 160px;
+  max-width: 220px;
+  padding: 0 18px;
+  font-size: 1.08rem;
+  border-radius: 6px;
   box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 } 

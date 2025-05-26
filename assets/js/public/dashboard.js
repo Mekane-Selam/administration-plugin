@@ -1815,20 +1815,20 @@
         },
 
         renderAssignmentGradesPanel: function(assignmentId, grades) {
-            var html = '<div class="assignment-grades-list-table">';
+            var html = '<div class="assignment-grades-list-table grades-card-ui">';
             html += '<div class="assignment-grades-list-header" style="display:flex;gap:18px;font-weight:600;color:#2271b1;margin-bottom:8px;">';
             html += '<div style="flex:2;">Student</div>';
             html += '<div style="flex:1;">Score</div>';
             html += '<div style="flex:2;">Feedback</div>';
-            html += '<div style="width:60px;"></div>';
+            html += '<div style="width:120px;"></div>';
             html += '</div>';
             if (grades.length) {
                 grades.forEach(function(g) {
-                    html += '<div class="assignment-grades-list-row" style="display:flex;gap:18px;align-items:center;margin-bottom:6px;">';
-                    html += '<div style="flex:2;">' + Dashboard.escapeHtml((g.FirstName||'') + ' ' + (g.LastName||'')) + '</div>';
-                    html += '<div style="flex:1;">' + (g.Score !== null ? g.Score : '-') + '</div>';
-                    html += '<div style="flex:2;">' + (g.Feedback ? Dashboard.escapeHtml(g.Feedback) : '-') + '</div>';
-                    html += '<div style="width:60px;display:flex;gap:6px;">';
+                    html += '<div class="assignment-grades-list-row" style="display:flex;gap:18px;align-items:center;margin-bottom:6px;min-height:44px;">';
+                    html += '<div style="flex:2;font-size:1.08em;">' + Dashboard.escapeHtml((g.FirstName||'') + ' ' + (g.LastName||'')) + '</div>';
+                    html += '<div style="flex:1;font-size:1.08em;">' + (g.Score !== null ? g.Score : '-') + '</div>';
+                    html += '<div style="flex:2;font-size:1.08em;">' + (g.Feedback ? Dashboard.escapeHtml(g.Feedback) : '-') + '</div>';
+                    html += '<div style="width:120px;display:flex;gap:10px;justify-content:flex-end;">';
                     html += '<button class="button button-secondary button-sm edit-grade-btn" data-grade-id="' + g.GradeID + '">Edit</button>';
                     html += '<button class="button button-danger button-sm delete-grade-btn" data-grade-id="' + g.GradeID + '">Delete</button>';
                     html += '</div>';
@@ -2537,5 +2537,11 @@
             }
         });
     });
+
+    // Add CSS for .grades-card-ui if not present
+    if (!$('style#grades-card-ui-style').length) {
+        var cardCss = `.grades-card-ui { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(34,113,177,0.07); padding: 32px 36px 28px 36px; min-height: 120px; margin-top: 10px; }`;
+        $('head').append('<style id="grades-card-ui-style">' + cardCss + '</style>');
+    }
 
 })(jQuery); 

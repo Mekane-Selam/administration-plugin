@@ -1776,6 +1776,182 @@
                     alert('Failed to update assignment.');
                 }
             });
+        },
+
+        // --- Course Grades Tab Logic ---
+        loadCourseGradesAssignments: function(courseId) {
+            var $listGrid = $('.course-grades-assignments-list-grid');
+            var $detailsPanel = $('.course-grades-details-panel');
+            $listGrid.html('<div class="loading">Loading assignments...</div>');
+            $detailsPanel.removeClass('active').hide().empty();
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_course_assignments',
+                    nonce: administration_plugin.nonce,
+                    course_id: courseId
+                },
+                success: function(response) {
+                    if (response.success && response.data && response.data.length) {
+                        var html = '';
+                        response.data.forEach(function(a) {
+                            html += '<div class="course-grades-assignment-row" data-assignment-id="' + a.AssignmentID + '">';
+                            html += '<div class="course-grades-assignment-title">' + Dashboard.escapeHtml(a.Title) + '</div>';
+                            html += '<div class="course-grades-assignment-meta">';
+                            if (a.DueDate) html += '<span class="course-grades-assignment-duedate">Due: ' + a.DueDate + '</span>';
+                            if (a.MaxScore) html += '<span class="course-grades-assignment-maxscore">Max: ' + a.MaxScore + '</span>';
+                            html += '</div></div>';
+                        });
+                        $listGrid.html(html);
+                    } else {
+                        $listGrid.html('<div class="course-grades-assignment-empty">No assignments yet.</div>');
+                    }
+                },
+                error: function() {
+                    $listGrid.html('<div class="error-message">Failed to load assignments.</div>');
+                }
+            });
+        },
+
+        renderAssignmentGradesPanel: function(assignmentId, grades) {
+            var html = '<div class="assignment-grades-list-table">';
+            html += '<div class="assignment-grades-list-header" style="display:flex;gap:18px;font-weight:600;color:#2271b1;margin-bottom:8px;">';
+            html += '<div style="flex:2;">Student</div>';
+            html += '<div style="flex:1;">Score</div>';
+            html += '<div style="flex:2;">Feedback</div>';
+            html += '<div style="width:60px;"></div>';
+            html += '</div>';
+            if (grades.length) {
+                grades.forEach(function(g) {
+                    html += '<div class="assignment-grades-list-row" style="display:flex;gap:18px;align-items:center;margin-bottom:6px;">';
+                    html += '<div style="flex:2;">' + Dashboard.escapeHtml((g.FirstName||'') + ' ' + (g.LastName||'')) + '</div>';
+                    html += '<div style="flex:1;">' + (g.Score !== null ? g.Score : '-') + '</div>';
+                    html += '<div style="flex:2;">' + (g.Feedback ? Dashboard.escapeHtml(g.Feedback) : '-') + '</div>';
+                    html += '<div style="width:60px;display:flex;gap:6px;">';
+                    html += '<button class="button button-secondary button-sm edit-grade-btn" data-grade-id="' + g.GradeID + '">Edit</button>';
+                    html += '<button class="button button-danger button-sm delete-grade-btn" data-grade-id="' + g.GradeID + '">Delete</button>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+            } else {
+                html += '<div class="assignment-grades-list-empty" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 0;">No grades yet.</div>';
+            }
+            html += '</div>';
+            $('.course-grades-details-panel').html(html).addClass('active').show();
+        },
+
+        // Add Grade Modal
+        showAddGradeModal: function(courseId) {
+            // Fetch assignments and students for dropdowns
+            $.when(
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_course_assignments', nonce: administration_plugin.nonce, course_id: courseId }
+                }),
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_course_students', nonce: administration_plugin.nonce, course_id: courseId }
+                })
+            ).done(function(assignmentsResp, studentsResp) {
+                var assignments = (assignmentsResp[0].success && assignmentsResp[0].data) ? assignmentsResp[0].data : [];
+                var students = (studentsResp[0].success && studentsResp[0].data) ? studentsResp[0].data : [];
+                var modalHtml = '<div class="modal grade-modal" id="add-grade-modal">';
+                modalHtml += '<div class="modal-content" style="max-width: 480px;">';
+                modalHtml += '<button class="close" id="close-add-grade-modal">&times;</button>';
+                modalHtml += '<h2>Add Grade</h2>';
+                modalHtml += '<form id="add-grade-form">';
+                modalHtml += '<div class="form-field"><label>Assignment <span class="required">*</span></label><select name="assignment_id" required>';
+                assignments.forEach(function(a) {
+                    modalHtml += '<option value="' + a.AssignmentID + '">' + Dashboard.escapeHtml(a.Title) + '</option>';
+                });
+                modalHtml += '</select></div>';
+                modalHtml += '<div class="form-field"><label>Student <span class="required">*</span></label><select name="person_id" required>';
+                students.forEach(function(s) {
+                    modalHtml += '<option value="' + s.PersonID + '">' + Dashboard.escapeHtml(s.FirstName + ' ' + s.LastName) + '</option>';
+                });
+                modalHtml += '</select></div>';
+                modalHtml += '<div class="form-field"><label>Score <span class="required">*</span></label><input type="number" name="score" min="0" step="0.01" required></div>';
+                modalHtml += '<div class="form-field"><label>Feedback</label><textarea name="feedback" rows="2"></textarea></div>';
+                modalHtml += '<div class="form-actions"><button type="submit" class="button button-primary">Add Grade</button></div>';
+                modalHtml += '<div class="form-message" style="display:none;"></div>';
+                modalHtml += '</form></div></div>';
+                $('body').append(modalHtml);
+                setTimeout(function() { $('#add-grade-modal').addClass('show'); }, 10);
+            });
+        },
+
+        // Edit Grade Modal
+        showEditGradeModal: function(grade) {
+            var modalHtml = '<div class="modal grade-modal" id="edit-grade-modal">';
+            modalHtml += '<div class="modal-content" style="max-width: 480px;">';
+            modalHtml += '<button class="close" id="close-edit-grade-modal">&times;</button>';
+            modalHtml += '<h2>Edit Grade</h2>';
+            modalHtml += '<form id="edit-grade-form">';
+            modalHtml += '<input type="hidden" name="grade_id" value="' + grade.GradeID + '">';
+            modalHtml += '<div class="form-field"><label>Student</label><input type="text" value="' + Dashboard.escapeHtml((grade.FirstName||'') + ' ' + (grade.LastName||'')) + '" disabled></div>';
+            modalHtml += '<div class="form-field"><label>Score <span class="required">*</span></label><input type="number" name="score" min="0" step="0.01" required value="' + (grade.Score !== null ? grade.Score : '') + '"></div>';
+            modalHtml += '<div class="form-field"><label>Feedback</label><textarea name="feedback" rows="2">' + (grade.Feedback ? Dashboard.escapeHtml(grade.Feedback) : '') + '</textarea></div>';
+            modalHtml += '<div class="form-actions"><button type="submit" class="button button-primary">Save Changes</button></div>';
+            modalHtml += '<div class="form-message" style="display:none;"></div>';
+            modalHtml += '</form></div></div>';
+            $('body').append(modalHtml);
+            setTimeout(function() { $('#edit-grade-modal').addClass('show'); }, 10);
+        },
+
+        // Delete Grade
+        deleteGrade: function(gradeId) {
+            if (!confirm('Are you sure you want to delete this grade?')) return;
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: { action: 'delete_grade', nonce: administration_plugin.nonce, grade_id: gradeId },
+                success: function(response) {
+                    if (response.success) {
+                        // Reload grades for the selected assignment if visible
+                        var selectedAssignment = $('.course-grades-assignment-row.selected').data('assignment-id');
+                        if (selectedAssignment) {
+                            $('.course-grades-assignment-row.selected').click();
+                        }
+                    } else {
+                        alert(response.data || 'Failed to delete grade.');
+                    }
+                },
+                error: function() {
+                    alert('Failed to delete grade.');
+                }
+            });
+        },
+
+        // Edit Grade
+        editGrade: function(gradeId, data) {
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'edit_grade',
+                    nonce: administration_plugin.nonce,
+                    grade_id: gradeId,
+                    score: data.Score,
+                    feedback: data.Feedback
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Reload grades for the selected assignment if visible
+                        var selectedAssignment = $('.course-grades-assignment-row.selected').data('assignment-id');
+                        if (selectedAssignment) {
+                            $('.course-grades-assignment-row.selected').click();
+                        }
+                    } else {
+                        alert(response.data || 'Failed to update grade.');
+                    }
+                },
+                error: function() {
+                    alert('Failed to update grade.');
+                }
+            });
         }
     };
 
@@ -2121,6 +2297,177 @@
                 error: function() {
                     $btn.prop('disabled', false).text('Save Changes');
                     $msg.text('Failed to update assignment.').addClass('error').show();
+                }
+            });
+        });
+
+        $(document).on('click', '.tab-button[data-tab="grades"]', function() {
+            var $tabContent = $(this).closest('.course-detail-tabs').next('.course-detail-tab-content');
+            var courseId = $tabContent.data('course-id');
+            Dashboard.loadCourseGradesAssignments(courseId);
+        });
+
+        $(document).on('click', '#close-add-grade-modal, #add-grade-modal', function(e) {
+            if ($(e.target).is('#close-add-grade-modal') || $(e.target).is('#add-grade-modal')) {
+                $('#add-grade-modal').removeClass('show');
+                setTimeout(function() { $('#add-grade-modal').remove(); }, 200);
+            }
+        });
+        $(document).on('click', '.modal-content', function(e) { e.stopPropagation(); });
+
+        $(document).on('submit', '#add-grade-form', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $msg = $form.find('.form-message');
+            var $btn = $form.find('button[type="submit"]');
+            $msg.hide().removeClass('error success');
+            var valid = true;
+            $form.find('[required]').each(function() {
+                if (!$(this).val().trim()) {
+                    valid = false;
+                    $(this).addClass('input-error');
+                } else {
+                    $(this).removeClass('input-error');
+                }
+            });
+            if (!valid) {
+                $msg.text('Please fill in all required fields.').addClass('error').show();
+                return;
+            }
+            $btn.prop('disabled', true).text('Adding...');
+            var formData = $form.serializeArray();
+            var data = { action: 'add_grade', nonce: administration_plugin.nonce };
+            formData.forEach(function(f) { data[f.name] = f.value; });
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    $btn.prop('disabled', false).text('Add Grade');
+                    if (response.success) {
+                        $msg.text('Grade added!').addClass('success').show();
+                        setTimeout(function() {
+                            $('#add-grade-modal').removeClass('show');
+                            setTimeout(function() { $('#add-grade-modal').remove(); }, 200);
+                            // Reload grades for the selected assignment if visible
+                            var selectedAssignment = $('.course-grades-assignment-row.selected').data('assignment-id');
+                            if (selectedAssignment) {
+                                $('.course-grades-assignment-row.selected').click();
+                            }
+                        }, 900);
+                    } else {
+                        $msg.text(response.data || 'Failed to add grade.').addClass('error').show();
+                    }
+                },
+                error: function() {
+                    $btn.prop('disabled', false).text('Add Grade');
+                    $msg.text('Failed to add grade.').addClass('error').show();
+                }
+            });
+        });
+
+        // Edit Grade Modal
+        $(document).on('click', '.edit-grade-btn', function() {
+            var gradeId = $(this).data('grade-id');
+            // Find the assignmentId from the selected assignment
+            var assignmentId = $('.course-grades-assignment-row.selected').data('assignment-id');
+            // Fetch grade details (reuse get_assignment_grades and filter client-side)
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: { action: 'get_assignment_grades', nonce: administration_plugin.nonce, assignment_id: assignmentId },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        var grade = response.data.find(function(g) { return g.GradeID === gradeId; });
+                        if (grade) {
+                            Dashboard.showEditGradeModal(grade);
+                        } else {
+                            alert('Grade not found.');
+                        }
+                    } else {
+                        alert('Failed to load grade details.');
+                    }
+                },
+                error: function() {
+                    alert('Failed to load grade details.');
+                }
+            });
+        });
+
+        $(document).on('submit', '#edit-grade-form', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $msg = $form.find('.form-message');
+            var $btn = $form.find('button[type="submit"]');
+            $msg.hide().removeClass('error success');
+            var valid = true;
+            $form.find('[required]').each(function() {
+                if (!$(this).val().trim()) {
+                    valid = false;
+                    $(this).addClass('input-error');
+                } else {
+                    $(this).removeClass('input-error');
+                }
+            });
+            if (!valid) {
+                $msg.text('Please fill in all required fields.').addClass('error').show();
+                return;
+            }
+            $btn.prop('disabled', true).text('Saving...');
+            var formData = $form.serializeArray();
+            var data = { action: 'edit_grade', nonce: administration_plugin.nonce };
+            formData.forEach(function(f) { data[f.name] = f.value; });
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    $btn.prop('disabled', false).text('Save Changes');
+                    if (response.success) {
+                        $msg.text('Grade updated!').addClass('success').show();
+                        setTimeout(function() {
+                            $('#edit-grade-modal').removeClass('show');
+                            setTimeout(function() { $('#edit-grade-modal').remove(); }, 200);
+                            // Reload grades for the selected assignment if visible
+                            var selectedAssignment = $('.course-grades-assignment-row.selected').data('assignment-id');
+                            if (selectedAssignment) {
+                                $('.course-grades-assignment-row.selected').click();
+                            }
+                        }, 900);
+                    } else {
+                        $msg.text(response.data || 'Failed to update grade.').addClass('error').show();
+                    }
+                },
+                error: function() {
+                    $btn.prop('disabled', false).text('Save Changes');
+                    $msg.text('Failed to update grade.').addClass('error').show();
+                }
+            });
+        });
+
+        $(document).on('click', '.course-grades-assignment-row', function() {
+            $('.course-grades-assignment-row').removeClass('selected');
+            $(this).addClass('selected');
+            var assignmentId = $(this).data('assignment-id');
+            var $panel = $('.course-grades-details-panel');
+            $panel.html('<div class="loading">Loading grades...</div>').addClass('active').show();
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_assignment_grades',
+                    nonce: administration_plugin.nonce,
+                    assignment_id: assignmentId
+                },
+                success: function(response) {
+                    if (response.success && response.data) {
+                        Dashboard.renderAssignmentGradesPanel(assignmentId, response.data);
+                    } else {
+                        $panel.html('<div class="error-message">Failed to load grades.</div>');
+                    }
+                },
+                error: function() {
+                    $panel.html('<div class="error-message">Failed to load grades.</div>');
                 }
             });
         });

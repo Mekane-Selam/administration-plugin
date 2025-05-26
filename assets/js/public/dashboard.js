@@ -1820,17 +1820,18 @@
             html += '<div style="flex:2;">Student</div>';
             html += '<div style="flex:1;">Score</div>';
             html += '<div style="flex:2;">Feedback</div>';
-            html += '<div style="width:120px;"></div>';
+            html += '<div style="width:80px;"></div>';
             html += '</div>';
             if (grades.length) {
-                grades.forEach(function(g) {
-                    html += '<div class="assignment-grades-list-row" style="display:flex;gap:18px;align-items:center;margin-bottom:6px;min-height:44px;">';
+                grades.forEach(function(g, i) {
+                    var striped = (i % 2 === 1) ? ' grades-striped-row' : '';
+                    html += '<div class="assignment-grades-list-row' + striped + '" style="display:flex;gap:18px;align-items:center;margin-bottom:0;min-height:38px;">';
                     html += '<div style="flex:2;font-size:1.08em;">' + Dashboard.escapeHtml((g.FirstName||'') + ' ' + (g.LastName||'')) + '</div>';
                     html += '<div style="flex:1;font-size:1.08em;">' + (g.Score !== null ? g.Score : '-') + '</div>';
                     html += '<div style="flex:2;font-size:1.08em;">' + (g.Feedback ? Dashboard.escapeHtml(g.Feedback) : '-') + '</div>';
-                    html += '<div style="width:120px;display:flex;gap:10px;justify-content:flex-end;">';
-                    html += '<button class="button button-secondary button-sm edit-grade-btn" data-grade-id="' + g.GradeID + '">Edit</button>';
-                    html += '<button class="button button-danger button-sm delete-grade-btn" data-grade-id="' + g.GradeID + '">Delete</button>';
+                    html += '<div style="width:80px;display:flex;gap:6px;justify-content:flex-end;">';
+                    html += '<button class="button button-secondary button-xs edit-grade-btn" data-grade-id="' + g.GradeID + '">Edit</button>';
+                    html += '<button class="button button-danger button-xs delete-grade-btn" data-grade-id="' + g.GradeID + '">Delete</button>';
                     html += '</div>';
                     html += '</div>';
                 });
@@ -2540,7 +2541,7 @@
 
     // Add CSS for .grades-card-ui if not present
     if (!$('style#grades-card-ui-style').length) {
-        var cardCss = `.grades-card-ui { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(34,113,177,0.07); padding: 32px 36px 28px 36px; min-height: 120px; margin-top: 10px; }`;
+        var cardCss = `.grades-card-ui { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(34,113,177,0.07); padding: 32px 36px 28px 36px; min-height: 120px; margin-top: 10px; }\n.button-xs { font-size: 0.92em !important; padding: 2px 10px !important; border-radius: 6px !important; min-width: 0 !important; line-height: 1.2 !important; }\n.grades-striped-row { background: #f7fafd; }`;
         $('head').append('<style id="grades-card-ui-style">' + cardCss + '</style>');
     }
 

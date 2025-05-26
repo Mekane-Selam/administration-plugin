@@ -2479,30 +2479,27 @@
             Dashboard.showAddGradeModal(courseId);
         });
 
+        // Grades tab assignment search filter
         $(document).off('input', '.course-detail-grades-search').on('input', '.course-detail-grades-search', function() {
             var search = $(this).val().toLowerCase();
-            var $rows = $('.assignment-grades-list-row');
-            var anyVisible = false;
+            var $rows = $('.course-grades-assignments-list-grid .course-grades-assignment-row');
             $rows.each(function() {
-                var $row = $(this);
-                var text = $row.text().toLowerCase();
-                if (text.includes(search)) {
-                    $row.show();
-                    anyVisible = true;
+                var title = $(this).find('.course-grades-assignment-title').text().toLowerCase();
+                var meta = $(this).find('.course-grades-assignment-meta').text().toLowerCase();
+                if (title.includes(search) || meta.includes(search)) {
+                    $(this).show();
                 } else {
-                    $row.hide();
+                    $(this).hide();
                 }
             });
             // Show/hide empty message
-            var $emptyMsg = $('.assignment-grades-list-empty');
-            if (!anyVisible) {
-                if ($emptyMsg.length === 0) {
-                    $('.assignment-grades-list-table').append('<div class="assignment-grades-list-empty" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 0;">No grades found.</div>');
-                } else {
-                    $emptyMsg.show();
+            var visible = $rows.filter(':visible').length;
+            if (visible === 0) {
+                if ($('.course-grades-assignments-list-grid .course-grades-assignment-empty').length === 0) {
+                    $('.course-grades-assignments-list-grid').append('<div class="course-grades-assignment-empty">No assignments found.</div>');
                 }
             } else {
-                $emptyMsg.hide();
+                $('.course-grades-assignments-list-grid .course-grades-assignment-empty').remove();
             }
         });
     });

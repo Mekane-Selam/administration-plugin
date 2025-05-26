@@ -2502,6 +2502,127 @@
                 $('.course-grades-assignments-list-grid .course-grades-assignment-empty').remove();
             }
         });
+
+        // Attendance tab logic
+        $(document).on('click', '.tab-button[data-tab="attendance"]', function() {
+            var $tabContent = $(this).closest('.course-detail-tabs').next('.course-detail-tab-content');
+            var courseId = $tabContent.data('course-id');
+            var $attendanceTab = $tabContent.find('#attendance');
+            var $dateInput = $attendanceTab.find('#attendance-date');
+            var $searchInput = $attendanceTab.find('.course-detail-attendance-search');
+            var $listGrid = $attendanceTab.find('.attendance-list-grid');
+            var $emptyMsg = $attendanceTab.find('.attendance-list-empty');
+            var $saveBtn = $attendanceTab.find('.save-attendance-btn');
+            var $msg = $attendanceTab.find('.attendance-save-message');
+            var today = new Date();
+            var yyyy = today.getFullYear();
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var dd = String(today.getDate()).padStart(2, '0');
+            var defaultDate = yyyy + '-' + mm + '-' + dd;
+            if (!$dateInput.val()) $dateInput.val(defaultDate);
+            var attendanceState = { original: [], checked: [], students: [] };
+            function renderList() {
+                var search = $searchInput.val().toLowerCase();
+                var html = '';
+                var visibleCount = 0;
+                attendanceState.students.forEach(function(s, i) {
+                    var name = (s.FirstName + ' ' + s.LastName).toLowerCase();
+                    if (!search || name.includes(search)) {
+                        visibleCount++;
+                        var checked = attendanceState.checked.includes(s.PersonID) ? 'checked' : '';
+                        var striped = (visibleCount % 2 === 0) ? ' grades-striped-row' : '';
+                        html += '<div class="attendance-row' + striped + '" style="display:flex;align-items:center;gap:14px;padding:8px 18px;font-size:1.05em;min-height:38px;">';
+                        html += '<input type="checkbox" class="attendance-checkbox" data-person-id="' + s.PersonID + '" ' + checked + ' style="margin-right:10px;" />';
+                        html += '<span>' + Dashboard.escapeHtml(s.FirstName + ' ' + s.LastName) + '</span>';
+                        html += '</div>';
+                    }
+                });
+                $listGrid.html(html);
+                $emptyMsg.toggle(visibleCount === 0);
+            }
+            function loadAttendance() {
+                $listGrid.html('<div class="loading" style="padding:24px 0 0 18px;">Loading...</div>');
+                $emptyMsg.hide();
+                $msg.html('');
+                $saveBtn.prop('disabled', true);
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_course_attendance',
+                        nonce: administration_plugin.nonce,
+                        course_id: courseId,
+                        session_date: $dateInput.val()
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            attendanceState.students = response.data.students;
+                            attendanceState.original = response.data.attendance.slice();
+                            attendanceState.checked = response.data.attendance.slice();
+                            renderList();
+                        } else {
+                            $listGrid.html('<div class="error-message">Failed to load attendance.</div>');
+                        }
+                    },
+                    error: function() {
+                        $listGrid.html('<div class="error-message">Failed to load attendance.</div>');
+                    }
+                });
+            }
+            // Initial load
+            loadAttendance();
+            // Date change
+            $dateInput.off('change').on('change', function() {
+                loadAttendance();
+            });
+            // Search filter
+            $searchInput.off('input').on('input', function() {
+                renderList();
+            });
+            // Checkbox change (delegated)
+            $listGrid.off('change', '.attendance-checkbox').on('change', '.attendance-checkbox', function() {
+                var personId = $(this).data('person-id');
+                if ($(this).is(':checked')) {
+                    if (!attendanceState.checked.includes(personId)) attendanceState.checked.push(personId);
+                } else {
+                    attendanceState.checked = attendanceState.checked.filter(function(id) { return id !== personId; });
+                }
+                // Enable save if changed
+                var changed = attendanceState.checked.sort().join(',') !== attendanceState.original.sort().join(',');
+                $saveBtn.prop('disabled', !changed);
+            });
+            // Save button
+            $saveBtn.off('click').on('click', function() {
+                $saveBtn.prop('disabled', true).text('Saving...');
+                $msg.html('');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'save_course_attendance',
+                        nonce: administration_plugin.nonce,
+                        course_id: courseId,
+                        session_date: $dateInput.val(),
+                        present_person_ids: attendanceState.checked
+                    },
+                    success: function(response) {
+                        $saveBtn.text('Save');
+                        if (response.success) {
+                            attendanceState.original = attendanceState.checked.slice();
+                            $msg.html('<span class="success-message">Attendance saved!</span>');
+                        } else {
+                            $msg.html('<span class="error-message">' + (response.data || 'Failed to save attendance.') + '</span>');
+                        }
+                        $saveBtn.prop('disabled', true);
+                    },
+                    error: function() {
+                        $saveBtn.text('Save');
+                        $msg.html('<span class="error-message">Failed to save attendance.</span>');
+                        $saveBtn.prop('disabled', false);
+                    }
+                });
+            });
+        });
     });
 
     // Add event handler for Cancel button

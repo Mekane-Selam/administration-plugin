@@ -65,6 +65,10 @@ class Administration_Database {
         // Add table variable
         $progtype_edu_courseattendance_table = $wpdb->prefix . 'progtype_edu_courseattendance';
 
+        // Curriculum and Lesson Plan tables
+        $progtype_edu_curriculum_table = $wpdb->prefix . 'progtype_edu_curriculum';
+        $progtype_edu_lessonplans_table = $wpdb->prefix . 'progtype_edu_lessonplans';
+
         // List of all tables
         $tables = [
             $person_table,
@@ -101,7 +105,9 @@ class Administration_Database {
             $progtype_edu_courseenrollments_table,
             $progtype_edu_assignments_table,
             $progtype_edu_assignmentgrades_table,
-            $progtype_edu_courseattendance_table
+            $progtype_edu_courseattendance_table,
+            $progtype_edu_curriculum_table,
+            $progtype_edu_lessonplans_table
         ];
 
         // Check if tables already exist
@@ -582,6 +588,41 @@ class Administration_Database {
             PRIMARY KEY (PersonID, CourseID, SessionDate),
             CONSTRAINT fk_attendance_person FOREIGN KEY (PersonID) REFERENCES $person_table(PersonID) ON DELETE CASCADE,
             CONSTRAINT fk_attendance_course FOREIGN KEY (CourseID) REFERENCES $progtype_edu_courses_table(CourseID) ON DELETE CASCADE
+        ) $charset_collate;";
+
+        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_curriculum_table (
+            CurriculumID VARCHAR(25) NOT NULL,
+            CourseID VARCHAR(25) NOT NULL,
+            WeekNumber INT NOT NULL,
+            Objective TEXT,
+            Materials TEXT,
+            VideoLinks TEXT,
+            CreatedBy VARCHAR(25),
+            CreatedDate DATETIME,
+            LastModifiedDate DATETIME,
+            PRIMARY KEY (CurriculumID),
+            CONSTRAINT fk_curriculum_course FOREIGN KEY (CourseID) REFERENCES $progtype_edu_courses_table(CourseID) ON DELETE CASCADE,
+            CONSTRAINT fk_curriculum_createdby FOREIGN KEY (CreatedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_edu_lessonplans_table (
+            LessonPlanID VARCHAR(25) NOT NULL,
+            CurriculumID VARCHAR(25) NULL,
+            CourseID VARCHAR(25) NOT NULL,
+            WeekNumber INT NOT NULL,
+            Date DATE,
+            Title VARCHAR(150),
+            Description TEXT,
+            Materials TEXT,
+            VideoLinks TEXT,
+            Notes TEXT,
+            CreatedBy VARCHAR(25),
+            CreatedDate DATETIME,
+            LastModifiedDate DATETIME,
+            PRIMARY KEY (LessonPlanID),
+            CONSTRAINT fk_lessonplan_course FOREIGN KEY (CourseID) REFERENCES $progtype_edu_courses_table(CourseID) ON DELETE CASCADE,
+            CONSTRAINT fk_lessonplan_curriculum FOREIGN KEY (CurriculumID) REFERENCES $progtype_edu_curriculum_table(CurriculumID) ON DELETE SET NULL,
+            CONSTRAINT fk_lessonplan_createdby FOREIGN KEY (CreatedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

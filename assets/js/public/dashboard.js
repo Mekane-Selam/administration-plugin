@@ -1953,6 +1953,137 @@
                     alert('Failed to update grade.');
                 }
             });
+        },
+
+        // --- Curriculum Tab Logic ---
+        loadCurriculum: function(courseId) {
+            var $listGrid = $('.curriculum-list-grid');
+            var $detailsPanel = $('.curriculum-details-panel');
+            $listGrid.html('<div class="loading">Loading curriculum...</div>');
+            $detailsPanel.hide().empty();
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_curriculum',
+                    nonce: administration_plugin.nonce,
+                    course_id: courseId
+                },
+                success: function(response) {
+                    if (response.success && response.data.length) {
+                        var html = '';
+                        response.data.forEach(function(row) {
+                            html += '<tr data-curriculum-id="' + row.CurriculumID + '">';
+                            html += '<td style="padding:10px 16px;">' + row.WeekNumber + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Objective || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Materials || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.VideoLinks || '') + '</td>';
+                            html += '<td style="padding:10px 16px;text-align:right;">';
+                            html += '<button class="button button-secondary button-xs edit-curriculum-btn" data-curriculum-id="' + row.CurriculumID + '">&#9998;</button> ';
+                            html += '<button class="button button-danger button-xs delete-curriculum-btn" data-curriculum-id="' + row.CurriculumID + '">&#128465;</button>';
+                            html += '</td></tr>';
+                        });
+                        $listGrid.html(html);
+                    } else {
+                        $listGrid.html('<tr class="curriculum-empty-row"><td colspan="5" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">No curriculum yet.</td></tr>');
+                    }
+                },
+                error: function() {
+                    $listGrid.html('<tr><td colspan="5" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">Failed to load curriculum.</td></tr>');
+                }
+            });
+        },
+
+        // Add/Edit/Delete handlers (modals to be implemented)
+        addCurriculum: function() {
+            // Show modal for add (to be implemented)
+            alert('Add Week modal coming soon!');
+        },
+
+        editCurriculum: function(curriculumId) {
+            // Show modal for edit (to be implemented)
+            alert('Edit Week modal coming soon!');
+        },
+
+        deleteCurriculum: function(curriculumId) {
+            var id = $(this).data('curriculum-id');
+            if (!confirm('Delete this week?')) return;
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: { action: 'delete_curriculum', nonce: administration_plugin.nonce, curriculum_id: id },
+                success: function(response) {
+                    if (response.success) loadCurriculum();
+                    else $msg.html('<span class="error-message">Failed to delete.</span>');
+                },
+                error: function() { $msg.html('<span class="error-message">Failed to delete.</span>'); }
+            });
+        },
+
+        // --- Lesson Plan Tab Logic ---
+        loadLessonPlans: function(courseId) {
+            var $listGrid = $('.lessonplan-list-grid');
+            var $detailsPanel = $('.lessonplan-details-panel');
+            $listGrid.html('<div class="loading">Loading lesson plans...</div>');
+            $detailsPanel.hide().empty();
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'get_lessonplans',
+                    nonce: administration_plugin.nonce,
+                    course_id: courseId
+                },
+                success: function(response) {
+                    if (response.success && response.data.length) {
+                        var html = '';
+                        response.data.forEach(function(row) {
+                            html += '<tr data-lessonplan-id="' + row.LessonPlanID + '">';
+                            html += '<td style="padding:10px 16px;">' + (row.Date || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Title || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Description || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Materials || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.VideoLinks || '') + '</td>';
+                            html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Notes || '') + '</td>';
+                            html += '<td style="padding:10px 16px;text-align:right;">';
+                            html += '<button class="button button-secondary button-xs edit-lessonplan-btn" data-lessonplan-id="' + row.LessonPlanID + '">&#9998;</button> ';
+                            html += '<button class="button button-danger button-xs delete-lessonplan-btn" data-lessonplan-id="' + row.LessonPlanID + '">&#128465;</button>';
+                            html += '</td></tr>';
+                        });
+                        $listGrid.html(html);
+                    } else {
+                        $listGrid.html('<tr class="lessonplan-empty-row"><td colspan="7" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">No lesson plans yet.</td></tr>');
+                    }
+                },
+                error: function() {
+                    $listGrid.html('<tr><td colspan="7" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">Failed to load lesson plans.</td></tr>');
+                }
+            });
+        },
+
+        addLessonPlan: function() {
+            // Show modal for add (to be implemented)
+            alert('Add Lesson modal coming soon!');
+        },
+
+        editLessonPlan: function(lessonPlanId) {
+            // Show modal for edit (to be implemented)
+            alert('Edit Lesson modal coming soon!');
+        },
+
+        deleteLessonPlan: function(lessonPlanId) {
+            var id = $(this).data('lessonplan-id');
+            if (!confirm('Delete this lesson?')) return;
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: { action: 'delete_lessonplan', nonce: administration_plugin.nonce, lessonplan_id: id },
+                success: function(response) {
+                    if (response.success) loadLessonPlans();
+                    else $msg.html('<span class="error-message">Failed to delete.</span>');
+                },
+                error: function() { $msg.html('<span class="error-message">Failed to delete.</span>'); }
+            });
         }
     };
 
@@ -2624,6 +2755,160 @@
                     }
                 });
             });
+        });
+
+        // --- Curriculum Tab Logic ---
+        $(document).on('click', '.tab-button[data-tab="curriculum"]', function() {
+            var $tabContent = $(this).closest('.course-detail-tabs').next('.course-detail-tab-content');
+            var courseId = $tabContent.data('course-id');
+            var $tab = $tabContent.find('#curriculum');
+            var $tableBody = $tab.find('.curriculum-table-body');
+            var $msg = $tab.find('.curriculum-message');
+            var $addBtn = $tab.find('.add-curriculum-btn');
+            function loadCurriculum() {
+                $tableBody.html('<tr><td colspan="5" style="padding:18px 0 0 18px;">Loading...</td></tr>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_curriculum', nonce: administration_plugin.nonce, course_id: courseId },
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var html = '';
+                            response.data.forEach(function(row) {
+                                html += '<tr data-curriculum-id="' + row.CurriculumID + '">';
+                                html += '<td style="padding:10px 16px;">' + row.WeekNumber + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Objective || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Materials || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.VideoLinks || '') + '</td>';
+                                html += '<td style="padding:10px 16px;text-align:right;">';
+                                html += '<button class="button button-secondary button-xs edit-curriculum-btn" data-curriculum-id="' + row.CurriculumID + '">&#9998;</button> ';
+                                html += '<button class="button button-danger button-xs delete-curriculum-btn" data-curriculum-id="' + row.CurriculumID + '">&#128465;</button>';
+                                html += '</td></tr>';
+                            });
+                            $tableBody.html(html);
+                        } else {
+                            $tableBody.html('<tr class="curriculum-empty-row"><td colspan="5" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">No curriculum yet.</td></tr>');
+                        }
+                    },
+                    error: function() {
+                        $tableBody.html('<tr><td colspan="5" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">Failed to load curriculum.</td></tr>');
+                    }
+                });
+            }
+            // Add/Edit/Delete handlers (modals to be implemented)
+            $addBtn.off('click').on('click', function() {
+                // Show modal for add (to be implemented)
+                alert('Add Week modal coming soon!');
+            });
+            $tableBody.off('click', '.edit-curriculum-btn').on('click', '.edit-curriculum-btn', function() {
+                // Show modal for edit (to be implemented)
+                alert('Edit Week modal coming soon!');
+            });
+            $tableBody.off('click', '.delete-curriculum-btn').on('click', '.delete-curriculum-btn', function() {
+                var id = $(this).data('curriculum-id');
+                if (!confirm('Delete this week?')) return;
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'delete_curriculum', nonce: administration_plugin.nonce, curriculum_id: id },
+                    success: function(response) {
+                        if (response.success) loadCurriculum();
+                        else $msg.html('<span class="error-message">Failed to delete.</span>');
+                    },
+                    error: function() { $msg.html('<span class="error-message">Failed to delete.</span>'); }
+                });
+            });
+            loadCurriculum();
+        });
+
+        // --- Lesson Plan Tab Logic ---
+        $(document).on('click', '.tab-button[data-tab="lessonplan"]', function() {
+            var $tabContent = $(this).closest('.course-detail-tabs').next('.course-detail-tab-content');
+            var courseId = $tabContent.data('course-id');
+            var $tab = $tabContent.find('#lessonplan');
+            var $tableBody = $tab.find('.lessonplan-table-body');
+            var $msg = $tab.find('.lessonplan-message');
+            var $addBtn = $tab.find('.add-lessonplan-btn');
+            var $weekFilter = $tab.find('.lessonplan-week-filter');
+            function loadWeeks() {
+                // Populate week filter from curriculum
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_curriculum', nonce: administration_plugin.nonce, course_id: courseId },
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var html = '<option value="">All Weeks</option>';
+                            response.data.forEach(function(row) {
+                                html += '<option value="' + row.WeekNumber + '">Week ' + row.WeekNumber + '</option>';
+                            });
+                            $weekFilter.html(html);
+                        } else {
+                            $weekFilter.html('<option value="">All Weeks</option>');
+                        }
+                    }
+                });
+            }
+            function loadLessonPlans() {
+                $tableBody.html('<tr><td colspan="7" style="padding:18px 0 0 18px;">Loading...</td></tr>');
+                var week = $weekFilter.val();
+                var data = { action: 'get_lessonplans', nonce: administration_plugin.nonce, course_id: courseId };
+                if (week) data.week_number = week;
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var html = '';
+                            response.data.forEach(function(row) {
+                                html += '<tr data-lessonplan-id="' + row.LessonPlanID + '">';
+                                html += '<td style="padding:10px 16px;">' + (row.Date || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Title || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Description || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Materials || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.VideoLinks || '') + '</td>';
+                                html += '<td style="padding:10px 16px;">' + Dashboard.escapeHtml(row.Notes || '') + '</td>';
+                                html += '<td style="padding:10px 16px;text-align:right;">';
+                                html += '<button class="button button-secondary button-xs edit-lessonplan-btn" data-lessonplan-id="' + row.LessonPlanID + '">&#9998;</button> ';
+                                html += '<button class="button button-danger button-xs delete-lessonplan-btn" data-lessonplan-id="' + row.LessonPlanID + '">&#128465;</button>';
+                                html += '</td></tr>';
+                            });
+                            $tableBody.html(html);
+                        } else {
+                            $tableBody.html('<tr class="lessonplan-empty-row"><td colspan="7" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">No lesson plans yet.</td></tr>');
+                        }
+                    },
+                    error: function() {
+                        $tableBody.html('<tr><td colspan="7" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">Failed to load lesson plans.</td></tr>');
+                    }
+                });
+            }
+            $weekFilter.off('change').on('change', function() { loadLessonPlans(); });
+            $addBtn.off('click').on('click', function() {
+                // Show modal for add (to be implemented)
+                alert('Add Lesson modal coming soon!');
+            });
+            $tableBody.off('click', '.edit-lessonplan-btn').on('click', '.edit-lessonplan-btn', function() {
+                // Show modal for edit (to be implemented)
+                alert('Edit Lesson modal coming soon!');
+            });
+            $tableBody.off('click', '.delete-lessonplan-btn').on('click', '.delete-lessonplan-btn', function() {
+                var id = $(this).data('lessonplan-id');
+                if (!confirm('Delete this lesson?')) return;
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'delete_lessonplan', nonce: administration_plugin.nonce, lessonplan_id: id },
+                    success: function(response) {
+                        if (response.success) loadLessonPlans();
+                        else $msg.html('<span class="error-message">Failed to delete.</span>');
+                    },
+                    error: function() { $msg.html('<span class="error-message">Failed to delete.</span>'); }
+                });
+            });
+            loadWeeks();
+            loadLessonPlans();
         });
     });
 

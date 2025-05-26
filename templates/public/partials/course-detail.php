@@ -2,9 +2,10 @@
   <button class="tab-button active" data-tab="general">General</button>
   <button class="tab-button" data-tab="enrollments">Enrollments</button>
   <button class="tab-button" data-tab="assignments">Assignments</button>
-  <button class="tab-button" data-tab="curriculum">Curriculum</button>
   <button class="tab-button" data-tab="grades">Grades</button>
   <button class="tab-button" data-tab="attendance">Attendance</button>
+  <button class="tab-button" data-tab="curriculum">Curriculum</button>
+  <button class="tab-button" data-tab="lessonplan">Lesson Plan</button>
 </div>
 <div class="course-detail-tab-content" data-course-id="<?php echo isset($course->CourseID) ? esc_attr($course->CourseID) : ''; ?>">
   <div class="tab-pane active" id="general">
@@ -100,9 +101,6 @@
       <div class="course-assignment-details-panel"></div>
     </div>
   </div>
-  <div class="tab-pane" id="curriculum">
-    <p>Curriculum content will go here.</p>
-  </div>
   <div class="tab-pane" id="grades">
     <div class="course-detail-grades-toolbar">
       <div class="course-detail-grades-search-container">
@@ -134,6 +132,54 @@
       <div class="attendance-list-empty" style="display:none;color:#b6b6b6;font-style:italic;padding:18px 0 0 0;text-align:center;">No students found.</div>
     </div>
     <div class="attendance-save-message" style="margin-top:16px;"></div>
+  </div>
+  <div class="tab-pane" id="curriculum">
+    <div class="curriculum-toolbar" style="display:flex;align-items:center;gap:18px;margin-bottom:18px;">
+      <button class="button button-primary add-curriculum-btn">Add Week</button>
+    </div>
+    <div class="curriculum-list-card grades-card-ui" style="padding:0;">
+      <table class="curriculum-table" style="width:100%;border-collapse:separate;border-spacing:0;">
+        <thead>
+          <tr style="background:#f7fafd;">
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Week</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Objective</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Materials</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Videos</th>
+            <th style="padding:10px 16px;text-align:right;font-weight:600;color:#2271b1;">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="curriculum-table-body">
+          <tr class="curriculum-empty-row"><td colspan="5" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">No curriculum yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="curriculum-message" style="margin-top:16px;"></div>
+  </div>
+  <div class="tab-pane" id="lessonplan">
+    <div class="lessonplan-toolbar" style="display:flex;align-items:center;gap:18px;margin-bottom:18px;">
+      <label for="lessonplan-week-filter" style="font-weight:500;">Week:</label>
+      <select id="lessonplan-week-filter" class="lessonplan-week-filter" style="min-width:80px;padding:6px 10px;border-radius:6px;border:1px solid #e3e7ee;"></select>
+      <button class="button button-primary add-lessonplan-btn" style="margin-left:auto;">Add Lesson</button>
+    </div>
+    <div class="lessonplan-list-card grades-card-ui" style="padding:0;">
+      <table class="lessonplan-table" style="width:100%;border-collapse:separate;border-spacing:0;">
+        <thead>
+          <tr style="background:#f7fafd;">
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Date</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Title</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Description</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Materials</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Videos</th>
+            <th style="padding:10px 16px;text-align:left;font-weight:600;color:#2271b1;">Notes</th>
+            <th style="padding:10px 16px;text-align:right;font-weight:600;color:#2271b1;">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="lessonplan-table-body">
+          <tr class="lessonplan-empty-row"><td colspan="7" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 18px;">No lesson plans yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="lessonplan-message" style="margin-top:16px;"></div>
   </div>
 </div>
 

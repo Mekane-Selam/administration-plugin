@@ -3142,16 +3142,32 @@
     // --- Lesson Plan Details Modal ---
     function showLessonPlanDetailsModal(data) {
         var modalHtml = '<div class="modal lessonplan-details-modal" id="lessonplan-details-modal">';
-        modalHtml += '<div class="modal-content" style="max-width: 540px;">';
-        modalHtml += '<button class="close" id="close-lessonplan-details-modal">&times;</button>';
-        modalHtml += '<h2>' + Dashboard.escapeHtml(data.Title || 'Lesson Plan Details') + '</h2>';
-        modalHtml += '<div class="lessonplan-details-fields">';
-        modalHtml += '<div><b>Date:</b> ' + (data.Date || '-') + '</div>';
-        modalHtml += '<div><b>Week:</b> ' + (data.WeekNumber || '-') + '</div>';
-        modalHtml += '<div><b>Description:</b><br>' + Dashboard.escapeHtml(data.Description || '-') + '</div>';
-        modalHtml += '<div><b>Materials:</b><br>' + Dashboard.escapeHtml(data.Materials || '-') + '</div>';
-        modalHtml += '<div><b>Video Links:</b><br>' + Dashboard.escapeHtml(data.VideoLinks || '-') + '</div>';
-        modalHtml += '<div><b>Notes:</b><br>' + Dashboard.escapeHtml(data.Notes || '-') + '</div>';
+        modalHtml += '<div class="modal-content grades-card-ui" style="max-width: 540px; padding: 32px 36px 28px 36px; border-radius: 14px; box-shadow: 0 2px 12px rgba(34,113,177,0.09); background: #fff;">';
+        modalHtml += '<button class="close" id="close-lessonplan-details-modal" style="position:absolute;top:18px;right:18px;font-size:1.6em;color:#b6b6b6;background:none;border:none;cursor:pointer;">&times;</button>';
+        modalHtml += '<h2 style="font-size:1.32rem;font-weight:700;color:#2271b1;margin-bottom:18px;line-height:1.2;">' + Dashboard.escapeHtml(data.Title || 'Lesson Plan Details') + '</h2>';
+        modalHtml += '<div class="lessonplan-details-fields" style="display:flex;flex-direction:column;gap:18px;">';
+        modalHtml += '<div style="display:flex;gap:32px;">';
+        modalHtml += '<div><span style="color:#6a7a8c;font-weight:500;">Date:</span> <span style="color:#1d2327;">' + (data.Date || '-') + '</span></div>';
+        modalHtml += '<div><span style="color:#6a7a8c;font-weight:500;">Week:</span> <span style="color:#1d2327;">' + (data.WeekNumber || '-') + '</span></div>';
+        modalHtml += '</div>';
+        if (data.Description) {
+            modalHtml += '<div><div style="color:#6a7a8c;font-weight:500;margin-bottom:2px;">Description</div><div style="color:#1d2327;white-space:pre-line;">' + Dashboard.escapeHtml(data.Description) + '</div></div>';
+        }
+        if (data.Materials) {
+            modalHtml += '<div><div style="color:#6a7a8c;font-weight:500;margin-bottom:2px;">Materials</div><div style="color:#1d2327;white-space:pre-line;">' + Dashboard.escapeHtml(data.Materials) + '</div></div>';
+        }
+        if (data.VideoLinks) {
+            // Try to auto-link URLs (comma or space separated)
+            var links = data.VideoLinks.split(/[,\s]+/).filter(Boolean);
+            var linksHtml = links.map(function(link) {
+                var url = link.match(/^https?:\/\//) ? link : 'https://' + link;
+                return '<a href="' + url + '" target="_blank" style="color:#2271b1;text-decoration:underline;word-break:break-all;">' + Dashboard.escapeHtml(link) + '</a>';
+            }).join('<br>');
+            modalHtml += '<div><div style="color:#6a7a8c;font-weight:500;margin-bottom:2px;">Video Links</div><div>' + linksHtml + '</div></div>';
+        }
+        if (data.Notes) {
+            modalHtml += '<div><div style="color:#6a7a8c;font-weight:500;margin-bottom:2px;">Notes</div><div style="color:#1d2327;white-space:pre-line;">' + Dashboard.escapeHtml(data.Notes) + '</div></div>';
+        }
         modalHtml += '</div></div></div>';
         $('body').append(modalHtml);
         setTimeout(function() { $('#lessonplan-details-modal').addClass('show'); }, 10);

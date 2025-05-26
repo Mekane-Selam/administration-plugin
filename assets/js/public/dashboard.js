@@ -2765,6 +2765,7 @@
             var $tableBody = $tab.find('.curriculum-table-body');
             var $msg = $tab.find('.curriculum-message');
             var $addBtn = $tab.find('.add-curriculum-btn');
+            function reload() { loadCurriculum(); }
             function loadCurriculum() {
                 $tableBody.html('<tr><td colspan="5" style="padding:18px 0 0 18px;">Loading...</td></tr>');
                 $.ajax({
@@ -2795,14 +2796,22 @@
                     }
                 });
             }
-            // Add/Edit/Delete handlers (modals to be implemented)
             $addBtn.off('click').on('click', function() {
-                // Show modal for add (to be implemented)
-                alert('Add Week modal coming soon!');
+                showCurriculumModal('add', { CourseID: courseId }, reload);
             });
             $tableBody.off('click', '.edit-curriculum-btn').on('click', '.edit-curriculum-btn', function() {
-                // Show modal for edit (to be implemented)
-                alert('Edit Week modal coming soon!');
+                var id = $(this).data('curriculum-id');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_curriculum', nonce: administration_plugin.nonce, course_id: courseId },
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var row = response.data.find(function(r) { return r.CurriculumID === id; });
+                            if (row) showCurriculumModal('edit', row, reload);
+                        }
+                    }
+                });
             });
             $tableBody.off('click', '.delete-curriculum-btn').on('click', '.delete-curriculum-btn', function() {
                 var id = $(this).data('curriculum-id');
@@ -2830,7 +2839,8 @@
             var $msg = $tab.find('.lessonplan-message');
             var $addBtn = $tab.find('.add-lessonplan-btn');
             var $weekFilter = $tab.find('.lessonplan-week-filter');
-            function loadWeeks() {
+            var weekOptions = [];
+            function loadWeeks(cb) {
                 // Populate week filter from curriculum
                 $.ajax({
                     url: administration_plugin.ajax_url,
@@ -2838,14 +2848,15 @@
                     data: { action: 'get_curriculum', nonce: administration_plugin.nonce, course_id: courseId },
                     success: function(response) {
                         if (response.success && response.data.length) {
+                            weekOptions = response.data.map(function(row) { return { value: row.WeekNumber }; });
                             var html = '<option value="">All Weeks</option>';
-                            response.data.forEach(function(row) {
-                                html += '<option value="' + row.WeekNumber + '">Week ' + row.WeekNumber + '</option>';
-                            });
+                            weekOptions.forEach(function(opt) { html += '<option value="' + opt.value + '">Week ' + opt.value + '</option>'; });
                             $weekFilter.html(html);
                         } else {
+                            weekOptions = [];
                             $weekFilter.html('<option value="">All Weeks</option>');
                         }
+                        if (cb) cb();
                     }
                 });
             }
@@ -2886,12 +2897,21 @@
             }
             $weekFilter.off('change').on('change', function() { loadLessonPlans(); });
             $addBtn.off('click').on('click', function() {
-                // Show modal for add (to be implemented)
-                alert('Add Lesson modal coming soon!');
+                showLessonPlanModal('add', { CourseID: courseId }, courseId, weekOptions, function() { loadLessonPlans(); });
             });
             $tableBody.off('click', '.edit-lessonplan-btn').on('click', '.edit-lessonplan-btn', function() {
-                // Show modal for edit (to be implemented)
-                alert('Edit Lesson modal coming soon!');
+                var id = $(this).data('lessonplan-id');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_lessonplans', nonce: administration_plugin.nonce, course_id: courseId },
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var row = response.data.find(function(r) { return r.LessonPlanID === id; });
+                            if (row) showLessonPlanModal('edit', row, courseId, weekOptions, function() { loadLessonPlans(); });
+                        }
+                    }
+                });
             });
             $tableBody.off('click', '.delete-lessonplan-btn').on('click', '.delete-lessonplan-btn', function() {
                 var id = $(this).data('lessonplan-id');
@@ -2907,8 +2927,23 @@
                     error: function() { $msg.html('<span class="error-message">Failed to delete.</span>'); }
                 });
             });
-            loadWeeks();
-            loadLessonPlans();
+            // Show details modal when row is clicked (not edit/delete)
+            $tableBody.off('click', 'tr').on('click', 'tr', function(e) {
+                if ($(e.target).closest('button').length) return; // ignore if clicking a button
+                var id = $(this).data('lessonplan-id');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: { action: 'get_lessonplans', nonce: administration_plugin.nonce, course_id: courseId },
+                    success: function(response) {
+                        if (response.success && response.data.length) {
+                            var row = response.data.find(function(r) { return r.LessonPlanID === id; });
+                            if (row) showLessonPlanDetailsModal(row);
+                        }
+                    }
+                });
+            });
+            loadWeeks(function() { loadLessonPlans(); });
         });
     });
 
@@ -3000,5 +3035,127 @@
             }
         });
     });
+
+    // --- Curriculum Add/Edit Modal Logic ---
+    function showCurriculumModal(mode, data, onSave) {
+        var isEdit = mode === 'edit';
+        var modalHtml = '<div class="modal curriculum-modal" id="curriculum-modal">';
+        modalHtml += '<div class="modal-content" style="max-width: 480px;">';
+        modalHtml += '<button class="close" id="close-curriculum-modal">&times;</button>';
+        modalHtml += '<h2>' + (isEdit ? 'Edit Week' : 'Add Week') + '</h2>';
+        modalHtml += '<form id="curriculum-form">';
+        if (isEdit) modalHtml += '<input type="hidden" name="curriculum_id" value="' + (data.CurriculumID || '') + '">';
+        modalHtml += '<div class="form-field"><label>Week Number <span class="required">*</span></label><input type="number" name="week_number" required min="1" value="' + (data.WeekNumber || '') + '"></div>';
+        modalHtml += '<div class="form-field"><label>Objective <span class="required">*</span></label><textarea name="objective" rows="2" required>' + (data.Objective || '') + '</textarea></div>';
+        modalHtml += '<div class="form-field"><label>Materials</label><input type="text" name="materials" value="' + (data.Materials || '') + '"></div>';
+        modalHtml += '<div class="form-field"><label>Video Links</label><input type="text" name="video_links" value="' + (data.VideoLinks || '') + '"></div>';
+        modalHtml += '<div class="form-actions"><button type="submit" class="button button-primary">' + (isEdit ? 'Save Changes' : 'Add Week') + '</button></div>';
+        modalHtml += '<div class="form-message" style="display:none;"></div>';
+        modalHtml += '</form></div></div>';
+        $('body').append(modalHtml);
+        setTimeout(function() { $('#curriculum-modal').addClass('show'); }, 10);
+        $('#close-curriculum-modal').on('click', function() { $('#curriculum-modal').removeClass('show'); setTimeout(function() { $('#curriculum-modal').remove(); }, 200); });
+        $('#curriculum-form').on('submit', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $msg = $form.find('.form-message');
+            var $btn = $form.find('button[type="submit"]');
+            $msg.hide().removeClass('error success');
+            var valid = true;
+            $form.find('[required]').each(function() { if (!$(this).val().trim()) { valid = false; $(this).addClass('input-error'); } else { $(this).removeClass('input-error'); } });
+            if (!valid) { $msg.text('Please fill in all required fields.').addClass('error').show(); return; }
+            $btn.prop('disabled', true).text(isEdit ? 'Saving...' : 'Adding...');
+            var formData = $form.serializeArray();
+            var ajaxData = { action: isEdit ? 'edit_curriculum' : 'add_curriculum', nonce: administration_plugin.nonce, course_id: data.CourseID };
+            formData.forEach(function(f) { ajaxData[f.name] = f.value; });
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: ajaxData,
+                success: function(response) {
+                    $btn.prop('disabled', false).text(isEdit ? 'Save Changes' : 'Add Week');
+                    if (response.success) {
+                        $msg.text(isEdit ? 'Week updated!' : 'Week added!').addClass('success').show();
+                        setTimeout(function() { $('#curriculum-modal').removeClass('show'); setTimeout(function() { $('#curriculum-modal').remove(); }, 200); if (onSave) onSave(); }, 900);
+                    } else {
+                        $msg.text(response.data || 'Failed to save.').addClass('error').show();
+                    }
+                },
+                error: function() { $btn.prop('disabled', false).text(isEdit ? 'Save Changes' : 'Add Week'); $msg.text('Failed to save.').addClass('error').show(); }
+            });
+        });
+    }
+    // --- Lesson Plan Add/Edit Modal Logic ---
+    function showLessonPlanModal(mode, data, courseId, weekOptions, onSave) {
+        var isEdit = mode === 'edit';
+        var modalHtml = '<div class="modal lessonplan-modal" id="lessonplan-modal">';
+        modalHtml += '<div class="modal-content" style="max-width: 540px;">';
+        modalHtml += '<button class="close" id="close-lessonplan-modal">&times;</button>';
+        modalHtml += '<h2>' + (isEdit ? 'Edit Lesson' : 'Add Lesson') + '</h2>';
+        modalHtml += '<form id="lessonplan-form">';
+        if (isEdit) modalHtml += '<input type="hidden" name="lessonplan_id" value="' + (data.LessonPlanID || '') + '">';
+        modalHtml += '<div class="form-field"><label>Week <span class="required">*</span></label><select name="week_number" required>';
+        weekOptions.forEach(function(opt) { modalHtml += '<option value="' + opt.value + '"' + (data.WeekNumber == opt.value ? ' selected' : '') + '>Week ' + opt.value + '</option>'; });
+        modalHtml += '</select></div>';
+        modalHtml += '<div class="form-field"><label>Date <span class="required">*</span></label><input type="date" name="date" required value="' + (data.Date || '') + '"></div>';
+        modalHtml += '<div class="form-field"><label>Title <span class="required">*</span></label><input type="text" name="title" required maxlength="150" value="' + (data.Title || '') + '"></div>';
+        modalHtml += '<div class="form-field"><label>Description</label><textarea name="description" rows="2">' + (data.Description || '') + '</textarea></div>';
+        modalHtml += '<div class="form-field"><label>Materials</label><input type="text" name="materials" value="' + (data.Materials || '') + '"></div>';
+        modalHtml += '<div class="form-field"><label>Video Links</label><input type="text" name="video_links" value="' + (data.VideoLinks || '') + '"></div>';
+        modalHtml += '<div class="form-field"><label>Notes</label><textarea name="notes" rows="2">' + (data.Notes || '') + '</textarea></div>';
+        modalHtml += '<div class="form-actions"><button type="submit" class="button button-primary">' + (isEdit ? 'Save Changes' : 'Add Lesson') + '</button></div>';
+        modalHtml += '<div class="form-message" style="display:none;"></div>';
+        modalHtml += '</form></div></div>';
+        $('body').append(modalHtml);
+        setTimeout(function() { $('#lessonplan-modal').addClass('show'); }, 10);
+        $('#close-lessonplan-modal').on('click', function() { $('#lessonplan-modal').removeClass('show'); setTimeout(function() { $('#lessonplan-modal').remove(); }, 200); });
+        $('#lessonplan-form').on('submit', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var $msg = $form.find('.form-message');
+            var $btn = $form.find('button[type="submit"]');
+            $msg.hide().removeClass('error success');
+            var valid = true;
+            $form.find('[required]').each(function() { if (!$(this).val().trim()) { valid = false; $(this).addClass('input-error'); } else { $(this).removeClass('input-error'); } });
+            if (!valid) { $msg.text('Please fill in all required fields.').addClass('error').show(); return; }
+            $btn.prop('disabled', true).text(isEdit ? 'Saving...' : 'Adding...');
+            var formData = $form.serializeArray();
+            var ajaxData = { action: isEdit ? 'edit_lessonplan' : 'add_lessonplan', nonce: administration_plugin.nonce, course_id: courseId };
+            formData.forEach(function(f) { ajaxData[f.name] = f.value; });
+            $.ajax({
+                url: administration_plugin.ajax_url,
+                type: 'POST',
+                data: ajaxData,
+                success: function(response) {
+                    $btn.prop('disabled', false).text(isEdit ? 'Save Changes' : 'Add Lesson');
+                    if (response.success) {
+                        $msg.text(isEdit ? 'Lesson updated!' : 'Lesson added!').addClass('success').show();
+                        setTimeout(function() { $('#lessonplan-modal').removeClass('show'); setTimeout(function() { $('#lessonplan-modal').remove(); }, 200); if (onSave) onSave(); }, 900);
+                    } else {
+                        $msg.text(response.data || 'Failed to save.').addClass('error').show();
+                    }
+                },
+                error: function() { $btn.prop('disabled', false).text(isEdit ? 'Save Changes' : 'Add Lesson'); $msg.text('Failed to save.').addClass('error').show(); }
+            });
+        });
+    }
+    // --- Lesson Plan Details Modal ---
+    function showLessonPlanDetailsModal(data) {
+        var modalHtml = '<div class="modal lessonplan-details-modal" id="lessonplan-details-modal">';
+        modalHtml += '<div class="modal-content" style="max-width: 540px;">';
+        modalHtml += '<button class="close" id="close-lessonplan-details-modal">&times;</button>';
+        modalHtml += '<h2>' + Dashboard.escapeHtml(data.Title || 'Lesson Plan Details') + '</h2>';
+        modalHtml += '<div class="lessonplan-details-fields">';
+        modalHtml += '<div><b>Date:</b> ' + (data.Date || '-') + '</div>';
+        modalHtml += '<div><b>Week:</b> ' + (data.WeekNumber || '-') + '</div>';
+        modalHtml += '<div><b>Description:</b><br>' + Dashboard.escapeHtml(data.Description || '-') + '</div>';
+        modalHtml += '<div><b>Materials:</b><br>' + Dashboard.escapeHtml(data.Materials || '-') + '</div>';
+        modalHtml += '<div><b>Video Links:</b><br>' + Dashboard.escapeHtml(data.VideoLinks || '-') + '</div>';
+        modalHtml += '<div><b>Notes:</b><br>' + Dashboard.escapeHtml(data.Notes || '-') + '</div>';
+        modalHtml += '</div></div></div>';
+        $('body').append(modalHtml);
+        setTimeout(function() { $('#lessonplan-details-modal').addClass('show'); }, 10);
+        $('#close-lessonplan-details-modal').on('click', function() { $('#lessonplan-details-modal').removeClass('show'); setTimeout(function() { $('#lessonplan-details-modal').remove(); }, 200); });
+    }
 
 })(jQuery); 

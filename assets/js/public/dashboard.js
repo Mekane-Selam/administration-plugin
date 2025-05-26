@@ -2478,6 +2478,33 @@
             var courseId = $tabContent.closest('.course-detail-tab-content').data('course-id');
             Dashboard.showAddGradeModal(courseId);
         });
+
+        $(document).off('input', '.course-detail-grades-search').on('input', '.course-detail-grades-search', function() {
+            var search = $(this).val().toLowerCase();
+            var $rows = $('.assignment-grades-list-row');
+            var anyVisible = false;
+            $rows.each(function() {
+                var $row = $(this);
+                var text = $row.text().toLowerCase();
+                if (text.includes(search)) {
+                    $row.show();
+                    anyVisible = true;
+                } else {
+                    $row.hide();
+                }
+            });
+            // Show/hide empty message
+            var $emptyMsg = $('.assignment-grades-list-empty');
+            if (!anyVisible) {
+                if ($emptyMsg.length === 0) {
+                    $('.assignment-grades-list-table').append('<div class="assignment-grades-list-empty" style="color:#b6b6b6;font-style:italic;padding:18px 0 0 0;">No grades found.</div>');
+                } else {
+                    $emptyMsg.show();
+                }
+            } else {
+                $emptyMsg.hide();
+            }
+        });
     });
 
     // Add event handler for Cancel button

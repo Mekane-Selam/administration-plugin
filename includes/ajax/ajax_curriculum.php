@@ -22,6 +22,9 @@ function ajax_get_curriculum() {
 function ajax_add_curriculum() {
     check_ajax_referer('administration_plugin_nonce', 'nonce');
     global $wpdb;
+    require_once dirname(__DIR__) . '/database/class-administration-database.php';
+    $person = Administration_Database::get_person_by_user_id(get_current_user_id());
+    $created_by = $person && !empty($person->PersonID) ? $person->PersonID : null;
     $table = $wpdb->prefix . 'progtype_edu_curriculum';
     $data = [
         'CurriculumID' => 'CURR' . uniqid(),
@@ -30,7 +33,7 @@ function ajax_add_curriculum() {
         'Objective' => sanitize_textarea_field($_POST['objective']),
         'Materials' => sanitize_text_field($_POST['materials']),
         'VideoLinks' => sanitize_text_field($_POST['video_links']),
-        'CreatedBy' => get_current_user_id(),
+        'CreatedBy' => $created_by,
         'CreatedDate' => current_time('mysql'),
         'LastModifiedDate' => current_time('mysql')
     ];
@@ -85,6 +88,9 @@ function ajax_get_lessonplans() {
 function ajax_add_lessonplan() {
     check_ajax_referer('administration_plugin_nonce', 'nonce');
     global $wpdb;
+    require_once dirname(__DIR__) . '/database/class-administration-database.php';
+    $person = Administration_Database::get_person_by_user_id(get_current_user_id());
+    $created_by = $person && !empty($person->PersonID) ? $person->PersonID : null;
     $table = $wpdb->prefix . 'progtype_edu_lessonplans';
     $data = [
         'LessonPlanID' => 'LESSON' . uniqid(),
@@ -97,7 +103,7 @@ function ajax_add_lessonplan() {
         'Materials' => sanitize_text_field($_POST['materials']),
         'VideoLinks' => sanitize_text_field($_POST['video_links']),
         'Notes' => sanitize_textarea_field($_POST['notes']),
-        'CreatedBy' => get_current_user_id(),
+        'CreatedBy' => $created_by,
         'CreatedDate' => current_time('mysql'),
         'LastModifiedDate' => current_time('mysql')
     ];

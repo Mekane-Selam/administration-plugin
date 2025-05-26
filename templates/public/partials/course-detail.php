@@ -123,7 +123,21 @@
     </div>
   </div>
   <div class="tab-pane" id="attendance">
-    <p>Attendance content will go here.</p>
+    <div class="course-detail-attendance-toolbar" style="display:flex;align-items:center;gap:18px;margin-bottom:18px;">
+      <div class="course-detail-attendance-date-container">
+        <label for="attendance-date" style="font-weight:500;margin-right:8px;">Date:</label>
+        <input type="date" id="attendance-date" class="course-detail-attendance-date" style="padding:6px 10px;border-radius:6px;border:1px solid #e3e7ee;" />
+      </div>
+      <div class="course-detail-attendance-search-container" style="flex:1;max-width:300px;">
+        <input type="text" class="course-detail-attendance-search" placeholder="Search students..." style="width:100%;padding:8px 12px;border:1px solid #e3e7ee;border-radius:8px;font-size:0.95rem;background:#f8fafc;" />
+      </div>
+      <button class="button button-primary save-attendance-btn" disabled style="margin-left:auto;min-width:110px;">Save</button>
+    </div>
+    <div class="attendance-list-card grades-card-ui" style="padding:0;">
+      <div class="attendance-list-grid" style="display:flex;flex-direction:column;"></div>
+      <div class="attendance-list-empty" style="display:none;color:#b6b6b6;font-style:italic;padding:18px 0 0 0;text-align:center;">No students found.</div>
+    </div>
+    <div class="attendance-save-message" style="margin-top:16px;"></div>
   </div>
 </div>
 

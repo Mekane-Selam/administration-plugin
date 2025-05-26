@@ -124,13 +124,9 @@
   </div>
   <div class="tab-pane" id="attendance">
     <div class="course-detail-attendance-toolbar" style="display:flex;align-items:center;gap:18px;margin-bottom:18px;">
-      <div class="course-detail-attendance-date-container">
-        <label for="attendance-date" style="font-weight:500;margin-right:8px;">Date:</label>
-        <input type="date" id="attendance-date" class="course-detail-attendance-date" style="padding:6px 10px;border-radius:6px;border:1px solid #e3e7ee;" />
-      </div>
-      <div class="course-detail-attendance-search-container" style="flex:1;max-width:300px;">
-        <input type="text" class="course-detail-attendance-search" placeholder="Search students..." style="width:100%;padding:8px 12px;border:1px solid #e3e7ee;border-radius:8px;font-size:0.95rem;background:#f8fafc;" />
-      </div>
+      <label for="attendance-date" style="font-weight:500;margin-right:8px;white-space:nowrap;">Date:</label>
+      <input type="date" id="attendance-date" class="course-detail-attendance-date" style="padding:6px 10px;border-radius:6px;border:1px solid #e3e7ee;min-width:140px;max-width:180px;" />
+      <input type="text" class="course-detail-attendance-search" placeholder="Search students..." style="flex:1;min-width:180px;max-width:340px;padding:8px 12px;border:1px solid #e3e7ee;border-radius:8px;font-size:0.95rem;background:#f8fafc;margin-left:18px;" />
       <button class="button button-primary save-attendance-btn" disabled style="margin-left:auto;min-width:110px;">Save</button>
     </div>
     <div class="attendance-list-card grades-card-ui" style="padding:0;">

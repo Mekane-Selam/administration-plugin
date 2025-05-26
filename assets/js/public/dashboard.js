@@ -2532,8 +2532,8 @@
                         var checked = attendanceState.checked.includes(s.PersonID) ? 'checked' : '';
                         var striped = (visibleCount % 2 === 0) ? ' grades-striped-row' : '';
                         html += '<div class="attendance-row' + striped + '" style="display:flex;align-items:center;gap:14px;padding:8px 18px;font-size:1.05em;min-height:38px;">';
-                        html += '<input type="checkbox" class="attendance-checkbox" data-person-id="' + s.PersonID + '" ' + checked + ' style="margin-right:10px;" />';
-                        html += '<span>' + Dashboard.escapeHtml(s.FirstName + ' ' + s.LastName) + '</span>';
+                        html += '<span style="flex:1;overflow:visible;white-space:normal;font-weight:500;">' + Dashboard.escapeHtml(s.FirstName + ' ' + s.LastName) + '</span>';
+                        html += '<input type="checkbox" class="attendance-checkbox" data-person-id="' + s.PersonID + '" ' + checked + ' style="margin-left:10px;" />';
                         html += '</div>';
                     }
                 });

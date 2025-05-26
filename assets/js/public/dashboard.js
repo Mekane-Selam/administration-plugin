@@ -2539,10 +2539,34 @@
         });
     });
 
-    // Add CSS for .grades-card-ui if not present
+    // Add CSS for .grades-card-ui, .button-xs, and .grades-striped-row if not present
     if (!$('style#grades-card-ui-style').length) {
-        var cardCss = `.grades-card-ui { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(34,113,177,0.07); padding: 32px 36px 28px 36px; min-height: 120px; margin-top: 10px; }\n.button-xs { font-size: 0.92em !important; padding: 2px 10px !important; border-radius: 6px !important; min-width: 0 !important; line-height: 1.2 !important; }\n.grades-striped-row { background: #f7fafd; }`;
+        var cardCss = `.grades-card-ui { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(34,113,177,0.07); padding: 32px 36px 28px 36px; min-height: 120px; margin-top: 10px; }\n.button-xs { font-size: 0.85em !important; padding: 2px 8px !important; border-radius: 6px !important; min-width: 0 !important; line-height: 1.2 !important; letter-spacing:0; }\n.grades-striped-row { background: #f7fafd; }`;
         $('head').append('<style id="grades-card-ui-style">' + cardCss + '</style>');
     }
+    // Ensure delete-grade-btn is functional
+    $(document).off('click', '.delete-grade-btn').on('click', '.delete-grade-btn', function() {
+        var gradeId = $(this).data('grade-id');
+        if (!confirm('Are you sure you want to delete this grade?')) return;
+        $.ajax({
+            url: administration_plugin.ajax_url,
+            type: 'POST',
+            data: { action: 'delete_grade', nonce: administration_plugin.nonce, grade_id: gradeId },
+            success: function(response) {
+                if (response.success) {
+                    // Reload grades for the selected assignment if visible
+                    var selectedAssignment = $('.course-grades-assignment-row.selected').data('assignment-id');
+                    if (selectedAssignment) {
+                        $('.course-grades-assignment-row.selected').click();
+                    }
+                } else {
+                    alert(response.data || 'Failed to delete grade.');
+                }
+            },
+            error: function() {
+                alert('Failed to delete grade.');
+            }
+        });
+    });
 
 })(jQuery); 

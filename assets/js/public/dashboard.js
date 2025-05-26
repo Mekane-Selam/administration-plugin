@@ -2471,6 +2471,12 @@
                 }
             });
         });
+
+        $(document).off('click', '.add-course-grade-btn').on('click', '.add-course-grade-btn', function() {
+            var $tabContent = $(this).closest('.tab-pane');
+            var courseId = $tabContent.closest('.course-detail-tab-content').data('course-id');
+            Dashboard.showAddGradeModal(courseId);
+        });
     });
 
     // Add event handler for Cancel button

@@ -1830,8 +1830,8 @@
                     html += '<div style="flex:1;font-size:1.08em;">' + (g.Score !== null ? g.Score : '-') + '</div>';
                     html += '<div style="flex:2;font-size:1.08em;">' + (g.Feedback ? Dashboard.escapeHtml(g.Feedback) : '-') + '</div>';
                     html += '<div style="width:80px;display:flex;gap:6px;justify-content:flex-end;">';
-                    html += '<button class="button button-secondary button-xs edit-grade-btn" data-grade-id="' + g.GradeID + '">Edit</button>';
-                    html += '<button class="button button-danger button-xs delete-grade-btn" data-grade-id="' + g.GradeID + '">Delete</button>';
+                    html += '<button class="button button-secondary button-xs edit-grade-btn" data-grade-id="' + g.GradeID + '" title="Edit">&#9998;</button>';
+                    html += '<button class="button button-danger button-xs delete-grade-btn" data-grade-id="' + g.GradeID + '" title="Delete">&#128465;</button>';
                     html += '</div>';
                     html += '</div>';
                 });

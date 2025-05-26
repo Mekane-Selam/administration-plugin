@@ -91,10 +91,20 @@ function ajax_add_lessonplan() {
     require_once dirname(__DIR__) . '/database/class-administration-database.php';
     $person = Administration_Database::get_person_by_user_id(get_current_user_id());
     $created_by = $person && !empty($person->PersonID) ? $person->PersonID : null;
+    // Look up CurriculumID for this course and week
+    $curriculum_id = null;
+    if (!empty($_POST['course_id']) && !empty($_POST['week_number'])) {
+        $curriculum_table = $wpdb->prefix . 'progtype_edu_curriculum';
+        $curriculum_id = $wpdb->get_var($wpdb->prepare(
+            "SELECT CurriculumID FROM $curriculum_table WHERE CourseID = %s AND WeekNumber = %d",
+            sanitize_text_field($_POST['course_id']),
+            intval($_POST['week_number'])
+        ));
+    }
     $table = $wpdb->prefix . 'progtype_edu_lessonplans';
     $data = [
         'LessonPlanID' => 'LESSON' . uniqid(),
-        'CurriculumID' => sanitize_text_field($_POST['curriculum_id']),
+        'CurriculumID' => $curriculum_id,
         'CourseID' => sanitize_text_field($_POST['course_id']),
         'WeekNumber' => intval($_POST['week_number']),
         'Date' => sanitize_text_field($_POST['date']),

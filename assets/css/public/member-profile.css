@@ -2,8 +2,23 @@
  * Member Profile UI styles for the administration plugin
  * Consistent with grades-card-ui and other modern plugin cards
  */
-.member-profile-container { background: #f7fafd; min-height: 100vh; padding: 0 0 60px 0; }
-.member-profile-card { box-shadow: 0 2px 12px rgba(34,113,177,0.09); border-radius: 14px; background: #fff; }
-.member-profile-section { margin-bottom: 18px; }
-.member-profile-section h3 { color: #2271b1; font-weight: 500; margin-bottom: 10px; }
-.loading { color: #b6b6b6; font-style: italic; } 
+.member-profile-container { background: #f7fafd; min-height: 100vh; padding: 0 0 60px 0; margin-top: 0; }
+.member-profile-card { box-shadow: 0 2px 12px rgba(34,113,177,0.09); border-radius: 14px; background: #fff; margin-top: 0; }
+.member-profile-card h2 { font-size: 2em; color: #2271b1; font-weight: 700; margin-bottom: 18px; text-align: center; }
+.member-profile-section { margin-bottom: 28px; background: #f7fafd; border-radius: 10px; padding: 18px 22px; }
+.member-profile-section h3 { color: #2271b1; font-weight: 600; margin-bottom: 12px; font-size: 1.15em; }
+.loading, .error { color: #b6b6b6; font-style: italic; text-align: center; margin: 12px 0; }
+.error { color: #d9534f; font-weight: 500; }
+.member-avatar-row { justify-content: center; }
+.member-avatar-container { display: flex; align-items: center; justify-content: center; }
+.member-avatar-img { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid #e3e7ee; background: #f7fafd; }
+.button, .button-xs { border-radius: 6px; font-size: 1em; padding: 6px 16px; border: none; background: #2271b1; color: #fff; cursor: pointer; transition: background 0.2s; }
+.button-xs { font-size: 0.95em; padding: 4px 10px; }
+.button-secondary { background: #e3e7ee; color: #2271b1; border: 1px solid #b6c6d9; }
+.button-primary { background: #2271b1; color: #fff; }
+.button:active, .button:focus { outline: none; background: #195a8c; }
+input[type="text"], input[type="email"], input[type="date"] { border: 1px solid #e3e7ee; border-radius: 5px; padding: 6px 10px; font-size: 1em; margin-top: 2px; }
+form#member-personal-info-edit-form label { font-weight: 500; color: #2271b1; margin-right: 6px; }
+form#member-personal-info-edit-form { background: #f7fafd; border-radius: 10px; padding: 18px 22px; }
+.member-profile-section ul { margin: 0 0 0 18px; padding: 0; }
+.member-profile-section li { margin-bottom: 6px; font-size: 1.05em; } 

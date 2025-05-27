@@ -2,6 +2,10 @@
  * Member Profile UI logic for the administration plugin
  * Loads personal info, family/relationships, and roles for the current user
  */
+if (typeof Dashboard === 'undefined') {
+  window.Dashboard = { escapeHtml: function(s) { return String(s).replace(/[&<>"']/g, function(m) { return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]; }); } };
+}
+
 jQuery(function($) {
   function renderPersonalInfo(d) {
     var html = '<div class="member-avatar-row" style="display:flex;align-items:center;gap:24px;margin-bottom:18px;">';

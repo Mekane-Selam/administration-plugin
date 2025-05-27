@@ -90,14 +90,6 @@ foreach ($staff_rows as $row) {
                 <div id="job-postings-list"></div>
             </div>
         </div>
-        <!-- Blank Card 1 (Bottom Left) -->
-        <div class="card">
-            <div class="card-body"></div>
-        </div>
-        <!-- Blank Card 2 (Bottom Right) -->
-        <div class="card">
-            <div class="card-body"></div>
-        </div>
     </div>
 </div>
 

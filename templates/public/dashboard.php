@@ -74,6 +74,10 @@ jQuery(document).ready(function($) {
         });
     }
 
+    // Set Parish as active on page load
+    $('.menu-item').removeClass('active');
+    $('.menu-item[data-page="parish"]').addClass('active');
+
     // Load initial dashboard content
     loadDashboardPage('parish');
 });

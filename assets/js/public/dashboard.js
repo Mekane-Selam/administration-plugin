@@ -2945,6 +2945,14 @@
             });
             loadWeeks(function() { loadLessonPlans(); });
         });
+
+        // Calendar tab: dynamic Google Calendar embed switching
+        $(document).on('change', '#calendar-select', function() {
+            var calendarId = $(this).val();
+            var tz = 'America/New_York'; // You can make this dynamic if needed
+            var src = 'https://calendar.google.com/calendar/embed?src=' + encodeURIComponent(calendarId) + '&ctz=' + encodeURIComponent(tz);
+            $('#google-calendar-iframe').attr('src', src);
+        });
     });
 
     // Add event handler for Cancel button

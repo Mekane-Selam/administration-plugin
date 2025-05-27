@@ -69,6 +69,9 @@ class Administration_Database {
         $progtype_edu_curriculum_table = $wpdb->prefix . 'progtype_edu_curriculum';
         $progtype_edu_lessonplans_table = $wpdb->prefix . 'progtype_edu_lessonplans';
 
+        // Google Calendars table
+        $progtype_google_calendars_table = $wpdb->prefix . 'progtype_google_calendars';
+
         // List of all tables
         $tables = [
             $person_table,
@@ -107,7 +110,8 @@ class Administration_Database {
             $progtype_edu_assignmentgrades_table,
             $progtype_edu_courseattendance_table,
             $progtype_edu_curriculum_table,
-            $progtype_edu_lessonplans_table
+            $progtype_edu_lessonplans_table,
+            $progtype_google_calendars_table,
         ];
 
         // Check if tables already exist
@@ -623,6 +627,18 @@ class Administration_Database {
             CONSTRAINT fk_lessonplan_course FOREIGN KEY (CourseID) REFERENCES $progtype_edu_courses_table(CourseID) ON DELETE CASCADE,
             CONSTRAINT fk_lessonplan_curriculum FOREIGN KEY (CurriculumID) REFERENCES $progtype_edu_curriculum_table(CurriculumID) ON DELETE SET NULL,
             CONSTRAINT fk_lessonplan_createdby FOREIGN KEY (CreatedBy) REFERENCES $person_table(PersonID) ON DELETE SET NULL
+        ) $charset_collate;";
+
+        // Google Calendars table
+        $sql[] = "CREATE TABLE IF NOT EXISTS $progtype_google_calendars_table (
+            CalendarID INT AUTO_INCREMENT PRIMARY KEY,
+            GoogleCalendarID VARCHAR(128) NOT NULL,
+            DisplayName VARCHAR(128) NOT NULL,
+            Color VARCHAR(16) DEFAULT NULL,
+            ActiveFlag TINYINT(1) DEFAULT 1,
+            CreatedBy VARCHAR(25) NULL,
+            CreatedDate DATETIME,
+            LastModifiedDate DATETIME
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');

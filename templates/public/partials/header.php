@@ -14,21 +14,15 @@
     <nav class="dashboard-menu" id="dashboard-menu">
         <ul>
             <li>
-                <a href="#" class="menu-item" data-page="main">
-                    <span class="dashicons dashicons-dashboard"></span>
-                    <?php _e('Dashboard', 'administration-plugin'); ?>
+                <a href="#" class="menu-item" data-page="parish">
+                    <span class="dashicons dashicons-groups"></span>
+                    <?php _e('Parish', 'administration-plugin'); ?>
                 </a>
             </li>
             <li>
                 <a href="#" class="menu-item" data-page="programs">
                     <span class="dashicons dashicons-calendar-alt"></span>
                     <?php _e('Programs', 'administration-plugin'); ?>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="menu-item" data-page="parish">
-                    <span class="dashicons dashicons-groups"></span>
-                    <?php _e('Parish', 'administration-plugin'); ?>
                 </a>
             </li>
             <li>
@@ -41,18 +35,6 @@
                 <a href="#" class="menu-item" data-page="hr">
                     <span class="dashicons dashicons-id"></span>
                     <?php _e('HR', 'administration-plugin'); ?>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="menu-item" data-page="finances">
-                    <span class="dashicons dashicons-chart-bar"></span>
-                    <?php _e('Finances', 'administration-plugin'); ?>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="menu-item" data-page="resources">
-                    <span class="dashicons dashicons-portfolio"></span>
-                    <?php _e('Resources', 'administration-plugin'); ?>
                 </a>
             </li>
             <li>

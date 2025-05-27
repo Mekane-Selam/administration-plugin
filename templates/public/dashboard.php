@@ -19,9 +19,8 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
     <?php 
     // Include header partial
     include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/header.php';
-    
-    // Include main content partial
-    include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
+    // Include main content partial (commented out, now loaded via AJAX as parish by default)
+    // include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
     ?>
 </div>
 
@@ -75,7 +74,7 @@ jQuery(document).ready(function($) {
     }
 
     // Load initial dashboard content
-    loadDashboardPage('main');
+    loadDashboardPage('parish');
 });
 </script> 
 

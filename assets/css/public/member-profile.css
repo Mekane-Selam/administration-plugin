@@ -1,0 +1,9 @@
+/*
+ * Member Profile UI styles for the administration plugin
+ * Consistent with grades-card-ui and other modern plugin cards
+ */
+.member-profile-container { background: #f7fafd; min-height: 100vh; padding: 0 0 60px 0; }
+.member-profile-card { box-shadow: 0 2px 12px rgba(34,113,177,0.09); border-radius: 14px; background: #fff; }
+.member-profile-section { margin-bottom: 18px; }
+.member-profile-section h3 { color: #2271b1; font-weight: 500; margin-bottom: 10px; }
+.loading { color: #b6b6b6; font-style: italic; } 

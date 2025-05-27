@@ -10,6 +10,7 @@ class Administration_Plugin_Public {
         // Register shortcodes
         add_shortcode('administration_dashboard', array($this, 'render_dashboard'));
         add_shortcode('careers_job_list', array($this, 'render_careers_job_list'));
+        add_shortcode('administration_member_profile', array($this, 'render_member_profile'));
 
         // Register AJAX handlers for dashboard content
         add_action('wp_ajax_load_dashboard_page', array($this, 'ajax_load_dashboard_page'));
@@ -1643,6 +1644,18 @@ class Administration_Plugin_Public {
     public function render_careers_job_list($atts = array()) {
         ob_start();
         include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/careers-list.php';
+        return ob_get_clean();
+    }
+
+    public function render_member_profile($atts = array()) {
+        if (!is_user_logged_in()) {
+            return '<p>' . __('You must be logged in to view your member profile.', 'administration-plugin') . '</p>';
+        }
+        // Enqueue member profile assets
+        wp_enqueue_style('administration-plugin-member-profile', ADMINISTRATION_PLUGIN_URL . 'assets/css/public/member-profile.css', array(), ADMINISTRATION_PLUGIN_VERSION, 'all');
+        wp_enqueue_script('administration-plugin-member-profile', ADMINISTRATION_PLUGIN_URL . 'assets/js/public/member-profile.js', array('jquery'), ADMINISTRATION_PLUGIN_VERSION, true);
+        ob_start();
+        include ADMINISTRATION_PLUGIN_PATH . 'templates/public/member-profile.php';
         return ob_get_clean();
     }
 } 

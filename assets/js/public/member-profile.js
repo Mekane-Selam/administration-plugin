@@ -178,6 +178,19 @@ jQuery(function($) {
     });
   });
 
+  // Sidebar menu navigation
+  $(document).on('click', '.member-profile-menu-item', function() {
+    var section = $(this).data('section');
+    $('.member-profile-menu-item').removeClass('active');
+    $(this).addClass('active');
+    $('#member-personal-info-section, #member-family-info-section, #member-involvement-section').hide();
+    if (section === 'personal') $('#member-personal-info-section').show();
+    if (section === 'family') $('#member-family-info-section').show();
+    if (section === 'involvement') $('#member-involvement-section').show();
+  });
+  // Show personal info by default
+  $('#member-personal-info-section').show();
+
   loadPersonalInfo();
   loadFamilyInfo();
   loadRolesInfo();

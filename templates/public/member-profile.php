@@ -2,7 +2,7 @@
 // Member profile UI
 ?>
 <div class="member-profile-container" style="margin-top:0;padding-top:0;">
-  <div class="member-profile-layout" style="display:flex;max-width:900px;margin:32px auto 0 auto;gap:32px;align-items:flex-start;">
+  <div class="member-profile-layout" style="display:flex;max-width:900px;margin:0px auto 0 auto;gap:32px;align-items:flex-start;">
     <nav class="member-profile-menu" style="min-width:180px;max-width:220px;background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(34,113,177,0.09);padding:24px 0;display:flex;flex-direction:column;gap:8px;">
       <button class="member-profile-menu-item active" data-section="personal" style="background:none;border:none;text-align:left;padding:12px 28px;font-size:1.08em;color:#2271b1;font-weight:600;cursor:pointer;border-radius:0 20px 20px 0;">Personal Info</button>
       <button class="member-profile-menu-item" data-section="family" style="background:none;border:none;text-align:left;padding:12px 28px;font-size:1.08em;color:#2271b1;font-weight:600;cursor:pointer;border-radius:0 20px 20px 0;">Family & Relationships</button>

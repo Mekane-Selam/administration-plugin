@@ -75,6 +75,6 @@ jQuery(document).ready(function($) {
     }
 
     // Load initial dashboard content
-    loadDashboardPage('main');
+    loadDashboardPage('parish');
 });
 </script> 

@@ -21,4 +21,9 @@ input[type="text"], input[type="email"], input[type="date"] { border: 1px solid 
 form#member-personal-info-edit-form label { font-weight: 500; color: #2271b1; margin-right: 6px; }
 form#member-personal-info-edit-form { background: #f7fafd; border-radius: 10px; padding: 18px 22px; }
 .member-profile-section ul { margin: 0 0 0 18px; padding: 0; }
-.member-profile-section li { margin-bottom: 6px; font-size: 1.05em; } 
+.member-profile-section li { margin-bottom: 6px; font-size: 1.05em; }
+.member-profile-menu-item.active { background: #e3e7ee !important; color: #195a8c !important; font-weight: 700 !important; box-shadow: 2px 0 8px rgba(34,113,177,0.07); }
+.member-profile-menu-item { transition: background 0.2s, color 0.2s; }
+.member-avatar-img.default-avatar { filter: grayscale(1) brightness(1.2); opacity: 0.7; }
+.member-avatar-upload-btn { background: #e3e7ee !important; color: #2271b1 !important; border: 1px solid #b6c6d9 !important; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 1.2em; padding: 0; }
+.member-avatar-upload-btn svg { width: 18px; height: 18px; } 

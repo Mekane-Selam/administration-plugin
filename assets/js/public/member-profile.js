@@ -8,11 +8,16 @@ if (typeof Dashboard === 'undefined') {
 
 jQuery(function($) {
   function renderPersonalInfo(d) {
+    var isDefaultAvatar = !d.AvatarURL;
+    var avatarSrc = isDefaultAvatar ? '/wp-content/plugins/administration-plugin/assets/img/avatar-default.svg' : Dashboard.escapeHtml(d.AvatarURL);
+    var avatarClass = isDefaultAvatar ? 'member-avatar-img default-avatar' : 'member-avatar-img';
     var html = '<div class="member-avatar-row" style="display:flex;align-items:center;gap:24px;margin-bottom:18px;">';
     html += '<div class="member-avatar-container" style="position:relative;width:84px;height:84px;">';
-    html += '<img src="' + (d.AvatarURL ? Dashboard.escapeHtml(d.AvatarURL) : '/wp-content/plugins/administration-plugin/assets/img/avatar-default.png') + '" class="member-avatar-img" style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:2px solid #e3e7ee;">';
+    html += '<img src="' + avatarSrc + '" class="' + avatarClass + '" style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:2px solid #e3e7ee;">';
     html += '<input type="file" id="member-avatar-upload" style="display:none;" accept="image/*">';
-    html += '<button class="button button-xs button-secondary member-avatar-upload-btn" style="position:absolute;bottom:0;right:0;">&#9998;</button>';
+    html += '<button class="button button-xs button-secondary member-avatar-upload-btn" style="position:absolute;bottom:0;right:0;" title="Upload Avatar">';
+    html += '<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 13.5V16h2.5l7.06-7.06-2.5-2.5L4 13.5zm11.71-6.29a1 1 0 0 0 0-1.42l-2.5-2.5a1 1 0 0 0-1.42 0l-1.34 1.34 3.92 3.92 1.34-1.34z" fill="#2271b1"/></svg>';
+    html += '</button>';
     html += '</div>';
     html += '<div style="flex:1;">';
     html += '<strong>Name:</strong> ' + Dashboard.escapeHtml(d.FirstName + ' ' + d.LastName) + '<br>';
@@ -26,7 +31,9 @@ jQuery(function($) {
     if (d.State) html += ', ' + Dashboard.escapeHtml(d.State);
     if (d.Zip) html += ' ' + Dashboard.escapeHtml(d.Zip);
     html += '</div>';
-    html += '<button class="button button-xs button-primary member-edit-info-btn" style="margin-left:18px;">Edit</button>';
+    html += '<button class="button button-xs button-primary member-edit-info-btn" style="margin-left:18px;" title="Edit Info">';
+    html += '<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:18px;vertical-align:middle;"><path d="M4 13.5V16h2.5l7.06-7.06-2.5-2.5L4 13.5zm11.71-6.29a1 1 0 0 0 0-1.42l-2.5-2.5a1 1 0 0 0-1.42 0l-1.34 1.34 3.92 3.92 1.34-1.34z" fill="#fff"/></svg>';
+    html += '</button>';
     html += '</div>';
     $('#member-personal-info').html(html);
   }
@@ -194,4 +201,6 @@ jQuery(function($) {
   loadPersonalInfo();
   loadFamilyInfo();
   loadRolesInfo();
-}); 
+});
+
+// Note: Uploaded avatar images are stored in the WordPress media library (wp-content/uploads) via wp_handle_upload, and the URL is saved in the core_person table. 

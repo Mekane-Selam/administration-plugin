@@ -19,10 +19,10 @@ if (!is_user_logged_in() || !current_user_can('manage_options')) {
     <?php 
     // Include header partial
     include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/header.php';
-    
-    // Include main content partial
-    include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
     ?>
+    <div class="administration-dashboard-content">
+      <div class="loading" style="text-align:center;padding:48px 0;color:#2271b1;font-size:1.2em;">Loading...</div>
+    </div>
 </div>
 
 <script>

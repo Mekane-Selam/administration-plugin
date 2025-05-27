@@ -3182,10 +3182,4 @@
         $('#close-lessonplan-details-modal').on('click', function() { $('#lessonplan-details-modal').removeClass('show'); setTimeout(function() { $('#lessonplan-details-modal').remove(); }, 200); });
     }
 
-    // Hide dashboard-content tab logic, set default to parish
-    $('.tab-button[data-tab="parish"]').addClass('active');
-    // Hide finances/resources tab logic
-    $('.tab-button[data-tab="finances"]').hide();
-    $('.tab-button[data-tab="resources"]').hide();
-
 })(jQuery); 

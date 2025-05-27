@@ -78,3 +78,12 @@ jQuery(document).ready(function($) {
     loadDashboardPage('main');
 });
 </script> 
+
+<!-- Hide dashboard-content tab button and logic, set default to parish -->
+<!-- <button class="tab-button active" data-tab="main">Dashboard</button> -->
+<button class="tab-button active" data-tab="parish">Parish</button>
+<button class="tab-button" data-tab="programs">Programs</button>
+<button class="tab-button" data-tab="calendar">Calendar</button>
+<button class="tab-button" data-tab="hr">HR</button>
+<!-- <button class="tab-button" data-tab="finances">Finances</button> -->
+<!-- <button class="tab-button" data-tab="resources">Resources</button> --> 

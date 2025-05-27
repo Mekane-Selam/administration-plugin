@@ -175,7 +175,7 @@ class Administration_Plugin_Public {
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
                 break;
             case 'calendar':
-                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/volunteer-ops-content.php';
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
                 break;
             case 'hr':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/hr-content.php';

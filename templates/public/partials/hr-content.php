@@ -109,22 +109,77 @@ foreach ($staff_rows as $row) {
                 <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
             </div>
             <div class="card-body" style="padding-left: 24px; padding-right: 24px;">
+<<<<<<< HEAD
+                <div class="permissions-split-panel">
+                    <div class="permissions-user-list-panel">
+                        <input type="text" id="permissions-user-search" class="permissions-user-search" placeholder="Search users..." autocomplete="off" />
+                        <ul id="permissions-user-list" class="permissions-user-list">
+                            <!-- User list will be populated by JS -->
+                        </ul>
+=======
                 <div class="permissions-split-panel">
                     <div class="permissions-user-list-panel">
                         <label for="permissions-user-search" style="font-weight:600;">Search User</label>
                         <input type="text" id="permissions-user-search" class="permissions-user-search" placeholder="Type to search users..." autocomplete="off" style="width:100%;margin-bottom:12px;">
                         <div class="permissions-user-list" style="max-height:300px;overflow-y:auto;"></div>
+>>>>>>> 3ebbeaae6a78017eb4b87291045fe48401ab07c9
                     </div>
+<<<<<<< HEAD
+                    <div class="permissions-details-panel" id="permissions-details-panel">
+                        <div class="permissions-details-placeholder">
+                            <p>Select a user to view and manage their roles and permissions.</p>
+                        </div>
+                        <!-- Details will be loaded here by JS -->
+=======
                     <div class="permissions-details-panel">
                         <div class="permissions-details-placeholder" style="color:#888;text-align:center;margin-top:40px;">
                             <span class="dashicons dashicons-admin-users" style="font-size:2em;"></span>
                             <p>Select a user to view and manage their permissions.</p>
                         </div>
                         <div class="permissions-details-content" style="display:none;"></div>
+>>>>>>> 3ebbeaae6a78017eb4b87291045fe48401ab07c9
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+        // JS: Fetch users and handle search/select
+        (function($){
+            let users = <?php echo json_encode($users); ?>;
+            function renderUserList(filter = '') {
+                const list = $('#permissions-user-list');
+                list.empty();
+                let filtered = users.filter(u => (u.FirstName + ' ' + u.LastName).toLowerCase().includes(filter.toLowerCase()));
+                if (filtered.length === 0) {
+                    list.append('<li class="no-users">No users found.</li>');
+                    return;
+                }
+                filtered.forEach(u => {
+                    list.append('<li class="permissions-user-list-item" data-person-id="'+u.PersonID+'">'+
+                        $('<div>').text(u.FirstName + ' ' + u.LastName).html() +
+                        '</li>');
+                });
+            }
+            $(document).on('input', '#permissions-user-search', function() {
+                renderUserList($(this).val());
+            });
+            $(document).on('click', '.permissions-user-list-item', function() {
+                $('.permissions-user-list-item').removeClass('selected');
+                $(this).addClass('selected');
+                let personId = $(this).data('person-id');
+                // Fetch details via AJAX (to be implemented)
+                $('#permissions-details-panel').html('<div class="loading">Loading...</div>');
+                $.post(ajaxurl, {
+                    action: 'get_user_permissions_details',
+                    person_id: personId
+                }, function(response) {
+                    $('#permissions-details-panel').html(response);
+                });
+            });
+            // Initial render
+            renderUserList();
+        })(jQuery);
+        </script>
     <?php endif; ?>
 </div>
 

@@ -36,6 +36,10 @@ foreach ($staff_rows as $row) {
     }
 }
 
+// Fetch all roles and programs for the permissions UI
+$all_roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}hr_roles ORDER BY RoleTitle ASC");
+$all_programs = $wpdb->get_results("SELECT ProgramID, ProgramName FROM {$wpdb->prefix}core_programs ORDER BY ProgramName ASC");
+
 // Permissions Management Access Logic
 if ( ! class_exists('Permissions_Util') ) {
     require_once dirname(__DIR__, 3) . '/includes/class-permissions-util.php';
@@ -130,6 +134,8 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
             var $detailsContent = $detailsPanel.find('.permissions-details-content');
             var lastSearch = '';
             var searchTimeout;
+            var allRoles = <?php echo json_encode($all_roles); ?>;
+            var allPrograms = <?php echo json_encode($all_programs); ?>;
             function renderUserList(users) {
                 $list.empty();
                 if (!Array.isArray(users) || !users.length) {
@@ -250,6 +256,8 @@ jQuery(function($) {
     var $detailsContent = $detailsPanel.find('.permissions-details-content');
     var lastSearch = '';
     var searchTimeout;
+    var allRoles = <?php echo json_encode($all_roles); ?>;
+    var allPrograms = <?php echo json_encode($all_programs); ?>;
     function renderUserList(users) {
         $list.empty();
         if (!Array.isArray(users) || !users.length) {

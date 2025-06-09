@@ -5,8 +5,6 @@ add_action('wp_ajax_get_member_family_info', 'ajax_get_member_family_info');
 add_action('wp_ajax_get_member_roles_info', 'ajax_get_member_roles_info');
 add_action('wp_ajax_update_member_personal_info', 'ajax_update_member_personal_info');
 add_action('wp_ajax_upload_member_avatar', 'ajax_upload_member_avatar');
-add_action('wp_ajax_search_people', 'ajax_search_people');
-add_action('wp_ajax_get_person_permissions', 'ajax_get_person_permissions');
 
 function ajax_get_member_personal_info() {
     check_ajax_referer('administration_plugin_nonce', 'nonce');
@@ -122,63 +120,4 @@ function ajax_upload_member_avatar() {
     $table = $wpdb->prefix . 'core_person';
     $wpdb->update($table, ['AvatarURL' => $avatar_url], ['PersonID' => $person->PersonID]);
     wp_send_json_success(['avatar_url' => esc_url($avatar_url)]);
-}
-
-function ajax_search_people() {
-    check_ajax_referer('administration_plugin_nonce', 'nonce');
-    if (!is_user_logged_in()) wp_send_json_error('Not logged in.');
-    global $wpdb;
-    $q = isset($_POST['q']) ? trim($_POST['q']) : '';
-    if (strlen($q) < 2) wp_send_json_success([]);
-    $person_table = $wpdb->prefix . 'core_person';
-    $results = $wpdb->get_results($wpdb->prepare(
-        "SELECT PersonID, FirstName, LastName FROM $person_table WHERE FirstName LIKE %s OR LastName LIKE %s ORDER BY FirstName ASC, LastName ASC LIMIT 20",
-        '%' . $wpdb->esc_like($q) . '%',
-        '%' . $wpdb->esc_like($q) . '%'
-    ));
-    $people = [];
-    foreach ($results as $row) {
-        $people[] = [
-            'PersonID' => $row->PersonID,
-            'FirstName' => $row->FirstName ?? '',
-            'LastName' => $row->LastName ?? ''
-        ];
-    }
-    wp_send_json_success($people);
-}
-
-function ajax_get_person_permissions() {
-    check_ajax_referer('administration_plugin_nonce', 'nonce');
-    if (!is_user_logged_in()) wp_send_json_error('Not logged in.');
-    require_once dirname(__DIR__) . '/database/class-administration-database.php';
-    global $wpdb;
-    $person_id = isset($_POST['person_id']) ? $_POST['person_id'] : '';
-    if (!$person_id) wp_send_json_error('Missing person_id');
-    $person = Administration_Database::get_person_by_person_id($person_id);
-    if (!$person) wp_send_json_error('Person not found');
-    $roles = [];
-    $hr_staff_table = $wpdb->prefix . 'hr_staff';
-    $hr_roles_table = $wpdb->prefix . 'hr_roles';
-    $programs_table = $wpdb->prefix . 'core_programs';
-    $staff_roles = $wpdb->get_results($wpdb->prepare(
-        "SELECT s.StaffRolesID, r.RoleTitle, s.ProgramID, p.ProgramName FROM $hr_staff_table s
-        LEFT JOIN $hr_roles_table r ON s.StaffRolesID = r.StaffRoleID
-        LEFT JOIN $programs_table p ON s.ProgramID = p.ProgramID
-        WHERE s.PersonID = %s",
-        $person_id
-    ));
-    foreach ($staff_roles as $role) {
-        $roles[] = [
-            'RoleTitle' => $role->RoleTitle ?? '',
-            'ProgramName' => $role->ProgramName ?? '',
-            'Permissions' => [] // Placeholder for future permissions
-        ];
-    }
-    $name = trim(($person->FirstName ?? '') . ' ' . ($person->LastName ?? ''));
-    if (!$name) $name = '(No Name)';
-    $data = [
-        'name' => $name,
-        'roles' => $roles
-    ];
-    wp_send_json_success($data);
 } 

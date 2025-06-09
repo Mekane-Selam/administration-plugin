@@ -35,6 +35,13 @@ foreach ($staff_rows as $row) {
         $staff_members[$pid]['programs'][] = $row->ProgramName;
     }
 }
+
+// Permissions Management Access Logic
+if ( ! class_exists('Permissions_Util') ) {
+    require_once dirname(__DIR__, 3) . '/includes/class-permissions-util.php';
+}
+$current_user_id = get_current_user_id();
+$can_access_permissions = Permissions_Util::user_has_permission($current_user_id, 'System Administration');
 ?>
 
 <div class="wrap administration-hr-admin">

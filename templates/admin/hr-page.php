@@ -117,7 +117,13 @@ if ( ! class_exists('Permissions_Util') ) {
     require_once dirname(__DIR__, 1) . '/class-permissions-util.php';
 }
 $current_user_id = get_current_user_id();
-if (Permissions_Util::user_has_permission($current_user_id, 'System Administration')): ?>
+$can_access_permissions = Permissions_Util::user_has_permission($current_user_id, 'System Administration');
+if ($can_access_permissions): ?>
+    <script>console.log('Permissions UI: User CAN access the permissions area.');</script>
+<?php else: ?>
+    <script>console.log('Permissions UI: User CANNOT access the permissions area.');</script>
+<?php endif; ?>
+<?php if ($can_access_permissions): ?>
     <div class="administration-permissions" style="margin-top: 2em; padding: 1em; border: 1px solid #ccc; background: #f9f9f9;">
         <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
         <p><?php _e('Manage user and role permissions below.', 'administration-plugin'); ?></p>

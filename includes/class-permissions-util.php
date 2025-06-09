@@ -12,8 +12,10 @@ class Permissions_Util {
      * @return bool
      */
     public static function user_has_permission($user_id, $permission_key, $program_id = null) {
+        $log_prefix = '[Permissions_Util] user_has_permission called: user_id=' . $user_id . ', permission_key=' . $permission_key . ', program_id=' . ($program_id ?? 'null');
         // 1. WordPress admin always has permission
         if (current_user_can('manage_options')) {
+            error_log($log_prefix . ' => true (WordPress admin)');
             return true;
         }
         global $wpdb;
@@ -23,6 +25,7 @@ class Permissions_Util {
             $user_id
         ));
         if (!$person) {
+            error_log($log_prefix . ' => false (no person found)');
             return false;
         }
         $person_id = $person->PersonID;
@@ -33,12 +36,13 @@ class Permissions_Util {
         $query = "SELECT s.StaffRolesID, s.ProgramID, r.RoleTitle FROM $hr_staff_table s LEFT JOIN $hr_roles_table r ON s.StaffRolesID = r.StaffRoleID WHERE s.PersonID = %s";
         $roles = $wpdb->get_results($wpdb->prepare($query, $person_id));
         if (!$roles) {
+            error_log($log_prefix . ' => false (no roles found)');
             return false;
         }
         // 4. Check for System Administration role (global)
         foreach ($roles as $role) {
             if ($role->RoleTitle === 'System Administration' && ($role->ProgramID === null || $role->ProgramID === '')) {
-                // System Admin role is global, grant all permissions
+                error_log($log_prefix . ' => true (System Administration role)');
                 return true;
             }
         }
@@ -47,9 +51,11 @@ class Permissions_Util {
         foreach ($roles as $role) {
             // If program-specific, match program; if global, always allow
             if ($role->RoleTitle === $permission_key && ($role->ProgramID === null || $role->ProgramID === '' || $role->ProgramID === $program_id)) {
+                error_log($log_prefix . ' => true (matched role/permission)');
                 return true;
             }
         }
+        error_log($log_prefix . ' => false (no matching role/permission)');
         return false;
     }
 } 

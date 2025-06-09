@@ -149,6 +149,41 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                         $('<div>').text(name).html()+'</div>');
                 });
             }
+            function searchUsers(query) {
+                $list.html('<div style="color:#888;padding:12px;">Searching...</div>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'search_people',
+                        nonce: administration_plugin.nonce,
+                        q: query
+                    },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data) && response.data.length) {
+                            renderUserList(response.data);
+                        } else {
+                            renderUserList([]);
+                        }
+                    },
+                    error: function() {
+                        renderUserList([]);
+                    }
+                });
+            }
+            $search.on('input', function() {
+                var val = $search.val().trim();
+                if (val === lastSearch) return;
+                lastSearch = val;
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    if (val.length < 2) {
+                        $list.empty();
+                        return;
+                    }
+                    searchUsers(val);
+                }, 200);
+            });
             function renderPermissionsDetails(personId, data) {
                 var html = '<h3 style="margin-top:0;">'+data.name+'</h3>';
                 html += '<button class="button button-secondary permissions-edit-btn" style="margin-bottom:12px;">Edit</button>';
@@ -320,6 +355,41 @@ jQuery(function($) {
                 $('<div>').text(name).html()+'</div>');
         });
     }
+    function searchUsers(query) {
+        $list.html('<div style="color:#888;padding:12px;">Searching...</div>');
+        $.ajax({
+            url: administration_plugin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'search_people',
+                nonce: administration_plugin.nonce,
+                q: query
+            },
+            success: function(response) {
+                if (response.success && Array.isArray(response.data) && response.data.length) {
+                    renderUserList(response.data);
+                } else {
+                    renderUserList([]);
+                }
+            },
+            error: function() {
+                renderUserList([]);
+            }
+        });
+    }
+    $search.on('input', function() {
+        var val = $search.val().trim();
+        if (val === lastSearch) return;
+        lastSearch = val;
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            if (val.length < 2) {
+                $list.empty();
+                return;
+            }
+            searchUsers(val);
+        }, 200);
+    });
     function renderPermissionsDetails(personId, data) {
         var html = '<h3 style="margin-top:0;">'+data.name+'</h3>';
         html += '<button class="button button-secondary permissions-edit-btn" style="margin-bottom:12px;">Edit</button>';

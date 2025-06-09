@@ -90,20 +90,8 @@ foreach ($staff_rows as $row) {
                 <div id="job-postings-list"></div>
             </div>
         </div>
-    </div>
-    <?php
-    // Permissions management section (only for WP admin or System Administration role)
-    if ( ! class_exists('Permissions_Util') ) {
-        require_once dirname(__DIR__, 3) . '/class-permissions-util.php';
-    }
-    $current_user_id = get_current_user_id();
-    $can_access_permissions = Permissions_Util::user_has_permission($current_user_id, 'System Administration');
-    if ($can_access_permissions): ?>
-        <script>console.log('Permissions UI: User CAN access the permissions area.');</script>
-    <?php else: ?>
-        <script>console.log('Permissions UI: User CANNOT access the permissions area.');</script>
-    <?php endif; ?>
-    <?php if ($can_access_permissions): ?>
+        <!-- Permissions Management Card (now inside grid) -->
+        <?php if ($can_access_permissions): ?>
         <div class="card administration-permissions">
             <div class="card-header" style="padding-left: 24px;">
                 <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
@@ -126,44 +114,107 @@ foreach ($staff_rows as $row) {
             </div>
         </div>
         <script>
-        // JS: Fetch users and handle search/select
-        (function($){
-            let users = <?php echo json_encode($users); ?>;
-            function renderUserList(filter = '') {
-                const list = $('#permissions-user-list');
-                list.empty();
-                let filtered = users.filter(u => (u.FirstName + ' ' + u.LastName).toLowerCase().includes(filter.toLowerCase()));
-                if (filtered.length === 0) {
-                    list.append('<li class="no-users">No users found.</li>');
+        jQuery(function($) {
+            // Permissions user search and split panel logic
+            var $search = $('#permissions-user-search');
+            var $list = $('.permissions-user-list');
+            var $detailsPanel = $('.permissions-details-panel');
+            var $placeholder = $detailsPanel.find('.permissions-details-placeholder');
+            var $detailsContent = $detailsPanel.find('.permissions-details-content');
+            var lastSearch = '';
+            var searchTimeout;
+            function renderUserList(users) {
+                $list.empty();
+                if (!Array.isArray(users) || !users.length) {
+                    $list.append('<div style="color:#888;padding:12px;">No users found.</div>');
                     return;
                 }
-                filtered.forEach(u => {
-                    list.append('<li class="permissions-user-list-item" data-person-id="'+u.PersonID+'">'+
-                        $('<div>').text(u.FirstName + ' ' + u.LastName).html() +
-                        '</li>');
+                users.forEach(function(user) {
+                    $list.append('<div class="permissions-user-list-item" data-person-id="'+user.PersonID+'">'+
+                        $('<div>').text(user.FirstName + ' ' + user.LastName).html()+'</div>');
                 });
             }
-            $(document).on('input', '#permissions-user-search', function() {
-                renderUserList($(this).val());
+            function searchUsers(query) {
+                $list.html('<div style="color:#888;padding:12px;">Searching...</div>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'search_people',
+                        nonce: administration_plugin.nonce,
+                        q: query
+                    },
+                    success: function(response) {
+                        if (response.success && Array.isArray(response.data) && response.data.length) {
+                            renderUserList(response.data);
+                        } else {
+                            renderUserList([]);
+                        }
+                    },
+                    error: function() {
+                        renderUserList([]);
+                    }
+                });
+            }
+            $search.on('input', function() {
+                var val = $search.val().trim();
+                if (val === lastSearch) return;
+                lastSearch = val;
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    if (val.length < 2) {
+                        $list.empty();
+                        return;
+                    }
+                    searchUsers(val);
+                }, 200);
             });
-            $(document).on('click', '.permissions-user-list-item', function() {
-                $('.permissions-user-list-item').removeClass('selected');
-                $(this).addClass('selected');
-                let personId = $(this).data('person-id');
-                // Fetch details via AJAX (to be implemented)
-                $('#permissions-details-panel').html('<div class="loading">Loading...</div>');
-                $.post(ajaxurl, {
-                    action: 'get_user_permissions_details',
-                    person_id: personId
-                }, function(response) {
-                    $('#permissions-details-panel').html(response);
+            $list.on('click', '.permissions-user-list-item', function() {
+                var $item = $(this);
+                $list.find('.permissions-user-list-item').removeClass('selected');
+                $item.addClass('selected');
+                var personId = $item.data('person-id');
+                $placeholder.hide();
+                $detailsContent.show().html('<div class="loading">Loading permissions...</div>');
+                // Fetch permissions/roles for this user
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_person_permissions',
+                        nonce: administration_plugin.nonce,
+                        person_id: personId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            var html = '<h3 style="margin-top:0;">'+response.data.name+'</h3>';
+                            if (response.data.roles && response.data.roles.length) {
+                                html += '<div class="permissions-roles-list">';
+                                response.data.roles.forEach(function(role) {
+                                    html += '<div class="permissions-role-item">';
+                                    html += '<strong>'+role.RoleTitle+'</strong>';
+                                    if (role.ProgramName) html += ' <span style="color:#888;">('+role.ProgramName+')</span>';
+                                    html += '<div style="margin-top:4px;">Permissions: <span style="color:#2271b1;">'+(role.Permissions ? role.Permissions.join(', ') : '—')+'</span></div>';
+                                    html += '</div>';
+                                });
+                                html += '</div>';
+                            } else {
+                                html += '<div style="color:#888;">No roles assigned.</div>';
+                            }
+                            $detailsContent.html(html);
+                        } else {
+                            $detailsContent.html('<div style="color:#888;">No permissions info found.</div>');
+                        }
+                    },
+                    error: function() {
+                        $detailsContent.html('<div style="color:#888;">Failed to load permissions info.</div>');
+                    }
                 });
             });
-            // Initial render
-            renderUserList();
-        })(jQuery);
+        });
         </script>
-    <?php endif; ?>
+        <?php endif; ?>
+    </div>
 </div>
 
 <!-- Staff Details Modal -->

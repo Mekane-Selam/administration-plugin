@@ -16,15 +16,19 @@ class Administration_Plugin_Autoloader {
      * @param string $class_name The name of the class to load
      */
     public static function autoload($class_name) {
-        // Only handle classes with our prefix
-        if (strpos($class_name, 'Administration_') !== 0) {
+        // Handle classes with our prefix or Permissions_Util
+        if (strpos($class_name, 'Administration_') !== 0 && $class_name !== 'Permissions_Util') {
             return;
         }
 
         // Convert class name to file path
-        $file_name = strtolower(str_replace('_', '-', $class_name));
-        $file_name = str_replace('administration-', '', $file_name);
-        $file_name = 'class-' . $file_name . '.php';
+        if ($class_name === 'Permissions_Util') {
+            $file_name = 'class-permissions-util.php';
+        } else {
+            $file_name = strtolower(str_replace('_', '-', $class_name));
+            $file_name = str_replace('administration-', '', $file_name);
+            $file_name = 'class-' . $file_name . '.php';
+        }
 
         // Define the base directories to search
         $directories = array(

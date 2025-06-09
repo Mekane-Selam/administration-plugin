@@ -136,6 +136,7 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
             var searchTimeout;
             var allRoles = <?php echo json_encode($all_roles); ?>;
             var allPrograms = <?php echo json_encode($all_programs); ?>;
+            var editMode = false;
             function renderUserList(users) {
                 $list.empty();
                 if (!Array.isArray(users) || !users.length) {
@@ -185,22 +186,26 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                 }, 200);
             });
             function renderPermissionsDetails(personId, data) {
-                var html = '<h3 style="margin-top:0;">'+data.name+'</h3>';
-                html += '<button class="button button-secondary permissions-edit-btn" style="margin-bottom:12px;">Edit</button>';
+                var html = '<div style="display:flex;align-items:center;justify-content:space-between;">';
+                html += '<h3 style="margin-top:0;margin-bottom:0;">'+data.name+'</h3>';
+                html += '<button class="button-link permissions-edit-btn" style="font-size:13px;padding:2px 8px;margin-left:12px;" title="Edit Roles"><span class="dashicons dashicons-edit"></span> Edit</button>';
+                html += '</div>';
                 if (data.roles && data.roles.length) {
-                    html += '<div class="permissions-roles-list">';
+                    html += '<div class="permissions-roles-list" style="margin-top:12px;">';
                     data.roles.forEach(function(role) {
                         html += '<div class="permissions-role-item" data-role-id="'+role.StaffRolesID+'" data-program-id="'+(role.ProgramID||'')+'">';
                         html += '<strong>'+role.RoleTitle+'</strong>';
                         if (role.ProgramName) html += ' <span style="color:#888;">('+role.ProgramName+')</span>';
-                        html += '<button class="button button-danger permissions-delete-role-btn" style="float:right;margin-left:8px;" title="Remove"><span class="dashicons dashicons-trash"></span></button>';
+                        if (editMode) {
+                            html += '<button class="button button-danger permissions-delete-role-btn" style="float:right;margin-left:8px;" title="Remove"><span class="dashicons dashicons-trash"></span></button>';
+                        }
                         html += '</div>';
                     });
                     html += '</div>';
                 } else {
-                    html += '<div style="color:#888;">No roles assigned.</div>';
+                    html += '<div style="color:#888;margin-top:12px;">No roles assigned.</div>';
                 }
-                html += '<div class="permissions-edit-form" style="display:none;margin-top:18px;">';
+                html += '<div class="permissions-edit-form" style="display:'+(editMode?'block':'none')+';margin-top:18px;">';
                 html += '<div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">';
                 html += '<div><label>Role<br><select class="permissions-role-select">';
                 html += '<option value="">Select role</option>';
@@ -219,7 +224,7 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                 $detailsContent.html(html);
                 $detailsContent.data('person-id', personId);
             }
-            function loadPersonPermissions(personId) {
+            function loadPersonPermissions(personId, keepEditMode) {
                 $detailsContent.show().html('<div class="loading">Loading permissions...</div>');
                 $.ajax({
                     url: administration_plugin.ajax_url,
@@ -232,6 +237,9 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                     success: function(response) {
                         if (response.success && response.data) {
                             renderPermissionsDetails(personId, response.data);
+                            if (keepEditMode && editMode) {
+                                $detailsContent.find('.permissions-edit-form').show();
+                            }
                         } else {
                             $detailsContent.html('<div style="color:#888;">No permissions info found.</div>');
                         }
@@ -247,10 +255,27 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                 $item.addClass('selected');
                 var personId = $item.data('person-id');
                 $placeholder.hide();
+                editMode = false;
                 loadPersonPermissions(personId);
             });
-            $detailsContent.on('click', '.permissions-edit-btn', function() {
-                $detailsContent.find('.permissions-edit-form').slideToggle(150);
+            $detailsContent.on('click', '.permissions-edit-btn', function(e) {
+                e.preventDefault();
+                editMode = !editMode;
+                var personId = $detailsContent.data('person-id');
+                renderPermissionsDetails(personId, {
+                    name: $detailsContent.find('h3').text(),
+                    roles: $detailsContent.find('.permissions-role-item').map(function(){
+                        return {
+                            StaffRolesID: $(this).data('role-id'),
+                            ProgramID: $(this).data('program-id'),
+                            RoleTitle: $(this).find('strong').text(),
+                            ProgramName: $(this).find('span').text().replace(/[()]/g, '')
+                        };
+                    }).get()
+                });
+                if (editMode) {
+                    $detailsContent.find('.permissions-edit-form').show();
+                }
             });
             $detailsContent.on('click', '.permissions-add-role-btn', function() {
                 var personId = $detailsContent.data('person-id');
@@ -272,7 +297,8 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                     },
                     success: function(response) {
                         if (response.success && response.data) {
-                            renderPermissionsDetails(personId, response.data);
+                            // After add, keep edit mode open
+                            loadPersonPermissions(personId, true);
                         } else {
                             alert(response.data || 'Failed to add role.');
                         }
@@ -300,7 +326,8 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                     },
                     success: function(response) {
                         if (response.success && response.data) {
-                            renderPermissionsDetails(personId, response.data);
+                            // After remove, keep edit mode open
+                            loadPersonPermissions(personId, true);
                         } else {
                             alert(response.data || 'Failed to remove role.');
                         }
@@ -342,6 +369,7 @@ jQuery(function($) {
     var searchTimeout;
     var allRoles = <?php echo json_encode($all_roles); ?>;
     var allPrograms = <?php echo json_encode($all_programs); ?>;
+    var editMode = false;
     function renderUserList(users) {
         $list.empty();
         if (!Array.isArray(users) || !users.length) {
@@ -391,22 +419,26 @@ jQuery(function($) {
         }, 200);
     });
     function renderPermissionsDetails(personId, data) {
-        var html = '<h3 style="margin-top:0;">'+data.name+'</h3>';
-        html += '<button class="button button-secondary permissions-edit-btn" style="margin-bottom:12px;">Edit</button>';
+        var html = '<div style="display:flex;align-items:center;justify-content:space-between;">';
+        html += '<h3 style="margin-top:0;margin-bottom:0;">'+data.name+'</h3>';
+        html += '<button class="button-link permissions-edit-btn" style="font-size:13px;padding:2px 8px;margin-left:12px;" title="Edit Roles"><span class="dashicons dashicons-edit"></span> Edit</button>';
+        html += '</div>';
         if (data.roles && data.roles.length) {
-            html += '<div class="permissions-roles-list">';
+            html += '<div class="permissions-roles-list" style="margin-top:12px;">';
             data.roles.forEach(function(role) {
                 html += '<div class="permissions-role-item" data-role-id="'+role.StaffRolesID+'" data-program-id="'+(role.ProgramID||'')+'">';
                 html += '<strong>'+role.RoleTitle+'</strong>';
                 if (role.ProgramName) html += ' <span style="color:#888;">('+role.ProgramName+')</span>';
-                html += '<button class="button button-danger permissions-delete-role-btn" style="float:right;margin-left:8px;" title="Remove"><span class="dashicons dashicons-trash"></span></button>';
+                if (editMode) {
+                    html += '<button class="button button-danger permissions-delete-role-btn" style="float:right;margin-left:8px;" title="Remove"><span class="dashicons dashicons-trash"></span></button>';
+                }
                 html += '</div>';
             });
             html += '</div>';
         } else {
-            html += '<div style="color:#888;">No roles assigned.</div>';
+            html += '<div style="color:#888;margin-top:12px;">No roles assigned.</div>';
         }
-        html += '<div class="permissions-edit-form" style="display:none;margin-top:18px;">';
+        html += '<div class="permissions-edit-form" style="display:'+(editMode?'block':'none')+';margin-top:18px;">';
         html += '<div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">';
         html += '<div><label>Role<br><select class="permissions-role-select">';
         html += '<option value="">Select role</option>';
@@ -425,7 +457,7 @@ jQuery(function($) {
         $detailsContent.html(html);
         $detailsContent.data('person-id', personId);
     }
-    function loadPersonPermissions(personId) {
+    function loadPersonPermissions(personId, keepEditMode) {
         $detailsContent.show().html('<div class="loading">Loading permissions...</div>');
         $.ajax({
             url: administration_plugin.ajax_url,
@@ -438,6 +470,9 @@ jQuery(function($) {
             success: function(response) {
                 if (response.success && response.data) {
                     renderPermissionsDetails(personId, response.data);
+                    if (keepEditMode && editMode) {
+                        $detailsContent.find('.permissions-edit-form').show();
+                    }
                 } else {
                     $detailsContent.html('<div style="color:#888;">No permissions info found.</div>');
                 }
@@ -453,10 +488,27 @@ jQuery(function($) {
         $item.addClass('selected');
         var personId = $item.data('person-id');
         $placeholder.hide();
+        editMode = false;
         loadPersonPermissions(personId);
     });
-    $detailsContent.on('click', '.permissions-edit-btn', function() {
-        $detailsContent.find('.permissions-edit-form').slideToggle(150);
+    $detailsContent.on('click', '.permissions-edit-btn', function(e) {
+        e.preventDefault();
+        editMode = !editMode;
+        var personId = $detailsContent.data('person-id');
+        renderPermissionsDetails(personId, {
+            name: $detailsContent.find('h3').text(),
+            roles: $detailsContent.find('.permissions-role-item').map(function(){
+                return {
+                    StaffRolesID: $(this).data('role-id'),
+                    ProgramID: $(this).data('program-id'),
+                    RoleTitle: $(this).find('strong').text(),
+                    ProgramName: $(this).find('span').text().replace(/[()]/g, '')
+                };
+            }).get()
+        });
+        if (editMode) {
+            $detailsContent.find('.permissions-edit-form').show();
+        }
     });
     $detailsContent.on('click', '.permissions-add-role-btn', function() {
         var personId = $detailsContent.data('person-id');
@@ -478,7 +530,8 @@ jQuery(function($) {
             },
             success: function(response) {
                 if (response.success && response.data) {
-                    renderPermissionsDetails(personId, response.data);
+                    // After add, keep edit mode open
+                    loadPersonPermissions(personId, true);
                 } else {
                     alert(response.data || 'Failed to add role.');
                 }
@@ -506,7 +559,8 @@ jQuery(function($) {
             },
             success: function(response) {
                 if (response.success && response.data) {
-                    renderPermissionsDetails(personId, response.data);
+                    // After remove, keep edit mode open
+                    loadPersonPermissions(personId, true);
                 } else {
                     alert(response.data || 'Failed to remove role.');
                 }

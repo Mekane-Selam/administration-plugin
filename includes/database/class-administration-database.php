@@ -671,6 +671,15 @@ class Administration_Database {
     }
 
     /**
+     * Get a person by PersonID
+     */
+    public static function get_person_by_person_id($person_id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE PersonID = %s", $person_id));
+    }
+
+    /**
      * Save a person (insert or update)
      * $person_data: array with keys UserID, FirstName, LastName, Email, [PersonID]
      * Returns PersonID on success, false on failure

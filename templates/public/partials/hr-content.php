@@ -36,90 +36,6 @@ foreach ($staff_rows as $row) {
     }
 }
 
-// Permissions management section (only for WP admin or System Administration role)
-if ( ! class_exists('Permissions_Util') ) {
-    require_once dirname(__DIR__, 3) . '/class-permissions-util.php';
-}
-$current_user_id = get_current_user_id();
-$can_access_permissions = Permissions_Util::user_has_permission($current_user_id, 'System Administration');
-if ($can_access_permissions): ?>
-    <script>console.log('Permissions UI: User CAN access the permissions area.');</script>
-<?php else: ?>
-    <script>console.log('Permissions UI: User CANNOT access the permissions area.');</script>
-<?php endif; ?>
-<?php if ($can_access_permissions): ?>
-    <div class="administration-permissions" style="margin-top: 2em; padding: 1em; border: 1px solid #ccc; background: #f9f9f9;">
-        <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
-        <p><?php _e('Manage user and role permissions below.', 'administration-plugin'); ?></p>
-        <h3><?php _e('Current Staff Roles', 'administration-plugin'); ?></h3>
-        <table class="widefat fixed striped">
-            <thead>
-                <tr>
-                    <th><?php _e('User', 'administration-plugin'); ?></th>
-                    <th><?php _e('Role', 'administration-plugin'); ?></th>
-                    <th><?php _e('Program', 'administration-plugin'); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $staff = $wpdb->get_results("SELECT s.PersonID, p.FirstName, p.LastName, r.RoleTitle, s.ProgramID FROM {$wpdb->prefix}hr_staff s LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID LEFT JOIN {$wpdb->prefix}hr_roles r ON s.StaffRolesID = r.StaffRoleID");
-                if ($staff) {
-                    foreach ($staff as $row) {
-                        echo '<tr>';
-                        echo '<td>' . esc_html($row->FirstName . ' ' . $row->LastName) . '</td>';
-                        echo '<td>' . esc_html($row->RoleTitle) . '</td>';
-                        echo '<td>' . esc_html($row->ProgramID ? $row->ProgramID : __('Global', 'administration-plugin')) . '</td>';
-                        echo '</tr>';
-                    }
-                } else {
-                    echo '<tr><td colspan="3">' . __('No staff roles assigned.', 'administration-plugin') . '</td></tr>';
-                }
-                ?>
-            </tbody>
-        </table>
-        <h3 style="margin-top:2em;"><?php _e('Assign New Role', 'administration-plugin'); ?></h3>
-        <form id="assign-role-form" method="post" style="display: flex; gap: 1em; align-items: flex-end; flex-wrap: wrap;">
-            <div>
-                <label for="assign-user"><?php _e('User', 'administration-plugin'); ?></label><br>
-                <select id="assign-user" name="assign-user">
-                    <?php
-                    $users = $wpdb->get_results("SELECT PersonID, FirstName, LastName FROM {$wpdb->prefix}core_person");
-                    foreach ($users as $user) {
-                        echo '<option value="' . esc_attr($user->PersonID) . '">' . esc_html($user->FirstName . ' ' . $user->LastName) . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <div>
-                <label for="assign-role"><?php _e('Role', 'administration-plugin'); ?></label><br>
-                <select id="assign-role" name="assign-role">
-                    <?php
-                    $roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}hr_roles");
-                    foreach ($roles as $role) {
-                        echo '<option value="' . esc_attr($role->StaffRoleID) . '">' . esc_html($role->RoleTitle) . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <div>
-                <label for="assign-program"><?php _e('Program (optional)', 'administration-plugin'); ?></label><br>
-                <select id="assign-program" name="assign-program">
-                    <option value=""><?php _e('Global', 'administration-plugin'); ?></option>
-                    <?php
-                    $programs = $wpdb->get_results("SELECT ProgramID, ProgramName FROM {$wpdb->prefix}core_programs");
-                    foreach ($programs as $program) {
-                        echo '<option value="' . esc_attr($program->ProgramID) . '">' . esc_html($program->ProgramName) . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <div>
-                <button type="submit" class="button button-primary"><?php _e('Assign Role', 'administration-plugin'); ?></button>
-            </div>
-        </form>
-    </div>
-<?php endif; ?>
-
 <div class="wrap administration-hr-admin">
     <div class="hr-admin-grid">
         <!-- Staff Directory Card -->
@@ -174,6 +90,96 @@ if ($can_access_permissions): ?>
             </div>
         </div>
     </div>
+    <?php
+    // Permissions management section (only for WP admin or System Administration role)
+    if ( ! class_exists('Permissions_Util') ) {
+        require_once dirname(__DIR__, 3) . '/class-permissions-util.php';
+    }
+    $current_user_id = get_current_user_id();
+    $can_access_permissions = Permissions_Util::user_has_permission($current_user_id, 'System Administration');
+    if ($can_access_permissions): ?>
+        <script>console.log('Permissions UI: User CAN access the permissions area.');</script>
+    <?php else: ?>
+        <script>console.log('Permissions UI: User CANNOT access the permissions area.');</script>
+    <?php endif; ?>
+    <?php if ($can_access_permissions): ?>
+        <div class="card administration-permissions">
+            <div class="card-header" style="padding-left: 24px;">
+                <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
+            </div>
+            <div class="card-body" style="padding-left: 24px; padding-right: 24px;">
+                <p><?php _e('Manage user and role permissions below.', 'administration-plugin'); ?></p>
+                <h3><?php _e('Current Staff Roles', 'administration-plugin'); ?></h3>
+                <div class="table-responsive">
+                    <table class="hr-admin-staff-table">
+                        <thead>
+                            <tr>
+                                <th><?php _e('User', 'administration-plugin'); ?></th>
+                                <th><?php _e('Role', 'administration-plugin'); ?></th>
+                                <th><?php _e('Program', 'administration-plugin'); ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $staff = $wpdb->get_results("SELECT s.PersonID, p.FirstName, p.LastName, r.RoleTitle, s.ProgramID FROM {$wpdb->prefix}hr_staff s LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID LEFT JOIN {$wpdb->prefix}hr_roles r ON s.StaffRolesID = r.StaffRoleID");
+                            if ($staff) {
+                                foreach ($staff as $row) {
+                                    echo '<tr>';
+                                    echo '<td>' . esc_html($row->FirstName . ' ' . $row->LastName) . '</td>';
+                                    echo '<td>' . esc_html($row->RoleTitle) . '</td>';
+                                    echo '<td>' . esc_html($row->ProgramID ? $row->ProgramID : __('Global', 'administration-plugin')) . '</td>';
+                                    echo '</tr>';
+                                }
+                            } else {
+                                echo '<tr><td colspan="3">' . __('No staff roles assigned.', 'administration-plugin') . '</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+                <h3 style="margin-top:2em;"><?php _e('Assign New Role', 'administration-plugin'); ?></h3>
+                <form id="assign-role-form" method="post" style="display: flex; gap: 1em; align-items: flex-end; flex-wrap: wrap;">
+                    <div>
+                        <label for="assign-user"><?php _e('User', 'administration-plugin'); ?></label><br>
+                        <select id="assign-user" name="assign-user">
+                            <?php
+                            $users = $wpdb->get_results("SELECT PersonID, FirstName, LastName FROM {$wpdb->prefix}core_person");
+                            foreach ($users as $user) {
+                                echo '<option value="' . esc_attr($user->PersonID) . '">' . esc_html($user->FirstName . ' ' . $user->LastName) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="assign-role"><?php _e('Role', 'administration-plugin'); ?></label><br>
+                        <select id="assign-role" name="assign-role">
+                            <?php
+                            $roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}hr_roles");
+                            foreach ($roles as $role) {
+                                echo '<option value="' . esc_attr($role->StaffRoleID) . '">' . esc_html($role->RoleTitle) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="assign-program"><?php _e('Program (optional)', 'administration-plugin'); ?></label><br>
+                        <select id="assign-program" name="assign-program">
+                            <option value=""><?php _e('Global', 'administration-plugin'); ?></option>
+                            <?php
+                            $programs = $wpdb->get_results("SELECT ProgramID, ProgramName FROM {$wpdb->prefix}core_programs");
+                            foreach ($programs as $program) {
+                                echo '<option value="' . esc_attr($program->ProgramID) . '">' . esc_html($program->ProgramName) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div>
+                        <button type="submit" class="button button-primary"><?php _e('Assign Role', 'administration-plugin'); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <!-- Staff Details Modal -->

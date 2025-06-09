@@ -35,6 +35,7 @@ foreach ($staff_rows as $row) {
         $staff_members[$pid]['programs'][] = $row->ProgramName;
     }
 }
+?>
 
 <div class="wrap administration-hr-admin">
     <div class="hr-admin-grid">

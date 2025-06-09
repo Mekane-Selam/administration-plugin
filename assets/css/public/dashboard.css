@@ -2633,3 +2633,7 @@ button.button-primary, button.button-secondary, button.button-danger {
 .permissions-details-content {
     margin-top: 0;
 }
+
+.hr-admin-grid > .permissions-full-width {
+    grid-column: 1 / -1;
+}

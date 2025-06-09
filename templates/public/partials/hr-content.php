@@ -99,7 +99,7 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
         </div>
         <!-- Permissions Management Card (now inside grid) -->
         <?php if ($can_access_permissions): ?>
-        <div class="card administration-permissions">
+        <div class="card administration-permissions permissions-full-width">
             <div class="card-header" style="padding-left: 24px;">
                 <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
             </div>
@@ -137,8 +137,10 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
                     return;
                 }
                 users.forEach(function(user) {
+                    var name = (user.FirstName || '') + (user.LastName ? ' ' + user.LastName : '');
+                    if (!name.trim()) name = '(No Name)';
                     $list.append('<div class="permissions-user-list-item" data-person-id="'+user.PersonID+'">'+
-                        $('<div>').text(user.FirstName + ' ' + user.LastName).html()+'</div>');
+                        $('<div>').text(name).html()+'</div>');
                 });
             }
             function searchUsers(query) {
@@ -250,13 +252,15 @@ jQuery(function($) {
     var searchTimeout;
     function renderUserList(users) {
         $list.empty();
-        if (!users.length) {
+        if (!Array.isArray(users) || !users.length) {
             $list.append('<div style="color:#888;padding:12px;">No users found.</div>');
             return;
         }
         users.forEach(function(user) {
+            var name = (user.FirstName || '') + (user.LastName ? ' ' + user.LastName : '');
+            if (!name.trim()) name = '(No Name)';
             $list.append('<div class="permissions-user-list-item" data-person-id="'+user.PersonID+'">'+
-                $('<div>').text(user.FirstName + ' ' + user.LastName).html()+'</div>');
+                $('<div>').text(name).html()+'</div>');
         });
     }
     function searchUsers(query) {
@@ -270,7 +274,7 @@ jQuery(function($) {
                 q: query
             },
             success: function(response) {
-                if (response.success && response.data.length) {
+                if (response.success && Array.isArray(response.data) && response.data.length) {
                     renderUserList(response.data);
                 } else {
                     renderUserList([]);

@@ -109,75 +109,20 @@ foreach ($staff_rows as $row) {
                 <h2><?php _e('Permissions Management', 'administration-plugin'); ?></h2>
             </div>
             <div class="card-body" style="padding-left: 24px; padding-right: 24px;">
-                <p><?php _e('Manage user and role permissions below.', 'administration-plugin'); ?></p>
-                <h3><?php _e('Current Staff Roles', 'administration-plugin'); ?></h3>
-                <div class="table-responsive">
-                    <table class="hr-admin-staff-table">
-                        <thead>
-                            <tr>
-                                <th><?php _e('User', 'administration-plugin'); ?></th>
-                                <th><?php _e('Role', 'administration-plugin'); ?></th>
-                                <th><?php _e('Program', 'administration-plugin'); ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $staff = $wpdb->get_results("SELECT s.PersonID, p.FirstName, p.LastName, r.RoleTitle, s.ProgramID FROM {$wpdb->prefix}hr_staff s LEFT JOIN {$wpdb->prefix}core_person p ON s.PersonID = p.PersonID LEFT JOIN {$wpdb->prefix}hr_roles r ON s.StaffRolesID = r.StaffRoleID");
-                            if ($staff) {
-                                foreach ($staff as $row) {
-                                    echo '<tr>';
-                                    echo '<td>' . esc_html($row->FirstName . ' ' . $row->LastName) . '</td>';
-                                    echo '<td>' . esc_html($row->RoleTitle) . '</td>';
-                                    echo '<td>' . esc_html($row->ProgramID ? $row->ProgramID : __('Global', 'administration-plugin')) . '</td>';
-                                    echo '</tr>';
-                                }
-                            } else {
-                                echo '<tr><td colspan="3">' . __('No staff roles assigned.', 'administration-plugin') . '</td></tr>';
-                            }
-                            ?>
-                        </tbody>
-                    </table>
+                <div class="permissions-split-panel">
+                    <div class="permissions-user-list-panel">
+                        <label for="permissions-user-search" style="font-weight:600;">Search User</label>
+                        <input type="text" id="permissions-user-search" class="permissions-user-search" placeholder="Type to search users..." autocomplete="off" style="width:100%;margin-bottom:12px;">
+                        <div class="permissions-user-list" style="max-height:300px;overflow-y:auto;"></div>
+                    </div>
+                    <div class="permissions-details-panel">
+                        <div class="permissions-details-placeholder" style="color:#888;text-align:center;margin-top:40px;">
+                            <span class="dashicons dashicons-admin-users" style="font-size:2em;"></span>
+                            <p>Select a user to view and manage their permissions.</p>
+                        </div>
+                        <div class="permissions-details-content" style="display:none;"></div>
+                    </div>
                 </div>
-                <h3 style="margin-top:2em;"><?php _e('Assign New Role', 'administration-plugin'); ?></h3>
-                <form id="assign-role-form" method="post" style="display: flex; gap: 1em; align-items: flex-end; flex-wrap: wrap;">
-                    <div>
-                        <label for="assign-user"><?php _e('User', 'administration-plugin'); ?></label><br>
-                        <select id="assign-user" name="assign-user">
-                            <?php
-                            $users = $wpdb->get_results("SELECT PersonID, FirstName, LastName FROM {$wpdb->prefix}core_person");
-                            foreach ($users as $user) {
-                                echo '<option value="' . esc_attr($user->PersonID) . '">' . esc_html($user->FirstName . ' ' . $user->LastName) . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="assign-role"><?php _e('Role', 'administration-plugin'); ?></label><br>
-                        <select id="assign-role" name="assign-role">
-                            <?php
-                            $roles = $wpdb->get_results("SELECT StaffRoleID, RoleTitle FROM {$wpdb->prefix}hr_roles");
-                            foreach ($roles as $role) {
-                                echo '<option value="' . esc_attr($role->StaffRoleID) . '">' . esc_html($role->RoleTitle) . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="assign-program"><?php _e('Program (optional)', 'administration-plugin'); ?></label><br>
-                        <select id="assign-program" name="assign-program">
-                            <option value=""><?php _e('Global', 'administration-plugin'); ?></option>
-                            <?php
-                            $programs = $wpdb->get_results("SELECT ProgramID, ProgramName FROM {$wpdb->prefix}core_programs");
-                            foreach ($programs as $program) {
-                                echo '<option value="' . esc_attr($program->ProgramID) . '">' . esc_html($program->ProgramName) . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <div>
-                        <button type="submit" class="button button-primary"><?php _e('Assign Role', 'administration-plugin'); ?></button>
-                    </div>
-                </form>
             </div>
         </div>
     <?php endif; ?>
@@ -195,4 +140,105 @@ foreach ($staff_rows as $row) {
             <div class="person-details-section-content" id="staff-details-general-content"></div>
         </div>
     </div>
-</div> 
+</div>
+
+<script>
+jQuery(function($) {
+    // Permissions user search and split panel logic
+    var $search = $('#permissions-user-search');
+    var $list = $('.permissions-user-list');
+    var $detailsPanel = $('.permissions-details-panel');
+    var $placeholder = $detailsPanel.find('.permissions-details-placeholder');
+    var $detailsContent = $detailsPanel.find('.permissions-details-content');
+    var lastSearch = '';
+    var searchTimeout;
+    function renderUserList(users) {
+        $list.empty();
+        if (!users.length) {
+            $list.append('<div style="color:#888;padding:12px;">No users found.</div>');
+            return;
+        }
+        users.forEach(function(user) {
+            $list.append('<div class="permissions-user-list-item" data-person-id="'+user.PersonID+'">'+
+                $('<div>').text(user.FirstName + ' ' + user.LastName).html()+'</div>');
+        });
+    }
+    function searchUsers(query) {
+        $list.html('<div style="color:#888;padding:12px;">Searching...</div>');
+        $.ajax({
+            url: administration_plugin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'search_people',
+                nonce: administration_plugin.nonce,
+                q: query
+            },
+            success: function(response) {
+                if (response.success && response.data.length) {
+                    renderUserList(response.data);
+                } else {
+                    renderUserList([]);
+                }
+            },
+            error: function() {
+                renderUserList([]);
+            }
+        });
+    }
+    $search.on('input', function() {
+        var val = $search.val().trim();
+        if (val === lastSearch) return;
+        lastSearch = val;
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            if (val.length < 2) {
+                $list.empty();
+                return;
+            }
+            searchUsers(val);
+        }, 200);
+    });
+    $list.on('click', '.permissions-user-list-item', function() {
+        var $item = $(this);
+        $list.find('.permissions-user-list-item').removeClass('selected');
+        $item.addClass('selected');
+        var personId = $item.data('person-id');
+        $placeholder.hide();
+        $detailsContent.show().html('<div class="loading">Loading permissions...</div>');
+        // Fetch permissions/roles for this user
+        $.ajax({
+            url: administration_plugin.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'get_person_permissions',
+                nonce: administration_plugin.nonce,
+                person_id: personId
+            },
+            success: function(response) {
+                if (response.success && response.data) {
+                    var html = '<h3 style="margin-top:0;">'+response.data.name+'</h3>';
+                    if (response.data.roles && response.data.roles.length) {
+                        html += '<div class="permissions-roles-list">';
+                        response.data.roles.forEach(function(role) {
+                            html += '<div class="permissions-role-item">';
+                            html += '<strong>'+role.RoleTitle+'</strong>';
+                            if (role.ProgramName) html += ' <span style="color:#888;">('+role.ProgramName+')</span>';
+                            html += '<div style="margin-top:4px;">Permissions: <span style="color:#2271b1;">'+(role.Permissions ? role.Permissions.join(', ') : '—')+'</span></div>';
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                    } else {
+                        html += '<div style="color:#888;">No roles assigned.</div>';
+                    }
+                    $detailsContent.html(html);
+                } else {
+                    $detailsContent.html('<div style="color:#888;">No permissions info found.</div>');
+                }
+            },
+            error: function() {
+                $detailsContent.html('<div style="color:#888;">Failed to load permissions info.</div>');
+            }
+        });
+    });
+});
+</script> 

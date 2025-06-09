@@ -2601,3 +2601,35 @@ button.button-primary, button.button-secondary, button.button-danger {
   opacity: 0;
   transition: opacity 0.4s;
 }
+
+/* Permissions Management Split Panel */
+.permissions-split-panel {
+    display: flex;
+    gap: 32px;
+    min-height: 320px;
+}
+.permissions-user-list-panel {
+    flex: 1 1 220px;
+    max-width: 260px;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 18px;
+}
+.permissions-details-panel {
+    flex: 2 1 0;
+    padding-left: 18px;
+}
+.permissions-user-list {
+    margin-top: 0;
+}
+.permissions-user-list-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.permissions-user-list-item:hover, .permissions-user-list-item.selected {
+    background: #f0f6fa;
+}
+.permissions-details-content {
+    margin-top: 0;
+}

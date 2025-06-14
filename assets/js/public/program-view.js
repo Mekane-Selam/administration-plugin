@@ -542,6 +542,9 @@
                     });
                     $('#course-enrollment-person-list').html(html);
                     $('#course-enrollment-selected-count').text(selectedPeople.length + ' selected');
+                    if (filtered.length === 0) {
+                        console.log('[Add Course Enrollment Modal] No people found for selection.');
+                    }
                 }
                 function loadPeopleList(query) {
                     $.ajax({
@@ -556,7 +559,12 @@
                             if (response.success && Array.isArray(response.data)) {
                                 allPeople = response.data;
                                 renderPeopleList(query || '');
+                            } else {
+                                console.log('[Add Course Enrollment Modal] Failed to load people list or empty.');
                             }
+                        },
+                        error: function() {
+                            console.log('[Add Course Enrollment Modal] AJAX error loading people list.');
                         }
                     });
                 }
@@ -572,6 +580,7 @@
                         selectedPeople = selectedPeople.filter(function(id) { return id !== personId; });
                     }
                     $('#course-enrollment-selected-count').text(selectedPeople.length + ' selected');
+                    console.log('[Add Course Enrollment Modal] selectedPeople:', selectedPeople);
                 });
                 $('#add-course-enrollment-modal').addClass('show');
                 $('#add-course-enrollment-form')[0].reset();
@@ -589,7 +598,9 @@
                 var $form = $(this);
                 var $message = $('#add-course-enrollment-message');
                 var courseId = $('#course-detail-modal .course-detail-tab-content').data('course-id');
-                if (!selectedPeople.length) {
+                // Debug log selectedPeople
+                console.log('[Add Course Enrollment Modal] Submitting selectedPeople:', typeof selectedPeople !== 'undefined' ? selectedPeople : 'undefined');
+                if (!selectedPeople || !selectedPeople.length) {
                     $message.html('<span class="error-message">Please select at least one person.</span>');
                     return;
                 }
@@ -1168,6 +1179,24 @@
                     injectEditButton();
                 }
             });
+
+            // --- BEGIN: Inject Remove Enrollment (Edit) Button for Courses ---
+            function injectCourseEnrollmentEditButton() {
+                $('.course-detail-enrollments-actions').each(function() {
+                    var $actions = $(this);
+                    if ($actions.find('.edit-course-enrollment-btn').length === 0) {
+                        $actions.append('<button class="edit-course-enrollment-btn" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
+                    }
+                });
+            }
+            // Call this after course enrollments are loaded or reloaded
+            $(document).on('ready courseDetailLoaded', injectCourseEnrollmentEditButton);
+            $(document).on('ajaxComplete', function(e, xhr, settings) {
+                if (settings && settings.data && settings.data.includes('get_course_detail_tabs')) {
+                    injectCourseEnrollmentEditButton();
+                }
+            });
+            // --- END: Inject Remove Enrollment (Edit) Button for Courses ---
         }
     };
     $(document).ready(function() {

@@ -243,7 +243,7 @@
         },
 
         loadDashboardContent: function() {
-            this.loadPage('parish');
+            this.loadPage('main');
         },
 
         initializeWidgets: function() {

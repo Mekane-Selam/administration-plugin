@@ -175,7 +175,30 @@
 }
 .program-view-edu-add-course-btn,
 .program-view-edu-add-enrollment-btn {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s;
+    justify-self: flex-end;
+    margin-left: 8px;
+}
+.program-view-edu-edit-btn {
     left: 18px;
+}
+.program-view-edu-edit-btn:hover,
+.program-view-edu-add-course-btn:hover,
+.program-view-edu-add-enrollment-btn:hover {
+    background: #135e96;
 }
 .program-view-edu-courses {
     flex: 2 1 0;

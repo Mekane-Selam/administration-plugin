@@ -168,6 +168,9 @@ class Administration_Plugin_Public {
             case 'main':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
                 break;
+            case 'dashobardload':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
+                break;
             case 'programs':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/programs-content.php';
                 break;

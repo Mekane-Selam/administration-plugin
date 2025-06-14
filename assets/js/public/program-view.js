@@ -1206,6 +1206,45 @@
                 }
             });
             // --- END: Inject Remove Enrollment (Edit) Button for Courses ---
+
+            // Show person details for course enrollment (only if not in edit mode)
+            $(document).on('click', '.course-detail-enrollment-card', function(e) {
+                var $enrollmentsList = $(this).closest('.course-detail-enrollments-list');
+                if ($enrollmentsList.hasClass('edit-mode')) return; // Don't trigger in edit mode
+                var personId = $(this).data('person-id');
+                var courseId = $('#course-detail-modal .course-detail-tab-content').data('course-id');
+                var $detailsPanel = $('.course-enrollment-person-details');
+                if (!personId || !courseId || !$detailsPanel.length) return;
+                $detailsPanel.html('<div class="loading">Loading person details...</div>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_person_details',
+                        nonce: administration_plugin.nonce,
+                        person_id: personId,
+                        course_id: courseId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            var person = response.data;
+                            var detailsHtml =
+                                '<h3 class="person-details-title">' + (person.FirstName || '') + ' ' + (person.LastName || '') + '</h3>' +
+                                '<div class="person-details-content">' +
+                                    '<div class="person-detail-row"><span class="person-detail-label">ID:</span> <span class="person-detail-value">' + (person.PersonID || '') + '</span></div>' +
+                                    '<div class="person-detail-row"><span class="person-detail-label">Email:</span> <span class="person-detail-value">' + (person.Email || 'N/A') + '</span></div>' +
+                                    '<div class="person-detail-row"><span class="person-detail-label">Phone:</span> <span class="person-detail-value">' + (person.Phone || 'N/A') + '</span></div>' +
+                                '</div>';
+                            $detailsPanel.html(detailsHtml);
+                        } else {
+                            $detailsPanel.html('<div class="error-message">Failed to load person details.</div>');
+                        }
+                    },
+                    error: function() {
+                        $detailsPanel.html('<div class="error-message">Failed to load person details.</div>');
+                    }
+                });
+            });
         }
     };
     $(document).ready(function() {

@@ -318,12 +318,14 @@
                         action: 'add_edu_enrollment',
                         nonce: administration_plugin.nonce,
                         program_id: programId,
-                        PersonIDs: selectedPeople // send as array
+                        'PersonIDs[]': selectedPeople // send as array with []
                     },
-                    traditional: true, // ensures array is sent as repeated params
                     success: function(response) {
                         if (response.success) {
                             $message.html('<span class="success-message">' + (response.data && response.data.summary ? response.data.summary : 'Enrollment(s) added successfully!') + '</span>');
+                            if (response.data && response.data.debug) {
+                                console.log('DEBUG:', response.data.debug);
+                            }
                             setTimeout(function() {
                                 $('#add-enrollment-modal').removeClass('show');
                                 $form[0].reset();
@@ -335,6 +337,9 @@
                             }, 800);
                         } else {
                             $message.html('<span class="error-message">' + (response.data || 'Failed to add enrollment.') + '</span>');
+                            if (response.data && response.data.debug) {
+                                console.log('DEBUG:', response.data.debug);
+                            }
                         }
                     },
                     error: function() {

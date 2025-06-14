@@ -117,4 +117,3 @@ function administration_plugin_ajax_remove_edu_enrollments() {
         wp_send_json_error('No enrollments deleted.');
     }
 } 
-} 

@@ -1059,9 +1059,8 @@
                         action: 'remove_edu_enrollments',
                         nonce: administration_plugin.nonce,
                         program_id: programId,
-                        PersonIDs: selected
+                        'PersonIDs[]': selected
                     },
-                    traditional: true,
                     success: function(response) {
                         if (response.success) {
                             ProgramView.reloadEnrollmentList(programId);

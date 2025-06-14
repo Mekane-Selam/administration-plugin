@@ -202,7 +202,10 @@
                     filtered.forEach(function(person) {
                         var fullName = person.FirstName + ' ' + person.LastName;
                         var checked = selectedPeople.includes(person.PersonID) ? 'checked' : '';
-                        html += `<div style='padding:4px 8px;'><label style='cursor:pointer;'><input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' ${checked}> ${fullName}</label></div>`;
+                        html += `<div class='enrollment-person-list-row' style='display:flex;align-items:center;padding:4px 8px;width:100%;'>
+                            <input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' style='margin-right:12px;vertical-align:middle;'>
+                            <span style='flex:1;vertical-align:middle;'>${fullName}</span>
+                        </div>`;
                     });
                     $('#enrollment-person-list').html(html);
                     $('#enrollment-selected-count').text(selectedPeople.length + ' selected');
@@ -1001,6 +1004,67 @@
                     }
                 });
             };
+
+            // 1. Add Edit Enrollment button and logic
+            $(document).on('click', '.program-view-edu-edit-enrollment-btn', function() {
+                var $enrollmentList = $('.enrollment-list-enhanced');
+                if ($enrollmentList.hasClass('edit-mode')) {
+                    // Exit edit mode
+                    $enrollmentList.removeClass('edit-mode');
+                    $enrollmentList.find('.enrollment-edit-checkbox-col').remove();
+                    $('.remove-enrollment-btn').remove();
+                    $(this).text('Edit');
+                } else {
+                    // Enter edit mode
+                    $enrollmentList.addClass('edit-mode');
+                    $enrollmentList.find('.enrollment-card').prepend('<div class="enrollment-edit-checkbox-col"><input type="checkbox" class="enrollment-edit-checkbox"></div>');
+                    $enrollmentList.before('<button class="button button-danger remove-enrollment-btn" style="margin-bottom:12px;">Remove Selected</button>');
+                    $(this).text('Cancel');
+                }
+            });
+
+            // 2. Remove selected enrollments
+            $(document).on('click', '.remove-enrollment-btn', function() {
+                var selected = [];
+                $('.enrollment-edit-checkbox:checked').each(function() {
+                    var $card = $(this).closest('.enrollment-card');
+                    selected.push($card.data('person-id'));
+                });
+                if (selected.length === 0) {
+                    alert('Please select at least one enrollment to remove.');
+                    return;
+                }
+                var programId = $('#program-view-container').data('program-id');
+                if (!confirm('Are you sure you want to remove the selected enrollments?')) return;
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'remove_edu_enrollments',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId,
+                        PersonIDs: selected
+                    },
+                    traditional: true,
+                    success: function(response) {
+                        if (response.success) {
+                            ProgramView.reloadEnrollmentList(programId);
+                        } else {
+                            alert(response.data || 'Failed to remove enrollments.');
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to remove enrollments.');
+                    }
+                });
+            });
+
+            // 3. Add Edit button to enrollment header after page load
+            $(document).on('ready programViewLoaded', function() {
+                if ($('.program-view-edu-enrollment-header .program-view-edu-edit-enrollment-btn').length === 0) {
+                    $('.program-view-edu-enrollment-header').append('<button class="button program-view-edu-edit-enrollment-btn" style="margin-left:12px;">Edit</button>');
+                }
+            });
         }
     };
     $(document).ready(function() {

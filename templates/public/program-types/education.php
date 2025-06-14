@@ -110,7 +110,7 @@
       <?php if (!empty($enrollments)) : ?>
         <div class="enrollment-list-enhanced">
           <?php foreach ($enrollments as $enrollment) : ?>
-            <div class="enrollment-card">
+            <div class="enrollment-card" data-person-id="<?php echo esc_attr($enrollment->PersonID); ?>">
               <div class="enrollment-card-icon"><span class="dashicons dashicons-id"></span></div>
               <div class="enrollment-card-details">
                 <div class="enrollment-card-title"><?php echo esc_html(trim($enrollment->FirstName . ' ' . $enrollment->LastName)); ?></div>

@@ -166,9 +166,6 @@ class Administration_Plugin_Public {
         ob_start();
         switch ($page) {
             case 'main':
-                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
-                break;
-            case 'dashobardload':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
                 break;
             case 'programs':

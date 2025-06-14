@@ -281,6 +281,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
 }
 
 .program-view-edu-enrollment-search-container {

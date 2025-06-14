@@ -24,8 +24,11 @@ function administration_plugin_ajax_add_edu_enrollment() {
     $success = 0;
     $already_enrolled = 0;
     $errors = 0;
+    $debug_logs = array();
+    $debug_logs[] = 'PersonIDs received: ' . json_encode($person_ids);
     foreach ($person_ids as $person_id) {
         $person_id = sanitize_text_field($person_id);
+        $debug_logs[] = 'Processing PersonID: ' . $person_id;
         // Check if person is already actively enrolled in the program
         $existing_enrollment = $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM $table WHERE ProgramID = %s AND PersonID = %s AND ActiveFlag = 1",
@@ -57,13 +60,15 @@ function administration_plugin_ajax_add_edu_enrollment() {
             $success++;
         } else {
             $errors++;
+            $debug_logs[] = 'Insert failed for PersonID: ' . $person_id . ' (DB error: ' . $wpdb->last_error . ')';
         }
     }
     $summary = "$success enrolled, $already_enrolled already enrolled, $errors errors.";
+    $debug_message = implode("\n", $debug_logs);
     if ($success > 0) {
-        wp_send_json_success(['summary' => $summary]);
+        wp_send_json_success(['summary' => $summary, 'debug' => $debug_message]);
     } else {
-        wp_send_json_error($summary);
+        wp_send_json_error($summary . "\n" . $debug_message);
     }
 }
 

@@ -2335,8 +2335,7 @@ button.button-danger:hover, button.button-danger:focus {
 .button.button-primary, .button.button-secondary, .button.button-danger,
 button.button-primary, button.button-secondary, button.button-danger {
   height: 44px;
-  min-width: 160px;
-  max-width: 220px;
+  width: 100%;
   padding: 0 18px;
   font-size: 1.08rem;
   border-radius: 6px;

@@ -91,9 +91,10 @@
                         <h2>Add New Enrollment</h2>
                         <form id="add-enrollment-form">
                             <div class="form-field">
-                                <label for="enrollment-person">Person</label>
+                                <label for="enrollment-person-search">Person</label>
                                 <input type="text" id="enrollment-person-search" placeholder="Search people..." autocomplete="off" />
-                                <select id="enrollment-person" name="PersonID" required size="6" style="margin-top:8px;"></select>
+                                <div id="enrollment-person-list" style="margin-top:8px; max-height:180px; overflow-y:auto; border:1px solid #e3e7ee; border-radius:6px; background:#fff;"></div>
+                                <div id="enrollment-selected-count" style="margin-top:6px; font-size:0.95em; color:#2271b1;"></div>
                             </div>
                             <div class="form-actions">
                                 <button type="submit" class="button button-primary">Add Enrollment</button>
@@ -184,12 +185,28 @@
                 $('#add-enrollment-form .form-field').remove();
                 $('#add-enrollment-form').prepend(`
                     <div class="form-field">
-                        <label for="enrollment-person">Person</label>
+                        <label for="enrollment-person-search">Person</label>
                         <input type="text" id="enrollment-person-search" placeholder="Search people..." autocomplete="off" />
-                        <select id="enrollment-person" name="PersonID" required size="6" style="margin-top:8px;"></select>
+                        <div id="enrollment-person-list" style="margin-top:8px; max-height:180px; overflow-y:auto; border:1px solid #e3e7ee; border-radius:6px; background:#fff;"></div>
+                        <div id="enrollment-selected-count" style="margin-top:6px; font-size:0.95em; color:#2271b1;"></div>
                     </div>
                 `);
-                // Load people for select
+                var allPeople = [];
+                var selectedPeople = [];
+                function renderPeopleList(query) {
+                    var filtered = allPeople.filter(function(person) {
+                        var fullName = person.FirstName + ' ' + person.LastName;
+                        return !query || fullName.toLowerCase().includes(query.toLowerCase());
+                    });
+                    var html = '';
+                    filtered.forEach(function(person) {
+                        var fullName = person.FirstName + ' ' + person.LastName;
+                        var checked = selectedPeople.includes(person.PersonID) ? 'checked' : '';
+                        html += `<div style='padding:4px 8px;'><label style='cursor:pointer;'><input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' ${checked}> ${fullName}</label></div>`;
+                    });
+                    $('#enrollment-person-list').html(html);
+                    $('#enrollment-selected-count').text(selectedPeople.length + ' selected');
+                }
                 function loadPeopleList(query) {
                     $.ajax({
                         url: administration_plugin.ajax_url,
@@ -200,25 +217,29 @@
                         },
                         success: function(response) {
                             if (response.success && Array.isArray(response.data)) {
-                                var options = '';
-                                response.data.forEach(function(person) {
-                                    var fullName = person.FirstName + ' ' + person.LastName;
-                                    if (!query || fullName.toLowerCase().includes(query.toLowerCase())) {
-                                        options += `<option value="${person.PersonID}">${fullName}</option>`;
-                                    }
-                                });
-                                $('#enrollment-person').html(options);
+                                allPeople = response.data;
+                                renderPeopleList(query || '');
                             }
                         }
                     });
                 }
                 loadPeopleList('');
-                $('#enrollment-person-search').off('input').on('input', function() {
-                    loadPeopleList($(this).val());
+                $(document).off('input', '#enrollment-person-search').on('input', '#enrollment-person-search', function() {
+                    renderPeopleList($(this).val());
+                });
+                $(document).off('change', '.enrollment-person-checkbox').on('change', '.enrollment-person-checkbox', function() {
+                    var personId = $(this).val();
+                    if ($(this).is(':checked')) {
+                        if (!selectedPeople.includes(personId)) selectedPeople.push(personId);
+                    } else {
+                        selectedPeople = selectedPeople.filter(function(id) { return id !== personId; });
+                    }
+                    $('#enrollment-selected-count').text(selectedPeople.length + ' selected');
                 });
                 $('#add-enrollment-modal').addClass('show');
                 $('#add-enrollment-form')[0].reset();
                 $('#add-enrollment-message').html('');
+                selectedPeople = [];
             });
 
             // Close modals
@@ -273,30 +294,33 @@
             });
 
             // Add Enrollment form submission
-            $(document).on('submit', '#add-enrollment-form', function(e) {
+            $(document).off('submit', '#add-enrollment-form').on('submit', '#add-enrollment-form', function(e) {
                 e.preventDefault();
                 var $form = $(this);
                 var $message = $('#add-enrollment-message');
                 var programId = $('#program-view-container').data('program-id');
-                var personId = $('#enrollment-person').val();
-                var data = {
-                    action: 'add_edu_enrollment',
-                    nonce: administration_plugin.nonce,
-                    program_id: programId,
-                    PersonID: personId
-                };
-                if (!data.PersonID) {
-                    $message.html('<span class="error-message">Person is required.</span>');
+                var personIds = [];
+                $('.enrollment-person-checkbox:checked').each(function() {
+                    personIds.push($(this).val());
+                });
+                if (personIds.length === 0) {
+                    $message.html('<span class="error-message">Please select at least one person.</span>');
                     return;
                 }
                 $message.html('<span class="loading">Adding enrollment...</span>');
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',
-                    data: data,
+                    data: {
+                        action: 'add_edu_enrollment',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId,
+                        PersonIDs: personIds // send as array
+                    },
+                    traditional: true, // ensures array is sent as repeated params
                     success: function(response) {
                         if (response.success) {
-                            $message.html('<span class="success-message">Enrollment added successfully!</span>');
+                            $message.html('<span class="success-message">' + (response.data && response.data.summary ? response.data.summary : 'Enrollment(s) added successfully!') + '</span>');
                             setTimeout(function() {
                                 $('#add-enrollment-modal').removeClass('show');
                                 $form[0].reset();

@@ -1081,6 +1081,8 @@
     top: auto !important;
     right: auto !important;
     left: auto !important;
+}
+.program-view-edu-toolbar-btn {
     background: #2271b1;
     color: #fff;
     border: none;
@@ -1097,4 +1099,7 @@
     transition: background 0.2s;
     justify-self: flex-end;
     margin-left: 0;
+}
+.program-view-edu-toolbar-btn:hover {
+    background: #135e96;
 } 

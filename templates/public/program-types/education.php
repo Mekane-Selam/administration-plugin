@@ -77,7 +77,7 @@
         <div class="program-view-edu-enrollment-search-container">
           <input type="text" class="program-view-edu-enrollment-search" placeholder="Search enrollments by name..." autocomplete="off" />
         </div>
-        <button type="button" class="program-view-edu-add-enrollment-btn" title="Add Enrollment">
+        <button type="button" class="program-view-edu-toolbar-btn program-view-edu-add-enrollment-btn" title="Add Enrollment">
           <span class="dashicons dashicons-plus"></span>
         </button>
       </div>
@@ -308,7 +308,7 @@
     outline: none;
 }
 
-.program-view-edu-add-enrollment-btn {
+.program-view-edu-toolbar-btn {
     background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
     color: #fff;
     border: none;
@@ -328,12 +328,12 @@
     min-width: 36px;
 }
 
-.program-view-edu-add-enrollment-btn:hover {
+.program-view-edu-toolbar-btn:hover {
     background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
     transform: translateY(-2px);
 }
 
-.program-view-edu-add-enrollment-btn .dashicons {
+.program-view-edu-toolbar-btn .dashicons {
     font-size: 1.2rem;
     width: 20px;
     height: 20px;

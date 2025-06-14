@@ -1096,7 +1096,7 @@
                     var $plusBtn = $toolbar.find('.program-view-edu-add-enrollment-btn');
                     // Only inject if not already present as a sibling to the plus button
                     if ($plusBtn.length && $plusBtn.siblings('.program-view-edu-edit-enrollment-btn').length === 0) {
-                        var $editBtn = $('<button type="button" class="program-view-edu-add-enrollment-btn program-view-edu-edit-enrollment-btn" title="Edit Enrollments" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
+                        var $editBtn = $('<button type="button" class="program-view-edu-toolbar-btn program-view-edu-edit-enrollment-btn" title="Edit Enrollments" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
                         $plusBtn.after($editBtn);
                     }
                 }

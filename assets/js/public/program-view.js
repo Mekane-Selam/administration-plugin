@@ -203,8 +203,10 @@
                         var fullName = person.FirstName + ' ' + person.LastName;
                         var checked = selectedPeople.includes(person.PersonID) ? 'checked' : '';
                         html += `<div class='enrollment-person-list-row' style='display:flex;align-items:center;padding:4px 8px;width:100%;'>
-                            <input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' style='margin-right:12px;vertical-align:middle;'>
-                            <span style='flex:1;vertical-align:middle;'>${fullName}</span>
+                            <div style='width:10%;display:flex;align-items:center;justify-content:center;'>
+                                <input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' style='vertical-align:middle;'>
+                            </div>
+                            <span style='width:90%;vertical-align:middle;display:inline-block;'>${fullName}</span>
                         </div>`;
                     });
                     $('#enrollment-person-list').html(html);
@@ -1061,8 +1063,19 @@
 
             // 3. Add Edit button to enrollment header after page load
             $(document).on('ready programViewLoaded', function() {
-                if ($('.program-view-edu-enrollment-header .program-view-edu-edit-enrollment-btn').length === 0) {
-                    $('.program-view-edu-enrollment-header').append('<button class="button program-view-edu-edit-enrollment-btn" style="margin-left:12px;">Edit</button>');
+                var $header = $('.program-view-edu-enrollment-header');
+                if ($header.length && $header.find('.program-view-edu-edit-enrollment-btn').length === 0) {
+                    $header.append('<button class="button program-view-edu-edit-enrollment-btn" style="margin-left:12px;">Edit</button>');
+                }
+            });
+
+            // Also inject the Edit button after AJAX reloads enrollment content
+            $(document).on('ajaxComplete', function(e, xhr, settings) {
+                if (settings && settings.data && settings.data.includes('get_program_full_view')) {
+                    var $header = $('.program-view-edu-enrollment-header');
+                    if ($header.length && $header.find('.program-view-edu-edit-enrollment-btn').length === 0) {
+                        $header.append('<button class="button program-view-edu-edit-enrollment-btn" style="margin-left:12px;">Edit</button>');
+                    }
                 }
             });
         }

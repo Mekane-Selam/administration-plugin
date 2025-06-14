@@ -73,7 +73,9 @@ function administration_plugin_ajax_remove_edu_enrollments() {
         wp_send_json_error('Permission denied.');
     }
     global $wpdb;
-    $table = $wpdb->prefix . 'progtype_edu_enrollment';
+    $enrollment_table = $wpdb->prefix . 'progtype_edu_enrollment';
+    $course_enroll_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
+    $courses_table = $wpdb->prefix . 'progtype_edu_courses';
     $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
     $person_ids = array();
     if (isset($_POST['PersonIDs'])) {
@@ -82,25 +84,37 @@ function administration_plugin_ajax_remove_edu_enrollments() {
     if (!$program_id || empty($person_ids)) {
         wp_send_json_error('Missing required fields.');
     }
-    $removed = 0;
-    $not_found = 0;
+    $blocked = [];
+    $deleted = 0;
     foreach ($person_ids as $person_id) {
         $person_id = sanitize_text_field($person_id);
-        $result = $wpdb->update(
-            $table,
-            array('ActiveFlag' => 0),
-            array('ProgramID' => $program_id, 'PersonID' => $person_id, 'ActiveFlag' => 1)
-        );
+        // Get all course IDs for this program
+        $course_ids = $wpdb->get_col($wpdb->prepare("SELECT CourseID FROM $courses_table WHERE ProgramID = %s", $program_id));
+        if (!empty($course_ids)) {
+            // Check if this person is enrolled in any course in this program
+            $in_course = $wpdb->get_var($wpdb->prepare(
+                "SELECT 1 FROM $course_enroll_table WHERE PersonID = %s AND CourseID IN (" . implode(',', array_fill(0, count($course_ids), '%s')) . ") AND ActiveFlag = 1 LIMIT 1",
+                array_merge([$person_id], $course_ids)
+            ));
+            if ($in_course) {
+                $blocked[] = $person_id;
+                continue;
+            }
+        }
+        // Delete from program enrollment
+        $result = $wpdb->delete($enrollment_table, array('ProgramID' => $program_id, 'PersonID' => $person_id));
         if ($result) {
-            $removed++;
-        } else {
-            $not_found++;
+            $deleted++;
         }
     }
-    $summary = "$removed removed, $not_found not found or already inactive.";
-    if ($removed > 0) {
+    if (!empty($blocked)) {
+        wp_send_json_error('One or more persons are currently enrolled in a course. Delete them first before removing them from the program.');
+    }
+    $summary = "$deleted deleted.";
+    if ($deleted > 0) {
         wp_send_json_success(['summary' => $summary]);
     } else {
-        wp_send_json_error($summary);
+        wp_send_json_error('No enrollments deleted.');
     }
+} 
 } 

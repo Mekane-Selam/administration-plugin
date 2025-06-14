@@ -526,7 +526,6 @@ class Administration_Database {
             StartDate DATE,
             EndDate DATE,
             PRIMARY KEY (CourseID),
-            CONSTRAINT fk_edu_course_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL,
             CONSTRAINT fk_edu_course_instructor FOREIGN KEY (PrimaryInstructorID) REFERENCES {$wpdb->prefix}core_person(PersonID) ON DELETE SET NULL,
             CONSTRAINT fk_edu_course_program FOREIGN KEY (ProgramID) REFERENCES {$wpdb->prefix}core_programs(ProgramID) ON DELETE SET NULL
         ) $charset_collate;";
@@ -669,6 +668,15 @@ class Administration_Database {
         global $wpdb;
         $table = $wpdb->prefix . 'core_person';
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE UserID = %d", $user_id));
+    }
+
+    /**
+     * Get a person by PersonID
+     */
+    public static function get_person_by_person_id($person_id) {
+        global $wpdb;
+        $table = $wpdb->prefix . 'core_person';
+        return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table WHERE PersonID = %s", $person_id));
     }
 
     /**

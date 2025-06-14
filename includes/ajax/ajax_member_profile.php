@@ -5,6 +5,8 @@ add_action('wp_ajax_get_member_family_info', 'ajax_get_member_family_info');
 add_action('wp_ajax_get_member_roles_info', 'ajax_get_member_roles_info');
 add_action('wp_ajax_update_member_personal_info', 'ajax_update_member_personal_info');
 add_action('wp_ajax_upload_member_avatar', 'ajax_upload_member_avatar');
+add_action('wp_ajax_search_people', 'ajax_search_people');
+add_action('wp_ajax_get_person_permissions', 'ajax_get_person_permissions');
 
 function ajax_get_member_personal_info() {
     check_ajax_referer('administration_plugin_nonce', 'nonce');
@@ -120,4 +122,4 @@ function ajax_upload_member_avatar() {
     $table = $wpdb->prefix . 'core_person';
     $wpdb->update($table, ['AvatarURL' => $avatar_url], ['PersonID' => $person->PersonID]);
     wp_send_json_success(['avatar_url' => esc_url($avatar_url)]);
-} 
+}

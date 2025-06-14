@@ -77,7 +77,7 @@
         <div class="program-view-edu-enrollment-search-container">
           <input type="text" class="program-view-edu-enrollment-search" placeholder="Search enrollments by name..." autocomplete="off" />
         </div>
-        <button type="button" class="program-view-edu-add-enrollment-btn" title="Add Enrollment">
+        <button type="button" class="program-view-edu-toolbar-btn program-view-edu-add-enrollment-btn" title="Add Enrollment">
           <span class="dashicons dashicons-plus"></span>
         </button>
       </div>
@@ -110,7 +110,7 @@
       <?php if (!empty($enrollments)) : ?>
         <div class="enrollment-list-enhanced">
           <?php foreach ($enrollments as $enrollment) : ?>
-            <div class="enrollment-card">
+            <div class="enrollment-card" data-person-id="<?php echo esc_attr($enrollment->PersonID); ?>">
               <div class="enrollment-card-icon"><span class="dashicons dashicons-id"></span></div>
               <div class="enrollment-card-details">
                 <div class="enrollment-card-title"><?php echo esc_html(trim($enrollment->FirstName . ' ' . $enrollment->LastName)); ?></div>
@@ -265,7 +265,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 90%;
+    width: 100%;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid #e3e7ee;
@@ -281,6 +281,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
 }
 
 .program-view-edu-enrollment-search-container {
@@ -307,7 +308,7 @@
     outline: none;
 }
 
-.program-view-edu-add-enrollment-btn {
+.program-view-edu-toolbar-btn {
     background: linear-gradient(135deg, #2271b1 0%, #3498db 100%);
     color: #fff;
     border: none;
@@ -327,12 +328,12 @@
     min-width: 36px;
 }
 
-.program-view-edu-add-enrollment-btn:hover {
+.program-view-edu-toolbar-btn:hover {
     background: linear-gradient(135deg, #135e96 0%, #2271b1 100%);
     transform: translateY(-2px);
 }
 
-.program-view-edu-add-enrollment-btn .dashicons {
+.program-view-edu-toolbar-btn .dashicons {
     font-size: 1.2rem;
     width: 20px;
     height: 20px;

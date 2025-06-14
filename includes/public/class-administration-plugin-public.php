@@ -36,7 +36,6 @@ class Administration_Plugin_Public {
         // Register new AJAX handler
         add_action('wp_ajax_get_program_full_view', array($this, 'ajax_get_program_full_view'));
         add_action('wp_ajax_add_edu_course', array($this, 'ajax_add_edu_course'));
-        add_action('wp_ajax_add_edu_enrollment', array($this, 'ajax_add_edu_enrollment'));
         add_action('wp_ajax_get_course_detail_and_enrollments', array($this, 'ajax_get_course_detail_and_enrollments'));
         add_action('wp_ajax_get_course_detail_tabs', array($this, 'ajax_get_course_detail_tabs'));
         add_action('wp_ajax_add_course_enrollment', array($this, 'ajax_add_course_enrollment'));
@@ -80,6 +79,8 @@ class Administration_Plugin_Public {
         add_action('wp_ajax_nopriv_edit_assignment', array($this, 'ajax_edit_assignment'));
         add_action('wp_ajax_delete_assignment', array($this, 'ajax_delete_assignment'));
         add_action('wp_ajax_nopriv_delete_assignment', array($this, 'ajax_delete_assignment'));
+        // Register AJAX handler for removing course enrollments
+        add_action('wp_ajax_remove_course_enrollments', array($this, 'ajax_remove_course_enrollments'));
     }
 
     /**
@@ -163,7 +164,7 @@ class Administration_Plugin_Public {
      */
     public function ajax_load_dashboard_page() {
         check_ajax_referer('administration_plugin_nonce', 'nonce');
-        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'main';
+        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'parish';
         ob_start();
         switch ($page) {
             case 'main':
@@ -442,14 +443,16 @@ class Administration_Plugin_Public {
         $first_name = isset($_POST['first_name']) ? sanitize_text_field($_POST['first_name']) : '';
         $last_name = isset($_POST['last_name']) ? sanitize_text_field($_POST['last_name']) : '';
         $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
-        if (!$first_name || !$last_name || !$email) {
-            wp_send_json_error('All fields are required.');
+        if (!$first_name || !$last_name) {
+            wp_send_json_error('First name and last name are required.');
         }
         global $wpdb;
         $table = $wpdb->prefix . 'core_person';
-        $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE Email = %s", $email));
-        if ($exists) {
-            wp_send_json_error('A person with this email already exists.');
+        if ($email) {
+            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE Email = %s", $email));
+            if ($exists) {
+                wp_send_json_error('A person with this email already exists.');
+            }
         }
         $person_data = [
             'FirstName' => $first_name,
@@ -604,60 +607,6 @@ class Administration_Plugin_Public {
     }
 
     /**
-     * AJAX handler to add an enrollment to an education program
-     */
-    public function ajax_add_edu_enrollment() {
-        check_ajax_referer('administration_plugin_nonce', 'nonce');
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Permission denied.');
-        }
-        global $wpdb;
-        $table = $wpdb->prefix . 'progtype_edu_enrollment';
-        $program_id = isset($_POST['program_id']) ? sanitize_text_field($_POST['program_id']) : '';
-        $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
-        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : null;
-        if (!$program_id || !$person_id) {
-            wp_send_json_error('Missing required fields.');
-        }
-
-        // Check if person is already actively enrolled in the program
-        $existing_enrollment = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $table WHERE ProgramID = %s AND PersonID = %s AND ActiveFlag = 1",
-            $program_id,
-            $person_id
-        ));
-
-        if ($existing_enrollment) {
-            wp_send_json_error('This person is already actively enrolled in this program.');
-            return;
-        }
-
-        // Generate unique ProgramEnrollmentID
-        do {
-            $unique_code = mt_rand(10000, 99999);
-            $enroll_id = 'ENROLL' . $unique_code;
-            $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $table WHERE ProgramEnrollmentID = %s", $enroll_id));
-        } while ($exists);
-
-        $insert_data = array(
-            'ProgramEnrollmentID' => $enroll_id,
-            'PersonID' => $person_id,
-            'ProgramID' => $program_id,
-            'ActiveFlag' => 1,
-            'EnrollmentDate' => current_time('mysql', 1)
-        );
-        if ($course_id) {
-            $insert_data['CourseID'] = $course_id;
-        }
-        $result = $wpdb->insert($table, $insert_data);
-        if ($result) {
-            wp_send_json_success(['ProgramEnrollmentID' => $enroll_id]);
-        } else {
-            wp_send_json_error('Failed to add enrollment.');
-        }
-    }
-
-    /**
      * AJAX handler to get course details and enrollments
      */
     public function ajax_get_course_detail_and_enrollments() {
@@ -724,70 +673,82 @@ class Administration_Plugin_Public {
         $course_enroll_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
         $program_enroll_table = $wpdb->prefix . 'progtype_edu_enrollment';
         $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
-        $person_id = isset($_POST['PersonID']) ? sanitize_text_field($_POST['PersonID']) : '';
         $active_flag = isset($_POST['ActiveFlag']) ? intval($_POST['ActiveFlag']) : 1;
         $enrollment_date = isset($_POST['EnrollmentDate']) ? sanitize_text_field($_POST['EnrollmentDate']) : current_time('mysql', 1);
-        $course_enrollment_id = isset($_POST['CourseEnrollmentID']) ? sanitize_text_field($_POST['CourseEnrollmentID']) : '';
-
-        if (!$course_id || !$person_id) {
+        $person_ids = array();
+        if (isset($_POST['PersonIDs'])) {
+            $person_ids = is_array($_POST['PersonIDs']) ? $_POST['PersonIDs'] : array($_POST['PersonIDs']);
+        } elseif (isset($_POST['PersonID'])) {
+            $person_ids = array($_POST['PersonID']);
+        }
+        if (!$course_id || empty($person_ids)) {
             wp_send_json_error('Missing required fields.');
         }
-
         // Get the program ID for this course
         $course = $wpdb->get_row($wpdb->prepare(
             "SELECT ProgramID FROM {$wpdb->prefix}progtype_edu_courses WHERE CourseID = %s",
             $course_id
         ));
-
         if (!$course) {
             wp_send_json_error('Course not found.');
             return;
         }
-
-        // Check if person is actively enrolled in the program
-        $program_enrollment = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $program_enroll_table WHERE ProgramID = %s AND PersonID = %s AND ActiveFlag = 1",
-            $course->ProgramID,
-            $person_id
-        ));
-
-        if (!$program_enrollment) {
-            wp_send_json_error('This person must be actively enrolled in the program before enrolling in a course.');
-            return;
-        }
-
-        // Check if person is already actively enrolled in the course
-        $existing_course_enrollment = $wpdb->get_row($wpdb->prepare(
-            "SELECT * FROM $course_enroll_table WHERE CourseID = %s AND PersonID = %s AND ActiveFlag = 1",
-            $course_id,
-            $person_id
-        ));
-
-        if ($existing_course_enrollment) {
-            wp_send_json_error('This person is already actively enrolled in this course.');
-            return;
-        }
-
-        if (!$course_enrollment_id) {
+        $success = 0;
+        $already_enrolled = 0;
+        $not_in_program = 0;
+        $errors = 0;
+        $debug_logs = array();
+        foreach ($person_ids as $person_id) {
+            $person_id = sanitize_text_field($person_id);
+            // Check if person is actively enrolled in the program
+            $program_enrollment = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $program_enroll_table WHERE ProgramID = %s AND PersonID = %s AND ActiveFlag = 1",
+                $course->ProgramID,
+                $person_id
+            ));
+            if (!$program_enrollment) {
+                $not_in_program++;
+                $debug_logs[] = 'Not in program: ' . $person_id;
+                continue;
+            }
+            // Check if person is already actively enrolled in the course
+            $existing_course_enrollment = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM $course_enroll_table WHERE CourseID = %s AND PersonID = %s AND ActiveFlag = 1",
+                $course_id,
+                $person_id
+            ));
+            if ($existing_course_enrollment) {
+                $already_enrolled++;
+                $debug_logs[] = 'Already enrolled: ' . $person_id;
+                continue;
+            }
+            // Generate unique CourseEnrollmentID
             do {
                 $unique_code = mt_rand(10000, 99999);
                 $course_enrollment_id = 'CORENROL' . $unique_code;
                 $exists = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $course_enroll_table WHERE CourseEnrollmentID = %s", $course_enrollment_id));
             } while ($exists);
+            $result = $wpdb->insert($course_enroll_table, array(
+                'CourseEnrollmentID' => $course_enrollment_id,
+                'CourseID' => $course_id,
+                'PersonID' => $person_id,
+                'ActiveFlag' => $active_flag,
+                'EnrollmentDate' => $enrollment_date
+            ));
+            if ($result) {
+                $success++;
+                $debug_logs[] = 'Enrolled: ' . $person_id;
+            } else {
+                $errors++;
+                $debug_logs[] = 'Insert failed: ' . $person_id . ' (DB error: ' . $wpdb->last_error . ')';
+            }
         }
-
-        $result = $wpdb->insert($course_enroll_table, array(
-            'CourseEnrollmentID' => $course_enrollment_id,
-            'CourseID' => $course_id,
-            'PersonID' => $person_id,
-            'ActiveFlag' => $active_flag,
-            'EnrollmentDate' => $enrollment_date
-        ));
-
-        if ($result) {
-            wp_send_json_success(['CourseEnrollmentID' => $course_enrollment_id]);
+        $summary = "$success enrolled, $already_enrolled already enrolled, $not_in_program not in program, $errors errors.";
+        $debug_message = implode("\n", $debug_logs);
+        if ($success > 0) {
+            wp_send_json_success(['summary' => $summary, 'debug' => $debug_message]);
         } else {
-            wp_send_json_error('Failed to add enrollment.');
+            wp_send_json_error($summary . "\n" . $debug_message);
         }
     }
 
@@ -1638,6 +1599,40 @@ class Administration_Plugin_Public {
             wp_send_json_success();
         } else {
             wp_send_json_error('Failed to delete assignment.');
+        }
+    }
+
+    public function ajax_remove_course_enrollments() {
+        check_ajax_referer('administration_plugin_nonce', 'nonce');
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permission denied.');
+        }
+        global $wpdb;
+        $course_enroll_table = $wpdb->prefix . 'progtype_edu_courseenrollments';
+        $course_id = isset($_POST['CourseID']) ? sanitize_text_field($_POST['CourseID']) : '';
+        $person_ids = array();
+        if (isset($_POST['PersonIDs'])) {
+            $person_ids = is_array($_POST['PersonIDs']) ? $_POST['PersonIDs'] : array($_POST['PersonIDs']);
+        }
+        if (!$course_id || empty($person_ids)) {
+            wp_send_json_error('Missing required fields.');
+        }
+        $deleted = 0;
+        $errors = 0;
+        foreach ($person_ids as $person_id) {
+            $person_id = sanitize_text_field($person_id);
+            $result = $wpdb->delete($course_enroll_table, array('CourseID' => $course_id, 'PersonID' => $person_id));
+            if ($result) {
+                $deleted++;
+            } else {
+                $errors++;
+            }
+        }
+        $summary = "$deleted deleted, $errors errors.";
+        if ($deleted > 0) {
+            wp_send_json_success(['summary' => $summary]);
+        } else {
+            wp_send_json_error($summary);
         }
     }
 

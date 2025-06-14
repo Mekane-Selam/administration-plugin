@@ -46,8 +46,8 @@ jQuery(document).ready(function($) {
         loadDashboardPage(page);
     });
 
-    // Function to load dashboard content
-    function loadDashboardPage(page) {
+    // Function to load dashboard content, now with optional callback
+    function loadDashboardPage(page, callback) {
         // Update active menu item
         $('.menu-item').removeClass('active');
         $(`.menu-item[data-page="${page}"]`).addClass('active');
@@ -64,6 +64,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     $('.administration-dashboard-content').html(response.data);
+                    if (typeof callback === 'function') callback();
                 } else {
                     console.error('Error loading dashboard page:', response.data);
                 }
@@ -78,7 +79,9 @@ jQuery(document).ready(function($) {
     $('.menu-item').removeClass('active');
     $('.menu-item[data-page="parish"]').addClass('active');
 
-    // Load initial dashboard content
-    loadDashboardPage('parish');
+    // Load main first, then parish
+    loadDashboardPage('main', function() {
+        loadDashboardPage('parish');
+    });
 });
 </script> 

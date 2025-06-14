@@ -175,7 +175,30 @@
 }
 .program-view-edu-add-course-btn,
 .program-view-edu-add-enrollment-btn {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s;
+    justify-self: flex-end;
+    margin-left: 8px;
+}
+.program-view-edu-edit-btn {
     left: 18px;
+}
+.program-view-edu-edit-btn:hover,
+.program-view-edu-add-course-btn:hover,
+.program-view-edu-add-enrollment-btn:hover {
+    background: #135e96;
 }
 .program-view-edu-courses {
     flex: 2 1 0;
@@ -247,6 +270,7 @@
 }
 .program-view-edu-enrollment .program-view-edu-title {
     margin-top: 0;
+    padding-right: 10px;
 }
 .program-view-edu-enrollment-content {
     width: 100%;
@@ -1043,4 +1067,65 @@
     font-size: 0.95rem;
     color: #2271b1;
     font-weight: 500;
+}
+
+.program-view-edu-enrollment-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+.program-view-edu-add-enrollment-btn,
+.program-view-edu-edit-enrollment-btn {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+}
+.program-view-edu-toolbar-btn {
+    background: #2271b1;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+    transition: background 0.2s;
+    justify-self: flex-end;
+    margin-left: 0;
+}
+.program-view-edu-toolbar-btn:hover {
+    background: #135e96;
+}
+
+.edit-course-enrollment-btn {
+  background: #2271b1;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(34,113,177,0.08);
+  transition: background 0.2s;
+  margin-left: 8px;
+  padding: 0;
+}
+.edit-course-enrollment-btn:hover, .edit-course-enrollment-btn:focus {
+  background: #135e96;
+}
+.edit-course-enrollment-btn .dashicons {
+  font-size: 1.2rem;
+  width: 22px;
+  height: 22px;
 } 

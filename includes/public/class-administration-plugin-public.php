@@ -162,14 +162,17 @@ class Administration_Plugin_Public {
      */
     public function ajax_load_dashboard_page() {
         check_ajax_referer('administration_plugin_nonce', 'nonce');
-        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'parish';
+        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'main';
         ob_start();
         switch ($page) {
-            case 'parish':
-                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
+            case 'main':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
                 break;
             case 'programs':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/programs-content.php';
+                break;
+            case 'parish':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
                 break;
             case 'calendar':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/calendar-content.php';

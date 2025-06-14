@@ -177,6 +177,322 @@
                 $('#add-course-message').html('');
             });
 
+            // Define selectedPeople in a higher scope so it is accessible to both modal and form
+            var selectedPeople = [];
+
+            // Add Enrollment button
+            $(document).on('click', '.program-view-edu-add-enrollment-btn', function(e) {
+                e.preventDefault();
+                var programId = $('#program-view-container').data('program-id');
+                // Remove course dropdown and add search/filter for person
+                $('#add-enrollment-form .form-field').remove();
+                $('#add-enrollment-form').prepend(`
+                    <div class="form-field">
+                        <label for="enrollment-person-search">Person</label>
+                        <input type="text" id="enrollment-person-search" placeholder="Search people..." autocomplete="off" />
+                        <div id="enrollment-person-list" style="margin-top:8px; max-height:180px; overflow-y:auto; border:1px solid #e3e7ee; border-radius:6px; background:#fff;"></div>
+                        <div id="enrollment-selected-count" style="margin-top:6px; font-size:0.95em; color:#2271b1;"></div>
+                    </div>
+                `);
+                var allPeople = [];
+                selectedPeople = [];
+                function renderPeopleList(query) {
+                    var filtered = allPeople.filter(function(person) {
+                        var fullName = person.FirstName + ' ' + person.LastName;
+                        return !query || fullName.toLowerCase().includes(query.toLowerCase());
+                    });
+                    var html = '';
+                    filtered.forEach(function(person) {
+                        var fullName = person.FirstName + ' ' + person.LastName;
+                        var checked = selectedPeople.includes(person.PersonID) ? 'checked' : '';
+                        html += `<div class='enrollment-person-list-row' style='display:flex;align-items:center;padding:4px 8px;width:100%;'>
+                            <div style='width:10%;display:flex;align-items:center;justify-content:center;'>
+                                <input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' style='vertical-align:middle;' ${checked}>
+                            </div>
+                            <span style='width:90%;vertical-align:middle;display:inline-block;'>${fullName}</span>
+                        </div>`;
+                    });
+                    $('#enrollment-person-list').html(html);
+                    $('#enrollment-selected-count').text(selectedPeople.length + ' selected');
+                }
+                function loadPeopleList(query) {
+                    $.ajax({
+                        url: administration_plugin.ajax_url,
+                        type: 'POST',
+                        data: {
+                            action: 'get_people_for_owner_select',
+                            nonce: administration_plugin.nonce
+                        },
+                        success: function(response) {
+                            if (response.success && Array.isArray(response.data)) {
+                                allPeople = response.data;
+                                renderPeopleList(query || '');
+                            }
+                        }
+                    });
+                }
+                loadPeopleList('');
+                $(document).off('input', '#enrollment-person-search').on('input', '#enrollment-person-search', function() {
+                    renderPeopleList($(this).val());
+                });
+                $(document).off('change', '.enrollment-person-checkbox').on('change', '.enrollment-person-checkbox', function() {
+                    var personId = $(this).val();
+                    if ($(this).is(':checked')) {
+                        if (!selectedPeople.includes(personId)) selectedPeople.push(personId);
+                    } else {
+                        selectedPeople = selectedPeople.filter(function(id) { return id !== personId; });
+                    }
+                    $('#enrollment-selected-count').text(selectedPeople.length + ' selected');
+                });
+                $('#add-enrollment-modal').addClass('show');
+                $('#add-enrollment-form')[0].reset();
+                $('#add-enrollment-message').html('');
+            });
+
+            // Close modals
+            $(document).on('click', '.modal .close, .modal .button:not(.button-primary)', function() {
+                $(this).closest('.modal').removeClass('show');
+            });
+
+            // Add Course form submission
+            $(document).on('submit', '#add-course-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $message = $('#add-course-message');
+                var programId = $('#program-view-container').data('program-id');
+                
+                var data = {
+                    action: 'add_edu_course',
+                    nonce: administration_plugin.nonce,
+                    program_id: programId,
+                    CourseName: $('#course-name').val().trim(),
+                    Level: $('#course-level').val().trim()
+                };
+
+                if (!data.CourseName) {
+                    $message.html('<span class="error-message">Course name is required.</span>');
+                    return;
+                }
+
+                $message.html('<span class="loading">Adding course...</span>');
+
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            $message.html('<span class="success-message">Course added successfully!</span>');
+                            setTimeout(function() {
+                                $('#add-course-modal').removeClass('show');
+                                $form[0].reset();
+                                $message.html('');
+                                // Reload only the courses list
+                                ProgramView.reloadCoursesList(programId);
+                            }, 800);
+                        } else {
+                            $message.html('<span class="error-message">' + (response.data || 'Failed to add course.') + '</span>');
+                        }
+                    },
+                    error: function() {
+                        $message.html('<span class="error-message">Failed to add course. Please try again.</span>');
+                    }
+                });
+            });
+
+            // Add Enrollment form submission: use selectedPeople array
+            $(document).off('submit', '#add-enrollment-form').on('submit', '#add-enrollment-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $message = $('#add-enrollment-message');
+                var programId = $('#program-view-container').data('program-id');
+                if (!selectedPeople.length) {
+                    $message.html('<span class="error-message">Please select at least one person.</span>');
+                    return;
+                }
+                $message.html('<span class="loading">Adding enrollment...</span>');
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'add_edu_enrollment',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId,
+                        'PersonIDs[]': selectedPeople // send as array with []
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $message.html('<span class="success-message">' + (response.data && response.data.summary ? response.data.summary : 'Enrollment(s) added successfully!') + '</span>');
+                            if (response.data && response.data.debug) {
+                                console.log('DEBUG:', response.data.debug);
+                            }
+                            setTimeout(function() {
+                                $('#add-enrollment-modal').removeClass('show');
+                                $form[0].reset();
+                                $message.html('');
+                                selectedPeople = [];
+                                $('.enrollment-person-checkbox').prop('checked', false);
+                                // Reload only the enrollment list
+                                ProgramView.reloadEnrollmentList(programId);
+                            }, 800);
+                        } else {
+                            $message.html('<span class="error-message">' + (response.data || 'Failed to add enrollment.') + '</span>');
+                            if (response.data && response.data.debug) {
+                                console.log('DEBUG:', response.data.debug);
+                            }
+                        }
+                    },
+                    error: function() {
+                        $message.html('<span class="error-message">Failed to add enrollment. Please try again.</span>');
+                    }
+                });
+            });
+
+            // Helper to reload only the courses list
+            ProgramView.reloadCoursesList = function(programId) {
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_program_full_view',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.html) {
+                            var $html = $('<div>' + response.data.html + '</div>');
+                            var $newCourses = $html.find('.program-view-edu-courses-list').html();
+                            $('#program-view-container .program-view-edu-courses-list').html($newCourses);
+                        }
+                    }
+                });
+            };
+
+            // Helper to reload only the enrollment list
+            ProgramView.reloadEnrollmentList = function(programId) {
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_program_full_view',
+                        nonce: administration_plugin.nonce,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.html) {
+                            var $html = $('<div>' + response.data.html + '</div>');
+                            var $newEnrollment = $html.find('.program-view-edu-enrollment-content').html();
+                            $('#program-view-container .program-view-edu-enrollment-content').html($newEnrollment);
+                            // Reset Edit button state
+                            var $editBtn = $('.program-view-edu-edit-enrollment-btn');
+                            if ($editBtn.length) {
+                                $editBtn.html('<span class="dashicons dashicons-edit"></span>');
+                            }
+                            $('.enrollment-list-enhanced').removeClass('edit-mode');
+                            $('.enrollment-edit-checkbox-col').remove();
+                            $('.remove-enrollment-btn').remove();
+                        }
+                    }
+                });
+            };
+
+            // Enrollment search functionality
+            $(document).on('input', '.enrollment-search-input', function() {
+                var query = $(this).val().toLowerCase();
+                $('.enrollment-list-enhanced .enrollment-card').each(function() {
+                    var name = $(this).find('.enrollment-card-title').text().toLowerCase();
+                    if (name.includes(query)) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+                // Show/hide placeholder if no results
+                var visible = $('.enrollment-list-enhanced .enrollment-card:visible').length;
+                var $placeholder = $('.program-enrollment-list-placeholder');
+                if (visible === 0) {
+                    if ($placeholder.length === 0) {
+                        $('.enrollment-list-enhanced').after('<div class="program-enrollment-list-placeholder">No enrollments found for this search.</div>');
+                    } else {
+                        $placeholder.show().text('No enrollments found for this search.');
+                    }
+                } else {
+                    $placeholder.hide();
+                }
+            });
+
+            // Add course detail modal template if not present
+            if ($('#course-detail-modal').length === 0) {
+                $('body').append(`
+                    <div id="course-detail-modal" class="modal course-detail-modal">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <div class="course-detail-modal-sections">
+                                <div class="course-detail-main-section"></div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            }
+            // Open course detail modal on course card click
+            $(document).on('click', '.course-card', function() {
+                var courseName = $(this).find('.course-card-title').text();
+                var programId = $('#program-view-container').data('program-id');
+                var courseId = $('#course-detail-modal .course-detail-tab-content').data('course-id');
+                $(this).closest('.courses-list-enhanced').find('.course-card').each(function() {
+                    if ($(this).find('.course-card-title').text() === courseName) {
+                        courseId = $(this).data('course-id');
+                    }
+                });
+                if (!courseId) {
+                    courseId = $(this).data('course-id');
+                }
+                if (!courseId) {
+                    courseId = $(this).attr('data-course-id');
+                }
+                if (!courseId) {
+                    alert('Could not determine course ID.');
+                    return;
+                }
+                // Fetch course details and enrollments (now as a single tabbed interface)
+                $.ajax({
+                    url: administration_plugin.ajax_url,
+                    type: 'POST',
+                    data: {
+                        action: 'get_course_detail_tabs',
+                        nonce: administration_plugin.nonce,
+                        course_id: courseId,
+                        program_id: programId
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.html) {
+                            $('#course-detail-modal .course-detail-main-section').html(response.data.html);
+                            $('#course-detail-modal').addClass('show');
+                        } else {
+                            alert(response.data || 'Failed to load course details.');
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to load course details.');
+                    }
+                });
+            });
+            // Close course detail modal
+            $(document).on('click', '#course-detail-modal .close', function() {
+                $('#course-detail-modal').removeClass('show');
+            });
+
+            // Tab switching for course detail modal
+            $(document).on('click', '#course-detail-modal .tab-button', function(e) {
+                e.preventDefault();
+                var $btn = $(this);
+                var tab = $btn.data('tab');
+                $btn.addClass('active').siblings('.tab-button').removeClass('active');
+                var $tabContent = $btn.closest('.course-detail-modal').find('.course-detail-tab-content');
+                $tabContent.find('.tab-pane').removeClass('active');
+                $tabContent.find('#' + tab).addClass('active');
+            });
+
             // --- BEGIN: Multi-Enrollment for Courses ---
             // Shared selectedPeople array for course add enrollment modal
             var selectedPeople = [];
@@ -273,12 +589,6 @@
                 $('#add-course-enrollment-form')[0].reset();
                 $('#add-course-enrollment-message').html('');
             });
-            // Close modal
-            $(document).on('click', '#add-course-enrollment-modal .close, #cancel-add-course-enrollment', function() {
-                $('#add-course-enrollment-modal').removeClass('show');
-                $('#add-course-enrollment-form')[0].reset();
-                $('#add-course-enrollment-message').html('');
-            });
             // Add Enrollment form submission (multi)
             $(document).off('submit', '#add-course-enrollment-form').on('submit', '#add-course-enrollment-form', function(e) {
                 e.preventDefault();
@@ -344,6 +654,7 @@
                     }
                 });
             });
+            // --- END: Multi-Enrollment for Courses ---
 
             // Remove Enrollment (Edit Mode) for courses
             $(document).on('click', '.edit-course-enrollment-btn', function(e) {

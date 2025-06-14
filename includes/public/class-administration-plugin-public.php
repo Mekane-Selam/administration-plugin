@@ -162,7 +162,7 @@ class Administration_Plugin_Public {
      */
     public function ajax_load_dashboard_page() {
         check_ajax_referer('administration_plugin_nonce', 'nonce');
-        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'main';
+        $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'parish';
         ob_start();
         switch ($page) {
             case 'main':

@@ -660,18 +660,26 @@
             $(document).on('click', '.edit-course-enrollment-btn', function(e) {
                 e.preventDefault();
                 var $enrollmentsList = $('.course-detail-enrollments-list');
+                var $toolbar = $(this).closest('.course-detail-enrollments-actions');
+                var $editBtn = $(this);
                 if ($enrollmentsList.hasClass('edit-mode')) {
                     // Exit edit mode
                     $enrollmentsList.removeClass('edit-mode');
                     $enrollmentsList.find('.course-enrollment-edit-checkbox-col').remove();
-                    $('.remove-course-enrollment-btn').remove();
-                    $(this).html('<span class="dashicons dashicons-edit"></span>');
+                    $toolbar.find('.remove-course-enrollment-btn').remove();
+                    $editBtn.html('<span class="dashicons dashicons-edit"></span>');
+                    $editBtn.removeClass('button-danger').addClass('button');
                 } else {
                     // Enter edit mode
                     $enrollmentsList.addClass('edit-mode');
                     $enrollmentsList.find('.course-detail-enrollment-card').prepend('<div class="course-enrollment-edit-checkbox-col"><input type="checkbox" class="course-enrollment-edit-checkbox"></div>');
-                    $enrollmentsList.before('<button class="button button-danger remove-course-enrollment-btn" style="margin-bottom:12px;">Remove Selected</button>');
-                    $(this).html('<span class="dashicons dashicons-no-alt"></span>'); // X icon
+                    // Remove any existing Remove Selected button in the toolbar
+                    $toolbar.find('.remove-course-enrollment-btn').remove();
+                    // Inject Remove Selected button next to Edit in the toolbar
+                    var $removeBtn = $('<button class="button button-danger remove-course-enrollment-btn" style="margin-left:8px;">Remove Selected</button>');
+                    $editBtn.after($removeBtn);
+                    $editBtn.html('<span class="dashicons dashicons-no-alt"></span>'); // X icon
+                    $editBtn.removeClass('button').addClass('button-danger');
                 }
             });
             // Remove selected enrollments (courses)

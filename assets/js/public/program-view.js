@@ -250,7 +250,7 @@
             });
 
             // Close modals
-            $(document).on('click', '.modal .close, .modal .button:not(.button-primary)', function() {
+            $(document).off('click', '.modal .close, .modal .button:not(.button-primary)').on('click', '.modal .close, .modal .button:not(.button-primary):not(.edit-course-enrollment-btn):not(.remove-course-enrollment-btn)', function() {
                 $(this).closest('.modal').removeClass('show');
             });
 
@@ -1194,7 +1194,7 @@
                 $('.course-detail-enrollments-actions').each(function() {
                     var $actions = $(this);
                     if ($actions.find('.edit-course-enrollment-btn').length === 0) {
-                        $actions.append('<button class="edit-course-enrollment-btn button" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
+                        $actions.append('<button class="edit-course-enrollment-btn button" type="button"><span class="dashicons dashicons-edit"></span></button>');
                     }
                 });
             }

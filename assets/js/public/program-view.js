@@ -204,7 +204,7 @@
                         var checked = selectedPeople.includes(person.PersonID) ? 'checked' : '';
                         html += `<div class='enrollment-person-list-row' style='display:flex;align-items:center;padding:4px 8px;width:100%;'>
                             <div style='width:10%;display:flex;align-items:center;justify-content:center;'>
-                                <input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' style='vertical-align:middle;'>
+                                <input type='checkbox' class='enrollment-person-checkbox' value='${person.PersonID}' style='vertical-align:middle;' ${checked}>
                             </div>
                             <span style='width:90%;vertical-align:middle;display:inline-block;'>${fullName}</span>
                         </div>`;
@@ -304,6 +304,7 @@
                 var $form = $(this);
                 var $message = $('#add-enrollment-message');
                 var programId = $('#program-view-container').data('program-id');
+                // Use selectedPeople array instead of re-querying checkboxes
                 var personIds = [];
                 $('.enrollment-person-checkbox:checked').each(function() {
                     personIds.push($(this).val());
@@ -330,6 +331,9 @@
                                 $('#add-enrollment-modal').removeClass('show');
                                 $form[0].reset();
                                 $message.html('');
+                                // Reset selectedPeople and checkboxes
+                                selectedPeople = [];
+                                $('.enrollment-person-checkbox').prop('checked', false);
                                 // Reload only the enrollment list
                                 ProgramView.reloadEnrollmentList(programId);
                             }, 800);
@@ -378,6 +382,14 @@
                             var $html = $('<div>' + response.data.html + '</div>');
                             var $newEnrollment = $html.find('.program-view-edu-enrollment-content').html();
                             $('#program-view-container .program-view-edu-enrollment-content').html($newEnrollment);
+                            // Reset Edit button state
+                            var $editBtn = $('.program-view-edu-edit-enrollment-btn');
+                            if ($editBtn.length) {
+                                $editBtn.html('<span class="dashicons dashicons-edit"></span>');
+                            }
+                            $('.enrollment-list-enhanced').removeClass('edit-mode');
+                            $('.enrollment-edit-checkbox-col').remove();
+                            $('.remove-enrollment-btn').remove();
                         }
                     }
                 });
@@ -1015,13 +1027,13 @@
                     $enrollmentList.removeClass('edit-mode');
                     $enrollmentList.find('.enrollment-edit-checkbox-col').remove();
                     $('.remove-enrollment-btn').remove();
-                    $(this).text('Edit');
+                    $(this).html('<span class="dashicons dashicons-edit"></span>');
                 } else {
                     // Enter edit mode
                     $enrollmentList.addClass('edit-mode');
                     $enrollmentList.find('.enrollment-card').prepend('<div class="enrollment-edit-checkbox-col"><input type="checkbox" class="enrollment-edit-checkbox"></div>');
                     $enrollmentList.before('<button class="button button-danger remove-enrollment-btn" style="margin-bottom:12px;">Remove Selected</button>');
-                    $(this).text('Cancel');
+                    $(this).html('<span class="dashicons dashicons-no-alt"></span>'); // X icon
                 }
             });
 
@@ -1106,23 +1118,6 @@
             $(document).on('ajaxComplete', function(e, xhr, settings) {
                 if (settings && settings.data && settings.data.includes('get_program_full_view')) {
                     injectEditButton();
-                }
-            });
-            // Edit button click handler (separate from plus button)
-            $(document).off('click', '.program-view-edu-edit-enrollment-btn').on('click', '.program-view-edu-edit-enrollment-btn', function() {
-                var $enrollmentList = $('.enrollment-list-enhanced');
-                if ($enrollmentList.hasClass('edit-mode')) {
-                    // Exit edit mode
-                    $enrollmentList.removeClass('edit-mode');
-                    $enrollmentList.find('.enrollment-edit-checkbox-col').remove();
-                    $('.remove-enrollment-btn').remove();
-                    $(this).text('').append('<span class="dashicons dashicons-edit"></span>');
-                } else {
-                    // Enter edit mode
-                    $enrollmentList.addClass('edit-mode');
-                    $enrollmentList.find('.enrollment-card').prepend('<div class="enrollment-edit-checkbox-col"><input type="checkbox" class="enrollment-edit-checkbox"></div>');
-                    $enrollmentList.before('<button class="button button-danger remove-enrollment-btn" style="margin-bottom:12px;">Remove Selected</button>');
-                    $(this).text('Cancel');
                 }
             });
         }

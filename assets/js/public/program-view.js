@@ -298,18 +298,14 @@
                 });
             });
 
-            // Add Enrollment form submission
+            // Add Enrollment button
             $(document).off('submit', '#add-enrollment-form').on('submit', '#add-enrollment-form', function(e) {
                 e.preventDefault();
                 var $form = $(this);
                 var $message = $('#add-enrollment-message');
                 var programId = $('#program-view-container').data('program-id');
-                // Use selectedPeople array instead of re-querying checkboxes
-                var personIds = [];
-                $('.enrollment-person-checkbox:checked').each(function() {
-                    personIds.push($(this).val());
-                });
-                if (personIds.length === 0) {
+                // Use selectedPeople array for submission
+                if (!selectedPeople || selectedPeople.length === 0) {
                     $message.html('<span class="error-message">Please select at least one person.</span>');
                     return;
                 }
@@ -321,22 +317,20 @@
                         action: 'add_edu_enrollment',
                         nonce: administration_plugin.nonce,
                         program_id: programId,
-                        PersonIDs: personIds // send as array
+                        PersonIDs: selectedPeople // send as array
                     },
                     traditional: true, // ensures array is sent as repeated params
                     success: function(response) {
                         if (response.success) {
                             $message.html('<span class="success-message">' + (response.data && response.data.summary ? response.data.summary : 'Enrollment(s) added successfully!') + '</span>');
-                            setTimeout(function() {
-                                $('#add-enrollment-modal').removeClass('show');
-                                $form[0].reset();
-                                $message.html('');
-                                // Reset selectedPeople and checkboxes
-                                selectedPeople = [];
-                                $('.enrollment-person-checkbox').prop('checked', false);
-                                // Reload only the enrollment list
-                                ProgramView.reloadEnrollmentList(programId);
-                            }, 800);
+                            $('#add-enrollment-modal').removeClass('show');
+                            $form[0].reset();
+                            $message.html('');
+                            // Reset selectedPeople and checkboxes
+                            selectedPeople = [];
+                            $('.enrollment-person-checkbox').prop('checked', false);
+                            // Reload only the enrollment list immediately
+                            ProgramView.reloadEnrollmentList(programId);
                         } else {
                             $message.html('<span class="error-message">' + (response.data || 'Failed to add enrollment.') + '</span>');
                         }
@@ -1019,56 +1013,75 @@
                 });
             };
 
-            // 1. Add Edit Enrollment button and logic
-            $(document).on('click', '.program-view-edu-edit-enrollment-btn', function() {
+            // 1. Edit Enrollment button logic: ensure cancel always reverts to edit icon and exits edit mode
+            $(document).off('click', '.program-view-edu-edit-enrollment-btn').on('click', '.program-view-edu-edit-enrollment-btn', function() {
                 var $enrollmentList = $('.enrollment-list-enhanced');
+                var $editBtn = $(this);
                 if ($enrollmentList.hasClass('edit-mode')) {
                     // Exit edit mode
                     $enrollmentList.removeClass('edit-mode');
                     $enrollmentList.find('.enrollment-edit-checkbox-col').remove();
                     $('.remove-enrollment-btn').remove();
-                    $(this).html('<span class="dashicons dashicons-edit"></span>');
+                    $editBtn.html('<span class="dashicons dashicons-edit"></span>');
                 } else {
                     // Enter edit mode
                     $enrollmentList.addClass('edit-mode');
                     $enrollmentList.find('.enrollment-card').prepend('<div class="enrollment-edit-checkbox-col"><input type="checkbox" class="enrollment-edit-checkbox"></div>');
                     $enrollmentList.before('<button class="button button-danger remove-enrollment-btn" style="margin-bottom:12px;">Remove Selected</button>');
-                    $(this).html('<span class="dashicons dashicons-no-alt"></span>'); // X icon
+                    $editBtn.html('<span class="dashicons dashicons-no-alt"></span>'); // X icon
                 }
             });
+            // Also handle clicking the X icon (cancel) to always revert
+            $(document).on('click', '.program-view-edu-edit-enrollment-btn .dashicons-no-alt', function(e) {
+                e.stopPropagation();
+                var $editBtn = $(this).closest('.program-view-edu-edit-enrollment-btn');
+                var $enrollmentList = $('.enrollment-list-enhanced');
+                $enrollmentList.removeClass('edit-mode');
+                $enrollmentList.find('.enrollment-edit-checkbox-col').remove();
+                $('.remove-enrollment-btn').remove();
+                $editBtn.html('<span class="dashicons dashicons-edit"></span>');
+            });
 
-            // 2. Remove selected enrollments
-            $(document).on('click', '.remove-enrollment-btn', function() {
-                var selected = [];
-                $('.enrollment-edit-checkbox:checked').each(function() {
-                    var $card = $(this).closest('.enrollment-card');
-                    selected.push($card.data('person-id'));
-                });
-                if (selected.length === 0) {
-                    alert('Please select at least one enrollment to remove.');
+            // 2. Add Enrollment form submission: use selectedPeople array and reload enrollment list immediately after AJAX
+            var selectedPeople = [];
+            $(document).off('submit', '#add-enrollment-form').on('submit', '#add-enrollment-form', function(e) {
+                e.preventDefault();
+                var $form = $(this);
+                var $message = $('#add-enrollment-message');
+                var programId = $('#program-view-container').data('program-id');
+                // Use selectedPeople array for submission
+                if (!selectedPeople || selectedPeople.length === 0) {
+                    $message.html('<span class="error-message">Please select at least one person.</span>');
                     return;
                 }
-                var programId = $('#program-view-container').data('program-id');
-                if (!confirm('Are you sure you want to remove the selected enrollments?')) return;
+                $message.html('<span class="loading">Adding enrollment...</span>');
                 $.ajax({
                     url: administration_plugin.ajax_url,
                     type: 'POST',
                     data: {
-                        action: 'remove_edu_enrollments',
+                        action: 'add_edu_enrollment',
                         nonce: administration_plugin.nonce,
                         program_id: programId,
-                        PersonIDs: selected
+                        PersonIDs: selectedPeople // send as array
                     },
-                    traditional: true,
+                    traditional: true, // ensures array is sent as repeated params
                     success: function(response) {
                         if (response.success) {
+                            $message.html('<span class="success-message">' + (response.data && response.data.summary ? response.data.summary : 'Enrollment(s) added successfully!') + '</span>');
+                            $('#add-enrollment-modal').removeClass('show');
+                            $form[0].reset();
+                            $message.html('');
+                            // Reset selectedPeople and checkboxes
+                            selectedPeople = [];
+                            $('.enrollment-person-checkbox').prop('checked', false);
+                            // Reload only the enrollment list immediately
                             ProgramView.reloadEnrollmentList(programId);
                         } else {
-                            alert(response.data || 'Failed to remove enrollments.');
+                            $message.html('<span class="error-message">' + (response.data || 'Failed to add enrollment.') + '</span>');
                         }
                     },
                     error: function() {
-                        alert('Failed to remove enrollments.');
+                        $message.html('<span class="error-message">Failed to add enrollment. Please try again.</span>');
                     }
                 });
             });

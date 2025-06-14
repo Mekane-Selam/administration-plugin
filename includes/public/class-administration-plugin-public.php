@@ -111,7 +111,7 @@ class Administration_Plugin_Public {
             'administration-plugin-program-view',
             ADMINISTRATION_PLUGIN_URL . 'assets/js/public/program-view.js',
             array('jquery'),
-            ADMINISTRATION_PLUGIN_VERSION,
+            '1.0.1',
             true
         );
         wp_enqueue_script(

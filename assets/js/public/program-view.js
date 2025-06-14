@@ -1007,18 +1007,21 @@
                 });
             };
 
-            // Ensure Edit button is placed in the toolbar and matches the Plus button style
-            function injectEditButton() {
+            // Ensure Edit button is always present in the enrollment toolbar, styled like the plus button, and does not remove the plus button
+            function ensureEditButtonInToolbar() {
                 var $toolbar = $('.program-view-edu-enrollment-toolbar');
                 if ($toolbar.length && $toolbar.find('.program-view-edu-edit-enrollment-btn').length === 0) {
-                    $toolbar.append('<button type="button" class="program-view-edu-edit-enrollment-btn program-view-edu-add-enrollment-btn" title="Edit Enrollments" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
+                    // Insert Edit button after the plus button
+                    var $plusBtn = $toolbar.find('.program-view-edu-add-enrollment-btn');
+                    var $editBtn = $('<button type="button" class="program-view-edu-edit-enrollment-btn" title="Edit Enrollments" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
+                    $plusBtn.after($editBtn);
                 }
             }
-            // Call after page load and after AJAX reloads
-            $(document).on('ready programViewLoaded', injectEditButton);
+            // Call on page load and after AJAX reloads
+            $(document).on('ready programViewLoaded', ensureEditButtonInToolbar);
             $(document).on('ajaxComplete', function(e, xhr, settings) {
                 if (settings && settings.data && settings.data.includes('get_program_full_view')) {
-                    injectEditButton();
+                    ensureEditButtonInToolbar();
                 }
             });
         }

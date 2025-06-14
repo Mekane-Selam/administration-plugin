@@ -35,4 +35,5 @@
     }
     ?>
   </div>
+  <div class="course-enrollment-person-details"></div>
 </div> 

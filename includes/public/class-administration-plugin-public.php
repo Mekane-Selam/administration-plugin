@@ -165,14 +165,11 @@ class Administration_Plugin_Public {
         $page = isset($_POST['page']) ? sanitize_text_field($_POST['page']) : 'main';
         ob_start();
         switch ($page) {
-            case 'main':
-                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/dashboard-content.php';
+            case 'parish':
+                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
                 break;
             case 'programs':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/programs-content.php';
-                break;
-            case 'parish':
-                include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/people-content.php';
                 break;
             case 'calendar':
                 include ADMINISTRATION_PLUGIN_PATH . 'templates/public/partials/calendar-content.php';

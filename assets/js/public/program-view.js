@@ -1087,9 +1087,15 @@
             function injectEditButton() {
                 var $toolbar = $('.program-view-edu-enrollment-toolbar');
                 if ($toolbar.length) {
-                    removeOldEditButton();
+                    // Remove any Edit button that is not a direct child of the toolbar (fixes template or legacy issues)
+                    $('.program-view-edu-edit-enrollment-btn').each(function() {
+                        if (!$(this).parent().is($toolbar)) {
+                            $(this).remove();
+                        }
+                    });
                     var $plusBtn = $toolbar.find('.program-view-edu-add-enrollment-btn');
-                    if ($plusBtn.length && $toolbar.find('.program-view-edu-edit-enrollment-btn').length === 0) {
+                    // Only inject if not already present as a sibling to the plus button
+                    if ($plusBtn.length && $plusBtn.siblings('.program-view-edu-edit-enrollment-btn').length === 0) {
                         var $editBtn = $('<button type="button" class="program-view-edu-edit-enrollment-btn" title="Edit Enrollments" style="margin-left:8px;"><span class="dashicons dashicons-edit"></span></button>');
                         $plusBtn.after($editBtn);
                     }

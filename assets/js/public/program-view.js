@@ -662,6 +662,8 @@
                 var $enrollmentsList = $('.course-detail-enrollments-list');
                 var $toolbar = $(this).closest('.course-detail-enrollments-actions');
                 var $editBtn = $(this);
+                // Always ensure the edit button has the correct class and no inline style
+                $editBtn.removeClass('button-danger').addClass('button').css('margin-left', '8px');
                 if ($enrollmentsList.hasClass('edit-mode')) {
                     // Exit edit mode
                     $enrollmentsList.removeClass('edit-mode');
@@ -681,6 +683,9 @@
                     $editBtn.html('<span class="dashicons dashicons-no-alt"></span>'); // X icon
                     $editBtn.removeClass('button').addClass('button-danger');
                 }
+                // Prevent event bubbling or accidental modal close
+                e.stopPropagation();
+                return false;
             });
             // Remove selected enrollments (courses)
             $(document).on('click', '.remove-course-enrollment-btn', function() {

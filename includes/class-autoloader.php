@@ -25,9 +25,9 @@ class Administration_Plugin_Autoloader {
         if ($class_name === 'Permissions_Util') {
             $file_name = 'class-permissions-util.php';
         } else {
-            $file_name = strtolower(str_replace('_', '-', $class_name));
-            $file_name = str_replace('administration-', '', $file_name);
-            $file_name = 'class-' . $file_name . '.php';
+        $file_name = strtolower(str_replace('_', '-', $class_name));
+        $file_name = str_replace('administration-', '', $file_name);
+        $file_name = 'class-' . $file_name . '.php';
         }
 
         // Define the base directories to search

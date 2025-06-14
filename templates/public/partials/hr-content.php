@@ -355,7 +355,7 @@ $can_access_permissions = Permissions_Util::user_has_permission($current_user_id
             <div class="person-details-section-content" id="staff-details-general-content"></div>
         </div>
     </div>
-</div>
+</div> 
 
 <script>
 jQuery(function($) {

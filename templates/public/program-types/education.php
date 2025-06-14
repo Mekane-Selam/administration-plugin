@@ -265,7 +265,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 90%;
+    width: 100%;
     margin-bottom: 16px;
     padding-bottom: 12px;
     border-bottom: 1px solid #e3e7ee;

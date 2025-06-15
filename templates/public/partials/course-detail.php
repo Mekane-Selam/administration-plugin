@@ -121,17 +121,17 @@
     </div>
   </div>
   <div class="tab-pane" id="attendance">
-    <div class="course-detail-attendance-toolbar">
-      <label for="attendance-date">Date:</label>
-      <input type="date" id="attendance-date" class="course-detail-attendance-date" />
-      <input type="text" class="course-detail-attendance-search" placeholder="Search students..." />
-      <button class="button button-primary save-attendance-btn" disabled>Save</button>
+    <div class="course-detail-attendance-toolbar" style="display:flex;align-items:center;gap:18px;margin-bottom:18px;">
+      <label for="attendance-date" style="font-weight:500;margin-right:8px;white-space:nowrap;">Date:</label>
+      <input type="date" id="attendance-date" class="course-detail-attendance-date" style="padding:6px 10px;border-radius:6px;border:1px solid #e3e7ee;min-width:140px;max-width:180px;" />
+      <input type="text" class="course-detail-attendance-search" placeholder="Search students..." style="flex:1;min-width:470px;padding:8px 12px;border:1px solid #e3e7ee;border-radius:8px;font-size:0.95rem;background:#f8fafc;margin-left:18px;" />
+      <button class="button button-primary save-attendance-btn" disabled style="margin-left:auto;min-width:110px;">Save</button>
     </div>
-    <div class="attendance-list-card grades-card-ui">
-      <div class="attendance-list-grid"></div>
-      <div class="attendance-list-empty">No students found.</div>
+    <div class="attendance-list-card grades-card-ui" style="padding:0;">
+      <div class="attendance-list-grid" style="display:flex;flex-direction:column;"></div>
+      <div class="attendance-list-empty" style="display:none;color:#b6b6b6;font-style:italic;padding:18px 0 0 0;text-align:center;">No students found.</div>
     </div>
-    <div class="attendance-save-message"></div>
+    <div class="attendance-save-message" style="margin-top:16px;"></div>
   </div>
   <div class="tab-pane" id="curriculum">
     <div class="curriculum-toolbar" style="display:flex;align-items:center;gap:18px;margin-bottom:18px;">

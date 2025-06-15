@@ -2633,36 +2633,36 @@ button.button-primary, button.button-secondary, button.button-danger {
     margin-top: 0;
 }
 
-.tab-pane#attendance {
+/* Attendance Tab: Keep toolbar visible, scroll attendance list */
+#attendance {
   display: flex;
   flex-direction: column;
-  height: 70vh;
-  min-height: 420px;
-  max-height: 80vh;
-  overflow: hidden;
+  height: 100%;
+  min-height: 0; /* For flexbox/Safari */
 }
 
 .course-detail-attendance-toolbar {
   flex: 0 0 auto;
-  z-index: 2;
+  /* Add padding/margin as needed */
+  z-index: 1;
   background: #fff;
-  position: sticky;
-  top: 0;
-  border-bottom: 1px solid #e3e7ee;
 }
 
-.attendance-list-card {
-  flex: 1 1 auto;
-  min-height: 0;
+.attendance-list-card.grades-card-ui {
+  flex: 1 1 0;
+  min-height: 0; /* For flexbox/Safari */
+  display: flex;
+  flex-direction: column;
+}
+
+.attendance-list-grid {
   overflow-y: auto;
-  max-height: 100%;
-  background: #fff;
+  min-height: 0; /* For flexbox/Safari */
+  max-height: 350px; /* Adjust as needed for your layout */
 }
 
 @media (max-width: 700px) {
-  .tab-pane#attendance {
-    height: 60vh;
-    min-height: 320px;
-    max-height: 80vh;
+  .attendance-list-grid {
+    max-height: 220px;
   }
 }

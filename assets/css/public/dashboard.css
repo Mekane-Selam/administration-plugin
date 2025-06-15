@@ -2632,37 +2632,3 @@ button.button-primary, button.button-secondary, button.button-danger {
 .permissions-details-content {
     margin-top: 0;
 }
-
-/* Attendance Tab: Keep toolbar visible, scroll attendance list */
-#attendance {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0; /* For flexbox/Safari */
-}
-
-.course-detail-attendance-toolbar {
-  flex: 0 0 auto;
-  /* Add padding/margin as needed */
-  z-index: 1;
-  background: #fff;
-}
-
-.attendance-list-card.grades-card-ui {
-  flex: 1 1 0;
-  min-height: 0; /* For flexbox/Safari */
-  display: flex;
-  flex-direction: column;
-}
-
-.attendance-list-grid {
-  overflow-y: auto;
-  min-height: 0; /* For flexbox/Safari */
-  max-height: 350px; /* Adjust as needed for your layout */
-}
-
-@media (max-width: 700px) {
-  .attendance-list-grid {
-    max-height: 220px;
-  }
-}

@@ -2632,3 +2632,37 @@ button.button-primary, button.button-secondary, button.button-danger {
 .permissions-details-content {
     margin-top: 0;
 }
+
+.tab-pane#attendance {
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+  min-height: 420px;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.course-detail-attendance-toolbar {
+  flex: 0 0 auto;
+  z-index: 2;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid #e3e7ee;
+}
+
+.attendance-list-card {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  max-height: 100%;
+  background: #fff;
+}
+
+@media (max-width: 700px) {
+  .tab-pane#attendance {
+    height: 60vh;
+    min-height: 320px;
+    max-height: 80vh;
+  }
+}

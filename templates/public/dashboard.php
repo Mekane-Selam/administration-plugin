@@ -81,7 +81,7 @@ jQuery(document).ready(function($) {
 
     // Load main first, then parish
     loadDashboardPage('main', function() {
-        loadDashboardPage('parish');
+    loadDashboardPage('parish');
     });
 });
 </script> 
